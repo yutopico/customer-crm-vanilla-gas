@@ -467,8 +467,13 @@ body {
     margin: 0;
 }
 
-/* 集計項目の名前 */
+/* 集計項目のアイコンと名前 */
 .stat-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
   font-size: 13px;
   font-weight: bold;
   letter-spacing: 0.04em;
@@ -505,6 +510,29 @@ body {
   font-size: 12px;
   line-height: 1.5;
   color: #818685;
+}
+
+/* 集計項目に表示するアウトラインアイコン */
+.stat-icon {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+  place-items: center;
+
+  /* 横並びなので外側の余白は不要 */
+  margin: 0;
+
+  /* 画面が狭くてもアイコンをつぶさない */
+  flex-shrink: 0;
+
+  color: #7d9680;
+}
+
+/* 集計アイコン内のSVGサイズ */
+.stat-icon svg {
+  width: 26px;
+  height: 26px;
 }
 
 
