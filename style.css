@@ -323,7 +323,7 @@ body {
   padding: 20px;
 
   /* 4枚の高さをそろえる */
-  min-height: 140px;
+  min-height: 170px;
 
   /* タイトルと説明文を縦に並べる */
   display: flex;
@@ -392,6 +392,36 @@ body {
 /* セージグリーン上でも読みやすい明るめの説明文 */
 .action-card--regular .action-card-description {
   color: #e3e8e4;
+}
+
+/* 主要メニュー内のアイコンを表示する円形エリア */
+.action-card-icon {
+  /* アイコン背景の大きさ */
+  width: 52px;
+  height: 52px;
+
+  /* アイコンを円の中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 白に近い半透明の背景で、カード色となじませる */
+  background-color: rgba(255, 255, 255, 0.72);
+
+  /* 円形にする */
+  border-radius: 50%;
+
+  /* タイトルと同じ色をアイコンに使用する */
+  color: #818685;
+
+  /* タイトルとの間に少し余白を作る */
+  margin-bottom: 4px;
+}
+
+
+/* SVGアイコン自体の大きさ */
+.action-card-icon svg {
+  width: 30px;
+  height: 30px;
 }
 
 
