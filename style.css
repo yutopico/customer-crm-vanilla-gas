@@ -19,7 +19,7 @@ body {
 }
 
   /* アプリ画面全体の横幅と余白を管理する */
-  .app-container {
+.app-container {
   /* 使用できる横幅いっぱいに広げる */
   width: 100%;
 
@@ -325,6 +325,13 @@ body {
 }
 
 
+/* スマホとタブレットでは2列 */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
 /* 画面幅が767px以下のスマートフォン向け設定 */
 @media (max-width: 767px) {
   .home-overview {
@@ -341,5 +348,13 @@ body {
 
   .ai-summary-card {
     padding: 20px;
+  }
+}
+
+/* 一番下にPC用設定 */
+@media (min-width: 1024px) {
+  .action-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
   }
 }
