@@ -602,7 +602,275 @@ body {
 
 
 /* ==================================================
-   07. レスポンシブ設定
+   07. 共通セクション見出し
+   やることリストなど、各情報エリアの見出し
+================================================== */
+
+/* セクション名と一覧表示ボタンを横並びにする */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 16px;
+}
+
+/* セクションのアイコンと名前 */
+.section-title {
+  /* ブラウザ標準の見出し余白をなくす */
+  margin: 0;
+
+  /* アイコンと名前を横に並べる */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 18px;
+  color: #515254;
+}
+
+/* セクション名の横に表示するアイコン */
+.section-title-icon {
+  /* アイコンを表示する領域の大きさ */
+  width: 26px;
+  height: 26px;
+
+  /* アイコンを中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 画面が狭くてもアイコンをつぶさない */
+  flex-shrink: 0;
+
+  color: #7d9680;
+}
+
+/* セクション見出し内のSVGサイズ */
+.section-title-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* 一覧画面へ移動するボタン */
+.section-link {
+  /* ブラウザ標準のボタンデザインをなくす */
+  border: none;
+  background-color: transparent;
+
+  /* 文字と矢印を横に並べる */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 0;
+
+  font-size: 12px;
+  color: #818685;
+
+  cursor: pointer;
+}
+
+/* 一覧表示ボタンへマウスを乗せたとき */
+.section-link:hover {
+  color: #515254;
+}
+
+/* やることリスト全体 */
+.todo-section {
+  /* 集計エリアとの間に余白を作る */
+  margin-top: 28px;
+}
+
+
+/* ==================================================
+   08. やることリスト
+   写真・誕生日・メモ・特徴の未登録項目
+================================================== */
+
+/* スマホとタブレットでは、やることカードを2列にする */
+.todo-grid {
+  display: grid;
+
+  /* 同じ幅の列を2つ作る */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  /* カード同士の間隔を作る */
+  gap: 12px;
+
+  /* セクション見出しとの間に余白を作る */
+  margin-top: 16px;
+}
+
+/* 4つのやることカードに共通するデザイン */
+.todo-card {
+  /* 矢印をカード右下へ配置する基準にする */
+  position: relative;
+
+  /* ブラウザ標準のボタンデザインを整える */
+  border: 1px solid rgba(63, 69, 67, 0.12);
+  background-color: #f1e8dc;
+
+  /* カードの角を丸くする */
+  border-radius: 18px;
+
+  /* カード内部に余白を作る */
+  padding: 18px;
+
+  /* カードの高さをそろえる */
+  min-height: 150px;
+
+  /* アイコンや文字を縦に並べる */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  /* ボタン内の文字を左揃えにする */
+  text-align: left;
+
+  color: #515254;
+
+  /* 操作できることを示す */
+  cursor: pointer;
+
+  /* ホバー時の動きをなめらかにする */
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* やることカード内のアイコンを表示する円形エリア */
+.todo-card-icon {
+  /* アイコン背景の大きさ */
+  width: 40px;
+  height: 40px;
+
+  /* アイコンを円の中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 淡いオレンジの背景を付ける */
+  background-color: rgba(245, 177, 135, 0.2);
+
+  /* 円形にする */
+  border-radius: 50%;
+
+  /* すべてのアイコンを淡いオレンジで統一する */
+  color: #f5b187;
+
+  /* アイコンはタイトルと横並びなので下余白を付けない */
+  margin: 0;
+
+  /* 画面が狭くてもアイコンがつぶれないようにする */
+  flex-shrink: 0;
+}
+
+/* やることカード内のSVGアイコン自体の大きさ */
+.todo-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* やることカード内の項目名 */
+.todo-card-title {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.4;
+  color: #515254;
+}
+
+/* 対応が必要なお客様の人数 */
+.todo-card-value {
+  /* アイコンと項目名のグループとの間に余白を作る */
+  margin-top: 12px;
+
+  /* 数値をカードの中央に配置する */
+  text-align: center;
+
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #515254;
+
+  /* 数字の横幅をそろえて読みやすくする */
+  font-variant-numeric: tabular-nums;
+}
+
+/* 人数の横に表示する「名」 */
+.todo-card-unit {
+  /* 数値との間に少し余白を作る */
+  margin-left: 3px;
+
+  /* 数値より小さく表示する */
+  font-size: 0.5em;
+
+  color: #818685;
+}
+
+/* カード下部に表示する補足説明 */
+.todo-card-description {
+  /* 数値との間に広めの余白を作る */
+  margin-top: 18px;
+
+  /* 右端と矢印に近づきすぎないよう余白を作る */
+  padding-right: 28px;
+
+  /* 説明文を右揃えにする */
+  text-align: right;
+
+  font-size: 12px;
+  line-height: 1.5;
+  color: #818685;
+}
+
+/* カード右下に表示する矢印 */
+.todo-card-arrow {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+
+  font-size: 20px;
+  line-height: 1;
+  color: #818685;
+}
+
+/* マウスを乗せたときの動きをなめらかにする */
+.todo-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* やることカードのアイコンと項目名 */
+.todo-card-header {
+  /* アイコンと項目名を横に並べる */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* アイコンと項目名を近づけて、1つのまとまりにする */
+  gap: 8px;
+
+  /* カード内で使用できる横幅いっぱいに広げる */
+  width: 100%;
+}
+
+/* マウスを乗せたカードを少し浮かせる */
+.todo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(63, 69, 67, 0.1);
+}
+
+/* キーボード操作で選択されたカードを見やすくする */
+.todo-card:focus-visible {
+  outline: 3px solid rgba(241, 154, 82, 0.4);
+  outline-offset: 3px;
+}
+
+
+/* ==================================================
+   09. レスポンシブ設定
    画面幅に応じてレイアウトを切り替える
 ================================================== */
 
@@ -673,6 +941,14 @@ body {
   .stats-grid {
     /* PCでは4つの集計項目を横1段に並べる */
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .todo-grid {
+    /* PCでは、やることカードを横4列にする */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    /* PCではカード同士の間隔を少し広げる */
+    gap: 16px;
   }
 
   .stat-item:nth-child(odd) {

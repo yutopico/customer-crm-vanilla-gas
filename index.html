@@ -325,6 +325,193 @@
                     </div>
                 </dl>
             </section>
+
+            <!-- 登録情報の不足など、対応が必要な項目を表示する領域 -->
+            <section class="todo-section">
+
+                <!-- セクション名と一覧表示ボタンを横並びにする -->
+                <div class="section-header">
+
+                    <!-- アイコンとセクション名 -->
+                    <h2 class="section-title">
+                        <!-- 対応項目の一覧を表すチェックリストアイコン -->
+                        <span class="section-title-icon" aria-hidden="true">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <!-- クリップボード本体 -->
+                                <rect x="5" y="4" width="14" height="16" rx="2"></rect>
+
+                                <!-- 上のクリップ部分 -->
+                                <path d="M9 4.5h6"></path>
+                                <path d="M10 3h4a1 1 0 0 1 1 1v1H9V4a1 1 0 0 1 1-1z"></path>
+
+                                <!-- チェックマーク -->
+                                <path d="m8 10 1.5 1.5L12 9"></path>
+                                <path d="m8 15 1.5 1.5L12 14"></path>
+
+                                <!-- 項目の線 -->
+                                <path d="M14 10h2"></path>
+                                <path d="M14 15h2"></path>
+                            </svg>
+                        </span>
+                        <span>やることリスト</span>
+                    </h2>
+
+                    <!-- 後から一覧画面へ移動する機能を追加する予定 -->
+                    <button class="section-link" type="button">
+                        すべて見る
+                        <span aria-hidden="true">›</span>
+                    </button>
+                </div>
+
+                <!-- 対応が必要な項目をカード形式で並べる領域 -->
+                <div class="todo-grid">
+
+                    <!-- 顧客写真が未登録のお客様を確認するカード -->
+                    <button class="todo-card" type="button">
+
+                        <!-- アイコンと項目名を横並びにする -->
+                        <span class="todo-card-header">
+                            <!-- 写真未登録を表すカメラアイコン -->
+                            <span class="todo-card-icon todo-card-icon--photo" aria-hidden="true">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <!-- カメラ本体 -->
+                                    <path d="M4 7h4l1.5-2h5L16 7h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+
+                                    <!-- カメラのレンズ -->
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                            </span>
+                            <span class="todo-card-title">写真未登録</span>
+                        </span>
+                        <span class="todo-card-value">
+                            5<span class="todo-card-unit">名</span>
+                        </span>
+                        <span class="todo-card-description">写真を登録しましょう</span>
+                        <span class="todo-card-arrow" aria-hidden="true"></span>
+                    </button>
+
+                    <!-- 誕生日が未登録のお客様を確認するカード -->
+                    <button class="todo-card" type="button">
+
+                        <!-- アイコンと項目名を横並びにする -->
+                        <span class="todo-card-header">
+                            <!-- 誕生日未登録を表すケーキアイコン -->
+                            <span class="todo-card-icon todo-card-icon--birthday" aria-hidden="true">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <!-- ろうそくの炎 -->
+                                    <path d="M12 2.5c1 1 1.4 1.8 1.4 2.6A1.4 1.4 0 0 1 12 6.5a1.4 1.4 0 0 1-1.4-1.4c0-.8.4-1.6 1.4-2.6z"></path>
+
+                                    <!-- ろうそく -->
+                                    <path d="M12 6.5V9"></path>
+
+                                    <!-- ケーキ上部 -->
+                                    <path d="M5 12h14"></path>
+                                    <path d="M7 8h10a2 2 0 0 1 2 2v2H5v-2a2 2 0 0 1 2-2z"></path>
+
+                                    <!-- ケーキ本体 -->
+                                    <path d="M5 12v7h14v-7"></path>
+
+                                    <!-- デコレーション -->
+                                    <path d="M5 15c2 2 4-2 7 0s5-2 7 0"></path>
+                                </svg>
+                            </span>
+                            <span class="todo-card-title">誕生日未登録</span>
+                        </span>
+                        <span class="todo-card-value">
+                            18<span class="todo-card-unit">名</span>
+                        </span>
+                        <span class="todo-card-description">誕生日を登録しましょう</span>
+                        <span class="todo-card-arrow" aria-hidden="true"></span>
+                    </button>
+
+                    <!-- 顧客メモが未登録のお客様を確認するカード -->
+                    <button class="todo-card" type="button">
+
+                        <!-- アイコンと項目名を横並びにする -->
+                        <span class="todo-card-header">
+                        <!-- メモ未登録を表す書類アイコン -->
+                            <span class="todo-card-icon todo-card-icon--memo" aria-hidden="true">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <!-- 書類本体 -->
+                                    <path d="M6 3h9l3 3v15H6z"></path>
+
+                                    <!-- 右上の折り返し -->
+                                    <path d="M15 3v4h4"></path>
+
+                                    <!-- メモを表す線 -->
+                                    <path d="M9 12h6"></path>
+                                    <path d="M9 16h4"></path>
+                                </svg>
+                            </span>
+                            <span class="todo-card-title">メモ未登録</span>
+                        </span>
+                        <span class="todo-card-value">
+                            3<span class="todo-card-unit">名</span>
+                        </span>
+                        <span class="todo-card-description">接客メモを残しましょう</span>
+                        <span class="todo-card-arrow" aria-hidden="true"></span>
+                    </button>
+
+                    <!-- 顧客の特徴が未登録のお客様を確認するカード -->
+                    <button class="todo-card" type="button">
+                        
+                        <!-- アイコンと項目名を横並びにする -->
+                        <span class="todo-card-header">
+                            <!-- 特徴未登録を表すタグアイコン -->
+                            <span class="todo-card-icon todo-card-icon--feature" aria-hidden="true">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <!-- タグ本体 -->
+                                    <path d="M3 12 12 3h7l2 2v7l-9 9z"></path>
+
+                                    <!-- タグの穴 -->
+                                    <circle cx="16.5" cy="7.5" r="1.5"></circle>
+                                </svg>
+                            </span>
+                            <span class="todo-card-title">特徴未登録</span>
+                        </span>
+                        <span class="todo-card-value">
+                            7<span class="todo-card-unit">名</span>
+                        </span>
+                        <span class="todo-card-description">特徴を登録しましょう</span>
+                        <span class="todo-card-arrow" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </section>
         </main>
     </body>
 </html>
