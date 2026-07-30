@@ -893,7 +893,148 @@ body {
 
 
 /* ==================================================
-   09. レスポンシブ設定
+   09. 最近利用した顧客
+   最近追加したお客様・最近見たお客様
+================================================== */
+
+/* スマホとタブレットでは2つの顧客一覧を縦に並べる */
+.recent-customers-grid {
+  display: grid;
+
+  /* 1列で表示する */
+  grid-template-columns: 1fr;
+
+  /* 2つの一覧の間に余白を作る */
+  gap: 28px;
+
+  /* やることリストとの間に余白を作る */
+  margin-top: 28px;
+}
+
+/* 顧客カードを並べる領域 */
+.customer-list {
+  display: grid;
+
+  /* 顧客カード同士を隙間なく並べる */
+  gap: 0;
+
+  /* セクション見出しとの間に余白を作る */
+  margin-top: 16px;
+
+  /* 3人分をまとめる一覧カードの外枠 */
+  border: 1px solid rgba(63, 69, 67, 0.12);
+  background-color: #f1e8dc;
+
+  /* 一覧カードの角を丸くする */
+  border-radius: 16px;
+
+  /* 内部の顧客カードが角丸の外へはみ出さないようにする */
+  overflow: hidden;
+}
+
+/* 最近利用した顧客に共通するカードデザイン */
+.customer-card {
+  /* カード内で使用できる横幅いっぱいに広げる */
+  width: 100%;
+
+  /* 外枠はcustomer-list側でまとめて管理する */
+  border: none;
+  background-color: transparent;
+  border-radius: 0;
+
+  /* カード内部に余白を作る */
+  padding: 16px;
+
+  /* 顧客アイコン・顧客情報・矢印を横に並べる */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  /* ボタン内の文字を左揃えにする */
+  text-align: left;
+
+  color: #515254;
+  cursor: pointer;
+
+  /* ホバー・クリック時の背景色の変化をなめらかにする */
+  transition: background-color 0.2s ease;
+}
+
+  /* 最後の顧客以外の下に区切り線を入れる */
+.customer-card:not(:last-child) {
+  border-bottom: 1px solid rgba(129, 134, 133, 0.28);
+}
+
+/* マウスを乗せた顧客カードの背景を少し明るくする */
+.customer-card:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* クリックしている間、顧客カードの背景色を変える */
+.customer-card:active {
+  background-color: rgba(245, 177, 135, 0.2);
+}
+
+/* キーボード操作で選択されたカードを見やすくする */
+.customer-card:focus-visible {
+  outline: 3px solid rgba(241, 154, 82, 0.4);
+  outline-offset: 3px;
+}
+
+/* 顧客写真が未登録の場合に表示する丸い仮アイコン */
+.customer-avatar {
+  /* 仮アイコンの大きさ */
+  width: 48px;
+  height: 48px;
+
+  /* 文字を円の中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 円形にする */
+  border-radius: 50%;
+
+  /* セージグリーン系の背景を付ける */
+  background-color: rgba(125, 150, 128, 0.2);
+  color: #7d9680;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  /* 画面が狭くてもアイコンをつぶさない */
+  flex-shrink: 0;
+}
+
+/* 顧客名と補足情報を縦に並べる */
+.customer-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  /* 矢印を右端へ押し出す */
+  flex: 1;
+
+  /* 長い文字がカードを押し広げないようにする */
+  min-width: 0;
+}
+
+/* 顧客名 */
+.customer-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #515254;
+}
+
+/* 登録日や閲覧時刻などの補足情報 */
+.customer-meta {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #818685;
+}
+
+
+/* ==================================================
+   10. レスポンシブ設定
    画面幅に応じてレイアウトを切り替える
 ================================================== */
 
@@ -972,6 +1113,14 @@ body {
 
     /* PCではカード同士の間隔を少し広げる */
     gap: 16px;
+  }
+
+  .recent-customers-grid {
+    /* PCでは2つの顧客一覧を左右に並べる */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    /* 左右の一覧の間に余白を作る */
+    gap: 24px;
   }
 
   .stat-item:nth-child(odd) {
