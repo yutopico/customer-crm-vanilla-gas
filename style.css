@@ -1,3 +1,8 @@
+/* ==================================================
+   01. 全体設定
+   ページ全体に共通する基本ルール
+================================================== */
+
 /* すべての要素で、paddingとborderを横幅・高さの内側に含めて計算する */
 * {
   box-sizing: border-box;
@@ -18,7 +23,13 @@ body {
   color: #818685;
 }
 
-  /* アプリ画面全体の横幅と余白を管理する */
+
+/* ==================================================
+   02. 共通レイアウト
+   アプリ全体の横幅や余白
+================================================== */
+
+/* アプリ画面全体の横幅と余白を管理する */
 .app-container {
   /* 使用できる横幅いっぱいに広げる */
   width: 100%;
@@ -29,25 +40,15 @@ body {
   /* 左右の余白を自動計算し、画面中央に配置する */
   margin: 0 auto;
 
-  /* 文字やカードが画面端にくっつかないよう内側に余白を作る */
+  /* スマホでは画面端との間に16pxの余白を作る */
   padding: 16px;
 }
 
-/* 画面幅が768px以上の場合に適用する設定 */
-@media (min-width: 768px) {
-  .app-container {
-    /* タブレット以上では左右の余白を少し広くする */
-    padding: 24px;
-  }
-}
 
-/* 画面幅が1024px以上の場合に適用する設定 */
-@media (min-width: 1024px) {
-  .app-container {
-    /* PCでは、さらにゆったりした余白にする */
-    padding: 32px;
-  }
-}
+/* ==================================================
+   03. 上部ヘッダー
+   ロゴ・アプリ名・お知らせ・メニュー
+================================================== */
 
 /* アプリ名と操作ボタンを横並びにする上部ヘッダー */
 .top-header {
@@ -70,7 +71,6 @@ body {
   border-bottom: 1px solid #c9bdaf;
 }
 
-
 /* ロゴ・アプリ名・説明文を横並びにする */
 .brand {
   display: flex;
@@ -80,7 +80,6 @@ body {
   /* 横幅が狭い場合に文字が画面を押し広げないようにする */
   min-width: 0;
 }
-
 
 /* アプリの円形ロゴ */
 .brand-logo {
@@ -99,9 +98,9 @@ body {
   flex-shrink: 0;
 }
 
-
 /* ロゴ右下のオレンジ色の丸 */
 .brand-logo::after {
+  /* 疑似要素を表示するために必要な設定 */
   content: "";
 
   width: 12px;
@@ -115,22 +114,20 @@ body {
   right: -8px;
   bottom: -4px;
 
-  /* 背景との間に白い縁を作る */
+  /* 背景との間に縁を作る */
   border: 3px solid #e1d2c0;
 }
-
 
 /* アプリ名 */
 .brand-text h1 {
   margin: 0;
 
-  /* 画面幅に合わせて文字サイズを少し変化させる */
+  /* 画面幅に合わせて文字サイズを変化させる */
   font-size: clamp(24px, 4vw, 32px);
 
   color: #3f4543;
   letter-spacing: 0.08em;
 }
-
 
 /* アプリ名の下に表示する説明文 */
 .brand-text p {
@@ -138,7 +135,6 @@ body {
   font-size: 14px;
   color: #626966;
 }
-
 
 /* お知らせボタンとメニューボタンを横並びにする */
 .header-actions {
@@ -149,7 +145,6 @@ body {
   /* 画面が狭くてもボタンがつぶれないようにする */
   flex-shrink: 0;
 }
-
 
 /* ヘッダー右側の操作ボタン */
 .icon-button {
@@ -170,13 +165,11 @@ body {
   cursor: pointer;
 }
 
-
-/* ボタン内のアイコン */
+/* ボタン内の最初のspanをアイコンとして扱う */
 .icon-button > span:first-child {
   font-size: 24px;
   line-height: 1;
 }
-
 
 /* アイコンの下に表示する文字 */
 .action-label {
@@ -184,7 +177,141 @@ body {
 }
 
 
-/* 横幅が600px以下のスマートフォン向け設定 */
+/* ==================================================
+   04. 挨拶・AIサマリー
+   ホーム画面上部の情報エリア
+================================================== */
+
+/* 挨拶とAIサマリーを配置するホーム上部エリア */
+.home-overview {
+  /* 複数の領域を行と列で配置できるGridを使用する */
+  display: grid;
+
+  /*
+    PCでは2列にする。
+    情報量が多いAIカードを少し広くする。
+  */
+  grid-template-columns: 0.9fr 1.1fr;
+
+  /* 2つの領域の間に余白を作る */
+  gap: 24px;
+
+  /* 上部ヘッダーと次の内容との間に余白を作る */
+  padding: 32px 0;
+}
+
+/* 利用者への挨拶を表示する領域 */
+.welcome-message {
+  /* 挨拶を縦方向の中央付近に配置する */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  /* 文字が端に寄りすぎないよう内側に余白を作る */
+  padding: 24px 8px;
+}
+
+/* 挨拶の見出し */
+.welcome-message h2 {
+  /* ブラウザ標準の余白をなくす */
+  margin: 0;
+
+  /* 画面幅に応じて文字サイズを変化させる */
+  font-size: clamp(28px, 5vw, 44px);
+
+  color: #3f4543;
+  letter-spacing: 0.04em;
+}
+
+/* 挨拶の補足文章 */
+.welcome-message p {
+  margin: 12px 0 0;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #626966;
+}
+
+/* AIによる分析結果を表示するカード */
+.ai-summary-card {
+  /* 背景より明るい色でカードを目立たせる */
+  background-color: #f1e8dc;
+
+  /* カードの角を丸くする */
+  border-radius: 24px;
+
+  /* カード内部に余白を作る */
+  padding: 24px;
+
+  /* 背景から少し浮いて見えるよう、薄い影を付ける */
+  box-shadow: 0 8px 24px rgba(63, 69, 67, 0.08);
+}
+
+/* AIサマリーのタイトルとNEWラベルを横並びにする */
+.ai-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* AIサマリーの見出し */
+.ai-summary-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #3f4543;
+}
+
+/* 新しい情報であることを示すラベル */
+.new-label {
+  background-color: #f19a52;
+  color: #ffffff;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+}
+
+/* AIが分析した内容を並べるリスト */
+.ai-summary-list {
+  margin: 20px 0 0;
+  padding-left: 20px;
+
+  color: #555c59;
+  line-height: 1.7;
+}
+
+/* 2件目以降の項目の上に余白を作る */
+.ai-summary-list li + li {
+  margin-top: 10px;
+}
+
+
+/* ==================================================
+   05. 主要メニュー
+   新規顧客登録・常連顧客更新・顧客検索・サマリー
+================================================== */
+
+/* スマホとタブレットでは主要メニューを2列にする */
+.action-grid {
+  display: grid;
+
+  /* 同じ幅の列を2つ作る */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  /* カード同士の間隔 */
+  gap: 12px;
+}
+
+
+/* ==================================================
+   06. レスポンシブ設定
+   画面幅に応じてレイアウトを切り替える
+================================================== */
+
+/* 横幅が600px以下の小さなスマートフォン向け設定 */
 @media (max-width: 600px) {
   .brand-logo {
     width: 44px;
@@ -206,136 +333,10 @@ body {
   }
 }
 
-/* 挨拶とAIサマリーを配置するホーム上部エリア */
-.home-overview {
-  /* 複数の領域を行と列で配置できるGridレイアウトを使用する */
-  display: grid;
-
-  /*
-    PCでは2列にする。
-    左側より右側のAIカードを少し広く表示する。
-  */
-  grid-template-columns: 0.9fr 1.1fr;
-
-  /* 2つの領域の間に余白を作る */
-  gap: 24px;
-
-  /* 上部ヘッダーとの間、次の内容との間に余白を作る */
-  padding: 32px 0;
-}
-
-
-/* 利用者への挨拶を表示する領域 */
-.welcome-message {
-  /* 挨拶を縦方向の中央付近に配置する */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  /* 文字が端に寄りすぎないよう内側に余白を作る */
-  padding: 24px 8px;
-}
-
-
-/* 挨拶の見出し */
-.welcome-message h2 {
-  /* ブラウザ標準の余白を調整する */
-  margin: 0;
-
-  /* 画面幅に応じて文字サイズを変化させる */
-  font-size: clamp(28px, 5vw, 44px);
-
-  color: #3f4543;
-  letter-spacing: 0.04em;
-}
-
-
-/* 挨拶の補足文章 */
-.welcome-message p {
-  margin: 12px 0 0;
-
-  font-size: 16px;
-  line-height: 1.8;
-
-  color: #626966;
-}
-
-
-/* AIによる分析結果を表示するカード */
-.ai-summary-card {
-  /* 背景より明るい色でカードを目立たせる */
-  background-color: #f1e8dc;
-
-  /* カードの角を丸くする */
-  border-radius: 24px;
-
-  /* カード内部に余白を作る */
-  padding: 24px;
-
-  /* 背景から少し浮いて見えるよう、薄い影を付ける */
-  box-shadow: 0 8px 24px rgba(63, 69, 67, 0.08);
-}
-
-
-/* AIサマリーのタイトルとNEWラベルを横並びにする */
-.ai-summary-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-
-/* AIサマリーの見出し */
-.ai-summary-header h2 {
-  margin: 0;
-  font-size: 22px;
-  color: #3f4543;
-}
-
-
-/* 新しい情報であることを示すラベル */
-.new-label {
-  background-color: #f19a52;
-  color: #ffffff;
-
-  padding: 4px 10px;
-  border-radius: 999px;
-
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 0.08em;
-}
-
-
-/* AIが分析した内容を並べるリスト */
-.ai-summary-list {
-  /* リスト全体の上下左右の余白を調整する */
-  margin: 20px 0 0;
-  padding-left: 20px;
-
-  color: #555c59;
-  line-height: 1.7;
-}
-
-
-/* 2件目以降の項目の上に余白を作る */
-.ai-summary-list li + li {
-  margin-top: 10px;
-}
-
-
-/* スマホとタブレットでは2列 */
-.action-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-/* 画面幅が767px以下のスマートフォン向け設定 */
+/* 横幅が767px以下のスマートフォン向け設定 */
 @media (max-width: 767px) {
   .home-overview {
-    /* スマホでは横並びをやめ、1列で表示する */
+    /* スマホでは挨拶とAIサマリーを縦に並べる */
     grid-template-columns: 1fr;
 
     gap: 16px;
@@ -351,10 +352,26 @@ body {
   }
 }
 
-/* 一番下にPC用設定 */
+/* 横幅が768px以上のタブレット向け設定 */
+@media (min-width: 768px) {
+  .app-container {
+    /* タブレット以上では左右の余白を少し広くする */
+    padding: 24px;
+  }
+}
+
+/* 横幅が1024px以上のパソコン向け設定 */
 @media (min-width: 1024px) {
+  .app-container {
+    /* PCでは、さらにゆったりした余白にする */
+    padding: 32px;
+  }
+
   .action-grid {
+    /* PCでは主要メニューを横4列にする */
     grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    /* PCではカード同士の余白を少し広げる */
     gap: 16px;
   }
 }
