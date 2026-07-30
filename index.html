@@ -732,6 +732,98 @@
                     </div>
                 </section>
             </div>
+
+            <!-- ホーム画面の主要機能へ移動する下部ナビゲーション -->
+            <nav class="bottom-navigation" aria-label="メインナビゲーション">
+
+                <!-- 現在表示しているホーム画面 -->
+                <button
+                    class="bottom-nav-item bottom-nav-item--active"
+                    type="button"
+                    aria-current="page"
+                >
+                    <!-- ホームを表す家アイコン -->
+                    <span class="bottom-nav-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M3 11.5 12 4l9 7.5"></path>
+                            <path d="M5 10v10h14V10"></path>
+                            <path d="M9 20v-6h6v6"></path>
+                        </svg>
+                    </span>
+                    <span class="bottom-nav-label">ホーム</span>
+                </button>
+
+                <!-- お客様の来店情報を登録する画面 -->
+                <button class="bottom-nav-item" type="button">
+                    <!-- カレンダーとプラスを組み合わせた来店登録アイコン -->
+                    <span class="bottom-nav-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                            <path d="M7 3v4"></path>
+                            <path d="M17 3v4"></path>
+                            <path d="M3 10h18"></path>
+                            <path d="M12 13v5"></path>
+                            <path d="M9.5 15.5h5"></path>
+                        </svg>
+                    </span>
+                    <span class="bottom-nav-label">来店登録</span>
+                </button>
+
+                <!-- 登録済みのお客様を検索する画面 -->
+                <button class="bottom-nav-item" type="button">
+                    <!-- 虫眼鏡アイコン -->
+                    <span class="bottom-nav-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                            <path d="m16 16 5 5"></path>
+                        </svg>
+                    </span>
+                    <span class="bottom-nav-label">顧客検索</span>
+                </button>
+
+                <!-- 売上や顧客情報のサマリー -->
+                <button class="bottom-nav-item" type="button">
+                    <!-- 売上や顧客情報のサマリーを表す棒グラフアイコン -->
+                    <span class="bottom-nav-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <!-- 左から右へ高くなる4本の棒 -->
+                            <rect x="3" y="15" width="3" height="6" rx="1"></rect>
+                            <rect x="8" y="11" width="3" height="10" rx="1"></rect>
+                            <rect x="13" y="7" width="3" height="14" rx="1"></rect>
+                            <rect x="18" y="3" width="3" height="18" rx="1"></rect>
+                        </svg>
+                    </span>
+                    <span class="bottom-nav-label">サマリー</span>
+                </button>
+            </nav>
         </main>
     </body>
 </html>

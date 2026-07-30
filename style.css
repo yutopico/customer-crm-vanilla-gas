@@ -22,6 +22,9 @@ body {
   /* ページ全体の文字色を、少し青みを含んだ淡いグレーにする */
   color: #818685;
 
+  /* 固定した下部ナビでページ末尾が隠れないよう余白を作る */
+  padding-bottom: 120px;
+
   /* ボタンにもページ全体と同じ文字設定を引き継ぐ */
   button {
     font: inherit;
@@ -1032,9 +1035,152 @@ body {
   color: #818685;
 }
 
+/* ==================================================
+   10. 下部ナビゲーション
+   ホーム・来店登録・顧客検索・サマリー
+================================================== */
+
+/* 主要画面へ移動する下部ナビゲーション */
+.bottom-navigation {
+  /* 画面をスクロールしても下部に表示し続ける */
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+
+  /* 画面中央へ配置する */
+  transform: translateX(-50%);
+
+  /* ほかの要素より手前に表示する */
+  z-index: 100;
+
+  /* スマホでは左右に16pxの余白を残す */
+  width: min(calc(100% - 32px), 620px);
+
+  /* 4つの項目を同じ幅で横に並べる */
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  /* ナビゲーション内部に余白を作る */
+  padding: 8px;
+
+  /* 背景を白に近い色にして、ページから浮かせる */
+  background-color: rgba(255, 255, 255, 0.94);
+
+  /* 外枠と角丸を付ける */
+  border: 1px solid rgba(63, 69, 67, 0.1);
+  border-radius: 24px;
+
+  /* やわらかい影を付ける */
+  box-shadow: 0 12px 32px rgba(63, 69, 67, 0.16);
+}
+
+/* 4つのナビゲーション項目に共通するデザイン */
+.bottom-nav-item {
+  /* 選択中の上線を配置する基準にする */
+  position: relative;
+
+  /* ブラウザ標準のボタンデザインをなくす */
+  border: none;
+  background-color: transparent;
+
+  /* 項目の角を丸くする */
+  border-radius: 18px;
+
+  /* アイコンと文字を縦に並べる */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  /* 項目の外側に余白を作り、選択背景を小さく見せる */
+  margin: 4px 6px;
+
+  /* ボタン内部に余白を作る */
+  padding: 10px 4px 8px;
+
+  color: #818685;
+  cursor: pointer;
+
+  /*
+    背景色・文字色・大きさの変化を、
+    0.2秒かけて自然に切り替える
+  */
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* ナビゲーション項目へマウスを乗せたとき */
+.bottom-nav-item:hover {
+  background-color: rgba(125, 150, 128, 0.1);
+  color: #515254;
+}
+
+/* ナビゲーション項目をクリックしている間 */
+.bottom-nav-item:active {
+  transform: scale(0.97);
+}
+
+/* キーボード操作で選択された項目を見やすくする */
+.bottom-nav-item:focus-visible {
+  outline: 3px solid rgba(241, 154, 82, 0.4);
+  outline-offset: 2px;
+}
+
+/* 下部ナビゲーション内のアイコン領域 */
+.bottom-nav-icon {
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+}
+
+/* 下部ナビゲーション内のSVGサイズ */
+.bottom-nav-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* アイコンの下に表示する項目名 */
+.bottom-nav-label {
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.2;
+
+  /* 項目名を途中で改行させない */
+  white-space: nowrap;
+}
+
+/* 現在表示している画面のナビゲーション項目 */
+.bottom-nav-item--active {
+  background-color: rgba(125, 150, 128, 0.18);
+  color: #7d9680;
+}
+
+/* 現在表示している項目の上に短い線を表示する */
+.bottom-nav-item--active::before {
+  content: "";
+
+  position: absolute;
+  top: -8px;
+
+  /* 選択中背景の直線部分に近い長さになるよう左右から指定する */
+  left: 16px;
+  right: 16px;
+
+  height: 4px;
+
+  background-color: #7d9680;
+  border-radius: 999px;
+}
+
 
 /* ==================================================
-   10. レスポンシブ設定
+   11. レスポンシブ設定
    画面幅に応じてレイアウトを切り替える
 ================================================== */
 
