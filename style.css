@@ -173,6 +173,96 @@ body {
   cursor: pointer;
 }
 
+/* お知らせボタンのSVGベルアイコン */
+.header-action-icon {
+  /* アイコンの大きさ */
+  width: 24px;
+  height: 24px;
+
+  /* SVG内の塗りつぶしを消して線画にする */
+  fill: none;
+
+  /* 親要素の文字色を線の色として使用する */
+  stroke: currentColor;
+
+  /* アプリになじむ細めの線 */
+  stroke-width: 1.8;
+
+  /* 線の端と角を丸くしてやさしい印象にする */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  /* SVG下部に余計な隙間ができるのを防ぐ */
+  display: block;
+
+  /* ベルだけ上に見えるため、少し下へ移動する */
+  transform: translateY(3px);
+}
+
+/* ヘッダー操作ボタンのアイコン部分 */
+.icon-button-icon {
+  /* バッジを重ねる基準にする */
+  position: relative;
+
+  /* SVGを中央に置く */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+}
+
+/* 通知件数バッジ */
+.notification-badge {
+  /* ベル右上に重ねて配置する */
+  position: absolute;
+  top: -6px;
+  right: -4px;
+
+  /* 数字を中央に置く */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+
+  /* 見た目 */
+  background-color: #f19a52;
+  color: #ffffff;
+  border: 2px solid #e1d2c0;
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+
+  z-index: 1;
+}
+
+/* メニューボタンのSVGアイコン */
+.header-menu-icon {
+  width: 24px;
+  height: 24px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+
+  display: block;
+
+  /* お知らせボタンとの高さを微調整する */
+  transform: translateY(3px);
+}
+
+/* メニューアイコンの真ん中の線だけ点線にする */
+.header-menu-line--dashed {
+  stroke-dasharray: 2.5 2.5;
+}
+
 /* ボタン内の最初のspanをアイコンとして扱う */
 .icon-button > span:first-child {
   font-size: 24px;

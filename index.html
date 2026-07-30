@@ -34,13 +34,42 @@
                 <!-- お知らせとメニューの操作ボタン -->
                 <div class="header-actions">
                     <!-- type="button"で通常の操作ボタンとして扱う -->
-                    <button class="icon-button" type="button" aria-label="お知らせ">
-                        <span aria-hidden="true">🔔</span>
+                    <button class="icon-button" type="button" aria-label="お知らせ 3件">
+                        <span class="icon-button-icon">
+                            <svg
+                                class="header-action-icon"
+                                viewBox="6 5 12 15"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M8.5 9.5a3.5 3.5 0 1 1 7 0v1.2c0 .9.3 1.8.8 2.6l.7 1.1c.3.5 0 1.1-.6 1.1H7.6c-.6 0-.9-.6-.6-1.1l.7-1.1c.5-.8.8-1.7.8-2.6V9.5"
+                                />
+                                <path d="M10.3 17.3a1.9 1.9 0 0 0 3.4 0" />
+                            </svg>
+                            <span class="notification-badge" aria-hidden="true">3</span>
+                        </span>
                         <span class="action-label">お知らせ</span>
                     </button>
 
                     <button class="icon-button" type="button" aria-label="メニュー">
-                        <span aria-hidden="true">☰</span>
+                        <svg
+                            class="header-menu-icon"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <!-- 上：横線＋小さな点 -->
+                            <path d="M2 3h16" />
+                            <circle cx="21" cy="3" r="0.9"
+                            fill="currentColor"
+                            stroke="none"
+                            />
+
+                            <!-- 真ん中 -->
+                            <path d="M2 11h20" />
+
+                            <!-- 下：ほんの少しだけ短くする -->
+                            <path d="M2 19h18" />
+                        </svg>
                         <span class="action-label">メニュー</span>
                     </button>
                 </div>
