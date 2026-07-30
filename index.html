@@ -33,23 +33,85 @@
 
                 <!-- お知らせとメニューの操作ボタン -->
                 <div class="header-actions">
-                    <!-- type="button"で通常の操作ボタンとして扱う -->
-                    <button class="icon-button" type="button" aria-label="お知らせ 3件">
-                        <span class="icon-button-icon">
-                            <svg
-                                class="header-action-icon"
-                                viewBox="6 5 12 15"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M8.5 9.5a3.5 3.5 0 1 1 7 0v1.2c0 .9.3 1.8.8 2.6l.7 1.1c.3.5 0 1.1-.6 1.1H7.6c-.6 0-.9-.6-.6-1.1l.7-1.1c.5-.8.8-1.7.8-2.6V9.5"
-                                />
-                                <path d="M10.3 17.3a1.9 1.9 0 0 0 3.4 0" />
-                            </svg>
-                            <span class="notification-badge" aria-hidden="true">3</span>
-                        </span>
-                        <span class="action-label">お知らせ</span>
-                    </button>
+                    <!-- お知らせボタンと通知パネルをまとめる領域 -->
+                    <div class="notification-area">
+                        <!-- type="button"で通常の操作ボタンとして扱う -->
+                        <button
+                            class="icon-button notification-button"
+                            type="button"
+                            aria-label="お知らせ 3件"
+                            aria-expanded="false"
+                            aria-controls="notification-panel"
+                        >
+                            <span class="icon-button-icon">
+                                <svg
+                                    class="header-action-icon"
+                                    viewBox="6 5 12 15"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M8.5 9.5a3.5 3.5 0 1 1 7 0v1.2c0 .9.3 1.8.8 2.6l.7 1.1c.3.5 0 1.1-.6 1.1H7.6c-.6 0-.9-.6-.6-1.1l.7-1.1c.5-.8.8-1.7.8-2.6V9.5"
+                                    />
+                                    <path d="M10.3 17.3a1.9 1.9 0 0 0 3.4 0" />
+                                </svg>
+                                <span class="notification-badge" aria-hidden="true">3</span>
+                            </span>
+                            <span class="action-label">お知らせ</span>
+                        </button>
+
+                        <!-- ベルを押したときに表示する通知パネル -->
+                        <div
+                            class="notification-panel"
+                            id="notification-panel"
+                            aria-label="お知らせ一覧"
+                        >
+                            <div class="notification-panel-header">
+                                <h2 class="notification-panel-title">お知らせ</h2>
+                                <span class="notification-panel-count">3件</span>
+                            </div>
+
+                            <div class="notification-list">
+                                <button class="notification-item" type="button">
+                                    <span class="notification-item-dot" aria-hidden="true"></span>
+
+                                    <span class="notification-item-content">
+                                        <span class="notification-item-title">
+                                            今月お誕生日のお客様が9名います
+                                        </span>
+                                        <span class="notification-item-description">
+                                            お祝いの準備を確認しましょう。
+                                        </span>
+                                    </span>
+                                </button>
+
+                                <button class="notification-item" type="button">
+                                    <span class="notification-item-dot" aria-hidden="true"></span>
+
+                                    <span class="notification-item-content">
+                                        <span class="notification-item-title">
+                                            最近30日間来店がない常連が5名います
+                                        </span>
+                                        <span class="notification-item-description">
+                                            お客様の最終来店日を確認しましょう。
+                                        </span>
+                                    </span>
+                                </button>
+
+                                <button class="notification-item" type="button">
+                                    <span class="notification-item-dot" aria-hidden="true"></span>
+
+                                    <span class="notification-item-content">
+                                        <span class="notification-item-title">
+                                            写真未登録のお客様が5名います
+                                        </span>
+                                        <span class="notification-item-description">
+                                            顧客情報を更新しましょう。
+                                        </span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
                     <button class="icon-button" type="button" aria-label="メニュー">
                         <svg
@@ -848,5 +910,7 @@
                 </button>
             </nav>
         </main>
+
+        <script src="script.js"></script>
     </body>
 </html>

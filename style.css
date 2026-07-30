@@ -242,6 +242,140 @@ body {
   z-index: 1;
 }
 
+/* お知らせボタンと通知パネルをまとめる領域 */
+.notification-area {
+  /* 通知パネルを配置する基準にする */
+  position: relative;
+}
+
+/* ベルの下に表示する通知パネル */
+.notification-panel {
+  /* 通常は非表示にする */
+  display: none;
+
+  /* 通常のレイアウトから切り離してベルの下に浮かせる */
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+
+  /* スマホ画面からはみ出さない範囲で横幅を確保する */
+  width: min(360px, calc(100vw - 32px));
+
+  padding: 16px;
+
+  background-color: #f1e8dc;
+  border: 1px solid #c9bdaf;
+  border-radius: 20px;
+
+  /* 背景からふんわり浮かせる */
+  box-shadow: 0 16px 40px rgb(81 82 84 / 18%);
+
+  /* ほかの要素より手前に表示する */
+  z-index: 100;
+}
+
+/* デザイン確認中は通知パネルを表示する */
+.notification-panel--open {
+  display: block;
+}
+
+/* 通知パネル上部のタイトルと件数を横並びにする */
+.notification-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding-bottom: 12px;
+  border-bottom: 1px solid #c9bdaf;
+}
+
+/* 通知パネルのタイトル */
+.notification-panel-title {
+  margin: 0;
+  font-size: 20px;
+  color: #515254;
+}
+
+/* 通知件数 */
+.notification-panel-count {
+  padding: 4px 9px;
+
+  background-color: #e3e8e4;
+  border-radius: 999px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 通知一覧 */
+.notification-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 通知1件分のボタン */
+.notification-item {
+  /* ブラウザ標準のボタンデザインを消す */
+  width: 100%;
+  border: none;
+  background-color: transparent;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  padding: 14px 4px;
+
+  color: #515254;
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+/* 通知と通知の間に区切り線を入れる */
+.notification-item:not(:last-child) {
+  border-bottom: 1px solid #d6cabd;
+}
+
+/* 未確認通知を表すオレンジ色の丸 */
+.notification-item-dot {
+  width: 8px;
+  height: 8px;
+
+  margin-top: 6px;
+
+  background-color: #f5b187;
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+/* 通知のタイトルと説明文を縦に並べる */
+.notification-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+/* 通知タイトル */
+.notification-item-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* 通知の補足説明 */
+.notification-item-description {
+  color: #818685;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 /* メニューボタンのSVGアイコン */
 .header-menu-icon {
   width: 24px;
