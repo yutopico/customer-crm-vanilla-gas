@@ -16,6 +16,7 @@
     <body><!-- ここから、ユーザーの画面に実際に表示される内容を書く -->
         <!-- アプリ画面の主要な内容をまとめる領域 -->
         <main class="app-container">
+
             <!-- アプリ名や説明をまとめるヘッダー領域 -->
             <header class="top-header">
                 <!-- ロゴ・アプリ名・キャッチコピーをまとめる領域 -->
@@ -43,8 +44,33 @@
                         <span class="action-label">メニュー</span>
                     </button>
                 </div>
-                
             </header>
+
+            <!-- ホーム画面上部の挨拶とAIサマリーをまとめる領域 -->
+            <section class="home-overview">
+                <!-- 利用者への挨拶を表示する領域 -->
+                <div class="welcome-message">
+                    <h2>おかえりなさい！</h2>
+                    <p>今日も素敵な一日になりますように。</p>
+                </div>
+
+                <!-- AIが顧客情報を分析した結果を表示するカード -->
+                <section class="ai-summary-card">
+                    <!-- AIサマリーカードの見出し -->
+                    <div class="ai-summary-header">
+                        <h2>AIサマリー</h2>
+                        <span class="new-label">NEW</span>
+                    </div>
+
+                    <!-- 現在は画面確認用の仮データ -->
+                    <ul class="ai-summary-list">
+                        <li>今月お誕生日のお客様が9名います。</li>
+                        <li>今月の新規登録は12名です。</li>
+                        <li>最近30日間来店がない常連が5名います。</li>
+                    </ul>
+
+                </section>
+            </section>
         </main>
-</body>
+    </body>
 </html>

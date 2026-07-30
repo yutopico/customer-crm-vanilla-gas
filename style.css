@@ -205,3 +205,141 @@ body {
     display: none;
   }
 }
+
+/* 挨拶とAIサマリーを配置するホーム上部エリア */
+.home-overview {
+  /* 複数の領域を行と列で配置できるGridレイアウトを使用する */
+  display: grid;
+
+  /*
+    PCでは2列にする。
+    左側より右側のAIカードを少し広く表示する。
+  */
+  grid-template-columns: 0.9fr 1.1fr;
+
+  /* 2つの領域の間に余白を作る */
+  gap: 24px;
+
+  /* 上部ヘッダーとの間、次の内容との間に余白を作る */
+  padding: 32px 0;
+}
+
+
+/* 利用者への挨拶を表示する領域 */
+.welcome-message {
+  /* 挨拶を縦方向の中央付近に配置する */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  /* 文字が端に寄りすぎないよう内側に余白を作る */
+  padding: 24px 8px;
+}
+
+
+/* 挨拶の見出し */
+.welcome-message h2 {
+  /* ブラウザ標準の余白を調整する */
+  margin: 0;
+
+  /* 画面幅に応じて文字サイズを変化させる */
+  font-size: clamp(28px, 5vw, 44px);
+
+  color: #3f4543;
+  letter-spacing: 0.04em;
+}
+
+
+/* 挨拶の補足文章 */
+.welcome-message p {
+  margin: 12px 0 0;
+
+  font-size: 16px;
+  line-height: 1.8;
+
+  color: #626966;
+}
+
+
+/* AIによる分析結果を表示するカード */
+.ai-summary-card {
+  /* 背景より明るい色でカードを目立たせる */
+  background-color: #f1e8dc;
+
+  /* カードの角を丸くする */
+  border-radius: 24px;
+
+  /* カード内部に余白を作る */
+  padding: 24px;
+
+  /* 背景から少し浮いて見えるよう、薄い影を付ける */
+  box-shadow: 0 8px 24px rgba(63, 69, 67, 0.08);
+}
+
+
+/* AIサマリーのタイトルとNEWラベルを横並びにする */
+.ai-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+
+/* AIサマリーの見出し */
+.ai-summary-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #3f4543;
+}
+
+
+/* 新しい情報であることを示すラベル */
+.new-label {
+  background-color: #f19a52;
+  color: #ffffff;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+}
+
+
+/* AIが分析した内容を並べるリスト */
+.ai-summary-list {
+  /* リスト全体の上下左右の余白を調整する */
+  margin: 20px 0 0;
+  padding-left: 20px;
+
+  color: #555c59;
+  line-height: 1.7;
+}
+
+
+/* 2件目以降の項目の上に余白を作る */
+.ai-summary-list li + li {
+  margin-top: 10px;
+}
+
+
+/* 画面幅が767px以下のスマートフォン向け設定 */
+@media (max-width: 767px) {
+  .home-overview {
+    /* スマホでは横並びをやめ、1列で表示する */
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+    padding: 24px 0;
+  }
+
+  .welcome-message {
+    padding: 8px 4px;
+  }
+
+  .ai-summary-card {
+    padding: 20px;
+  }
+}
