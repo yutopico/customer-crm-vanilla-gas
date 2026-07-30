@@ -193,6 +193,48 @@
                     </button>
                 </div>
             </section>
+
+            <!-- 顧客数や売上など、ホーム画面の主要な数値を表示する集計エリア -->
+            <section class="stats-summary" aria-label="顧客データ集計">
+
+                <!-- 項目名と数値を組み合わせた集計一覧 -->
+                <dl class="stats-grid">
+
+                    <!-- 登録されている顧客数 -->
+                    <div class="stat-item">
+                        <dt class="stat-label">顧客数</dt>
+                        <dd class="stat-value">
+                            128<span class="stat-unit">名</span>
+                        </dd>
+                        <dd class="stat-description">登録済みのお客様</dd>
+                    </div>
+
+                    <!-- 全期間の売上合計 -->
+                    <div class="stat-item">
+                        <dt class="stat-label">累計売上</dt>
+                        <dd class="stat-value">¥5,480,000</dd>
+                        <dd class="stat-description">全期間の累計売上</dd>
+                    </div>
+
+                    <!-- 今月誕生日を迎える顧客数 -->
+                    <div class="stat-item">
+                        <dt class="stat-label">今月誕生日</dt>
+                        <dd class="stat-value">
+                            9<span class="stat-unit">名</span>
+                        </dd>
+                        <dd class="stat-description">今月お誕生日のお客様</dd>
+                    </div>
+
+                    <!-- 今月新しく登録された顧客数 -->
+                    <div class="stat-item">
+                        <dt class="stat-label">今月登録</dt>
+                        <dd class="stat-value">
+                            12<span class="stat-unit">名</span>
+                        </dd>
+                        <dd class="stat-description">今月の新規登録</dd>
+                    </div>
+                </dl>
+            </section>
         </main>
     </body>
 </html>
