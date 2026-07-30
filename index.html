@@ -190,17 +190,11 @@
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                 >
-                                    <!-- グラフ全体の基準となる横軸 -->
-                                    <path d="M3 21h18"></path>
-
-                                    <!-- 左側の短い棒 -->
-                                    <path d="M6 21v-6"></path>
-
-                                    <!-- 中央の高い棒 -->
-                                    <path d="M12 21V8"></path>
-
-                                    <!-- 右側の中くらいの棒 -->
-                                    <path d="M18 21v-9"></path>
+                                    <!-- 左から右へ高くなる4本の棒 -->
+                                    <rect x="3" y="15" width="3" height="6" rx="1"></rect>
+                                    <rect x="8" y="11" width="3" height="10" rx="1"></rect>
+                                    <rect x="13" y="7" width="3" height="14" rx="1"></rect>
+                                    <rect x="18" y="3" width="3" height="18" rx="1"></rect>
                                 </svg>
                             </span>
                             <span class="action-card-title">サマリー</span>
