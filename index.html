@@ -14,10 +14,37 @@
     </head>
 
     <body><!-- ここから、ユーザーの画面に実際に表示される内容を書く -->
-        <!-- ページ内で最も重要なメイン見出し -->
-        <h1>顧客管理Webアプリ</h1>
+        <!-- アプリ画面の主要な内容をまとめる領域 -->
+        <main class="app-container">
+            <!-- アプリ名や説明をまとめるヘッダー領域 -->
+            <header class="top-header">
+                <!-- ロゴ・アプリ名・キャッチコピーをまとめる領域 -->
+                <div class="brand">
+                    <!-- 装飾用のロゴ。内容を持たないため読み上げ対象から外す -->
+                    <div class="brand-logo" aria-hidden="true"></div>
 
-        <!-- プロジェクトの現在の状態を説明する文章 -->
-        <p>ポートフォリオ Ver.1 制作スタート！</p>
+                    <!-- アプリ名とキャッチコピー -->
+                    <div class="brand-text">
+                        <h1>顧客管理</h1>
+                        <p>顧客情報を、もっとスマートに。</p>
+                    </div>
+                </div>
+
+                <!-- お知らせとメニューの操作ボタン -->
+                <div class="header-actions">
+                    <!-- type="button"で通常の操作ボタンとして扱う -->
+                    <button class="icon-button" type="button" aria-label="お知らせ">
+                        <span aria-hidden="true">🔔</span>
+                        <span class="action-label">お知らせ</span>
+                    </button>
+
+                    <button class="icon-button" type="button" aria-label="メニュー">
+                        <span aria-hidden="true">☰</span>
+                        <span class="action-label">メニュー</span>
+                    </button>
+                </div>
+                
+            </header>
+        </main>
 </body>
 </html>

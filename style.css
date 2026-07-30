@@ -1,3 +1,8 @@
+/* すべての要素で、paddingとborderを横幅・高さの内側に含めて計算する */
+* {
+  box-sizing: border-box;
+}
+
 /* ページ全体に適用する基本デザイン */
 body {
   /* ブラウザが最初から持っている外側の余白をなくす */
@@ -11,4 +16,192 @@ body {
 
   /* ページ全体の文字色を、少し青みを含んだ淡いグレーにする */
   color: #818685;
+}
+
+  /* アプリ画面全体の横幅と余白を管理する */
+  .app-container {
+  /* 使用できる横幅いっぱいに広げる */
+  width: 100%;
+
+  /* 横幅が広いPCでも、画面を広げすぎない */
+  max-width: 1200px;
+
+  /* 左右の余白を自動計算し、画面中央に配置する */
+  margin: 0 auto;
+
+  /* 文字やカードが画面端にくっつかないよう内側に余白を作る */
+  padding: 16px;
+}
+
+/* 画面幅が768px以上の場合に適用する設定 */
+@media (min-width: 768px) {
+  .app-container {
+    /* タブレット以上では左右の余白を少し広くする */
+    padding: 24px;
+  }
+}
+
+/* 画面幅が1024px以上の場合に適用する設定 */
+@media (min-width: 1024px) {
+  .app-container {
+    /* PCでは、さらにゆったりした余白にする */
+    padding: 32px;
+  }
+}
+
+/* アプリ名と操作ボタンを横並びにする上部ヘッダー */
+.top-header {
+  /* ロゴ側とボタン側を横に並べる */
+  display: flex;
+
+  /* 左右の要素を両端へ配置する */
+  justify-content: space-between;
+
+  /* 縦方向の位置を中央にそろえる */
+  align-items: center;
+
+  /* 左右のグループが近づきすぎないよう間隔を作る */
+  gap: 16px;
+
+  /* ヘッダー下部に余白を作る */
+  padding: 8px 0 20px;
+
+  /* ヘッダーと次の内容を区切る薄い線 */
+  border-bottom: 1px solid #c9bdaf;
+}
+
+
+/* ロゴ・アプリ名・説明文を横並びにする */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  /* 横幅が狭い場合に文字が画面を押し広げないようにする */
+  min-width: 0;
+}
+
+
+/* アプリの円形ロゴ */
+.brand-logo {
+  /* ロゴの大きさ */
+  width: 52px;
+  height: 52px;
+
+  /* 円形の外枠を作る */
+  border: 10px solid #aeb6a5;
+  border-radius: 50%;
+
+  /* オレンジ色の丸を配置する基準にする */
+  position: relative;
+
+  /* 画面が狭くてもロゴがつぶれないようにする */
+  flex-shrink: 0;
+}
+
+
+/* ロゴ右下のオレンジ色の丸 */
+.brand-logo::after {
+  content: "";
+
+  width: 12px;
+  height: 12px;
+
+  background-color: #f19a52;
+  border-radius: 50%;
+
+  /* 円形ロゴの右下へ配置する */
+  position: absolute;
+  right: -8px;
+  bottom: -4px;
+
+  /* 背景との間に白い縁を作る */
+  border: 3px solid #e1d2c0;
+}
+
+
+/* アプリ名 */
+.brand-text h1 {
+  margin: 0;
+
+  /* 画面幅に合わせて文字サイズを少し変化させる */
+  font-size: clamp(24px, 4vw, 32px);
+
+  color: #3f4543;
+  letter-spacing: 0.08em;
+}
+
+
+/* アプリ名の下に表示する説明文 */
+.brand-text p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #626966;
+}
+
+
+/* お知らせボタンとメニューボタンを横並びにする */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  /* 画面が狭くてもボタンがつぶれないようにする */
+  flex-shrink: 0;
+}
+
+
+/* ヘッダー右側の操作ボタン */
+.icon-button {
+  /* ブラウザ標準のボタンデザインを消す */
+  border: none;
+  background-color: transparent;
+
+  /* アイコンと文字を縦に並べる */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  padding: 6px;
+  color: #3f4543;
+
+  /* マウスを乗せたときにクリックできることを示す */
+  cursor: pointer;
+}
+
+
+/* ボタン内のアイコン */
+.icon-button > span:first-child {
+  font-size: 24px;
+  line-height: 1;
+}
+
+
+/* アイコンの下に表示する文字 */
+.action-label {
+  font-size: 12px;
+}
+
+
+/* 横幅が600px以下のスマートフォン向け設定 */
+@media (max-width: 600px) {
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+    border-width: 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 22px;
+  }
+
+  .brand-text p {
+    font-size: 11px;
+  }
+
+  /* スマホではボタンの文字を隠し、アイコンだけ表示する */
+  .action-label {
+    display: none;
+  }
 }
