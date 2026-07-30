@@ -330,7 +330,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 8px;
+  gap: 0;
 
   /* ボタン内の文字を左揃えにする */
   text-align: left;
@@ -346,6 +346,20 @@ body {
     transform 0.2s ease,
     box-shadow 0.2s ease,
     border-color 0.2s ease;
+}
+
+/* 主要メニューのアイコンと機能名 */
+.action-card-header {
+  /* アイコンと機能名を横に並べる */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* アイコンと機能名の間に余白を作る */
+  gap: 12px;
+
+  /* カード内の横幅いっぱいに広げる */
+  width: 100%;
 }
 
 
@@ -374,6 +388,15 @@ body {
 
 /* カード内の補足説明 */
 .action-card-description {
+  /* アイコンとタイトルのまとまりから28px離す */
+  margin-top: 28px;
+
+  /* カード内の横幅いっぱいに広げる */
+  width: 100%;
+
+  /* 説明文をカードの中央へ配置する */
+  text-align: center;
+
   font-size: 13px;
   line-height: 1.5;
   color: #818685;
@@ -413,8 +436,8 @@ body {
   /* タイトルと同じ色をアイコンに使用する */
   color: #818685;
 
-  /* タイトルとの間に少し余白を作る */
-  margin-bottom: 4px;
+  /* タイトルと横並びなので下余白は付けない */
+  margin-bottom: 0;
 }
 
 
