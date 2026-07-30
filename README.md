@@ -1,6 +1,3 @@
-# Repository-name-customer-crm-vanilla-gas
-HTML・CSS・JavaScript・Google Apps Scriptで制作する顧客管理Webアプリ
-
 # 顧客管理Webアプリ Ver.1
 
 HTML・CSS・JavaScript・Google Apps Scriptを使用して制作する、
@@ -8,7 +5,7 @@ HTML・CSS・JavaScript・Google Apps Scriptを使用して制作する、
 
 ## 概要
 
-同じ顧客管理システムを、技術構成ごとに段階的に発展させる
+ひとつの顧客管理システムを、技術構成ごとに段階的に発展させる
 ポートフォリオプロジェクトの第1バージョンです。
 
 ## 使用技術
