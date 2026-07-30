@@ -425,53 +425,73 @@ body {
 }
 
 
-/* ========================================
+/* ==================================================
    06. 集計エリア
-======================================== */
+   顧客数・累計売上・今月誕生日・今月登録
+================================================== */
 
 /* 顧客数や売上など、主要な数値をまとめるカード */
 .stats-summary {
-    margin-top: 24px;
-    padding: 20px;
-    background-color: #f1e8dc;
-    border-radius: 16px;
+  /* 主要メニューとの間に余白を作る */
+  margin-top: 24px;
+
+  /* カード内部に余白を作る */
+  padding: 20px;
+
+  /* 背景より明るい色でカードとして見せる */
+  background-color: #f1e8dc;
+
+  /* カードの角を丸くする */
+  border-radius: 16px;
 }
 
-/* 集計項目をスマートフォン・タブレットでは2列に並べる */
+/* スマホとタブレットでは集計項目を2列にする */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin: 0;
+  display: grid;
+
+  /* 同じ幅の列を2つ作る */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  /* dl要素が持つブラウザ標準の余白をなくす */
+  margin: 0;
 }
 
-/* 1つ分の集計項目 */
+/* 4つの集計項目に共通するデザイン */
 .stat-item {
-    padding: 16px;
-    text-align: center;
+  /* 各項目の内側に余白を作る */
+  padding: 16px;
+
+  /* アイコン・文字・数値を中央揃えにする */
+  text-align: center;
 }
 
-/* スマホ・タブレットでは、左側の項目と右側の項目を区切る */
+/* スマホとタブレットでは左側と右側の項目を区切る */
 .stat-item:nth-child(odd) {
   border-right: 1px solid rgba(129, 134, 133, 0.2);
 }
 
-/* スマホ・タブレットでは、上段と下段を区切る */
+/* スマホとタブレットでは上段と下段の項目を区切る */
 .stat-item:nth-child(-n + 2) {
   border-bottom: 1px solid rgba(129, 134, 133, 0.2);
 }
 
-/* dl要素の初期余白を取り除く */
+/* 集計項目内のブラウザ標準の余白をなくす */
 .stat-label,
 .stat-value,
 .stat-description {
-    margin: 0;
+  margin: 0;
 }
 
-/* 集計項目のアイコンと名前 */
+/* 集計項目のアイコンと項目名 */
 .stat-label {
+  /* アイコンと項目名を横に並べる */
   display: flex;
+
+  /* アイコンと項目名を中央へ配置する */
   justify-content: center;
   align-items: center;
+
+  /* アイコンと項目名の間に余白を作る */
   gap: 8px;
 
   font-size: 13px;
@@ -482,10 +502,12 @@ body {
 
 /* 集計結果の数値 */
 .stat-value {
+  /* 項目名との間に余白を作る */
   margin-top: 8px;
 
-  /* 画面幅に合わせて数値の大きさを調整する */
+  /* 画面幅に応じて数値の大きさを変化させる */
   font-size: clamp(22px, 4vw, 30px);
+
   font-weight: bold;
   line-height: 1.2;
   color: #515254;
@@ -497,42 +519,85 @@ body {
   overflow-wrap: anywhere;
 }
 
-/* 「名」など、数値に付く単位 */
+/* 「名」など、数値の横に表示する単位 */
 .stat-unit {
+  /* 数値と単位の間に余白を作る */
   margin-left: 4px;
+
+  /* 数値より小さく表示する */
   font-size: 0.5em;
+
   color: #818685;
 }
 
 /* 数値の下に表示する補足説明 */
 .stat-description {
+  /* 数値との間に余白を作る */
   margin-top: 8px;
+
   font-size: 12px;
   line-height: 1.5;
   color: #818685;
 }
 
-/* 集計項目に表示するアウトラインアイコン */
+/* 集計項目に表示する共通アイコン */
 .stat-icon {
+  /* アイコンを配置する領域の大きさ */
   width: 28px;
   height: 28px;
 
+  /* アイコンを領域の中央に配置する */
   display: grid;
   place-items: center;
 
-  /* 横並びなので外側の余白は不要 */
+  /* 横並びなので外側の余白は付けない */
   margin: 0;
 
-  /* 画面が狭くてもアイコンをつぶさない */
+  /* 画面が狭くてもアイコンがつぶれないようにする */
   flex-shrink: 0;
 
+  /* 基本のアイコン色をセージグリーンにする */
   color: #7d9680;
 }
 
-/* 集計アイコン内のSVGサイズ */
+/* 集計項目内のSVGアイコン自体の大きさ */
 .stat-icon svg {
   width: 26px;
   height: 26px;
+}
+
+/* 今月誕生日のアイコン */
+.stat-icon--birthday {
+  /* ケーキアイコンだけ淡いオレンジにする */
+  color: #f5b187;
+}
+
+/* 今月登録に表示するNEWアイコン */
+.stat-icon--new {
+  /* NEWの文字幅に合わせて横幅を変化させる */
+  width: auto;
+  min-width: 38px;
+  height: 22px;
+
+  /* NEWの文字の左右に余白を作る */
+  padding: 0 7px;
+
+  /* NEWの文字を中央に配置する */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* NEWアイコンの外枠を作る */
+  border: 1.5px solid #7d9680;
+  border-radius: 5px;
+
+  background-color: transparent;
+  color: #7d9680;
+
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  line-height: 1;
 }
 
 
