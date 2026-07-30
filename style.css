@@ -21,6 +21,11 @@ body {
 
   /* ページ全体の文字色を、少し青みを含んだ淡いグレーにする */
   color: #818685;
+
+  /* ボタンにもページ全体と同じ文字設定を引き継ぐ */
+  button {
+    font: inherit;
+  }
 }
 
 
@@ -125,7 +130,7 @@ body {
   /* 画面幅に合わせて文字サイズを変化させる */
   font-size: clamp(24px, 4vw, 32px);
 
-  color: #3f4543;
+  color: #515254;
   letter-spacing: 0.08em;
 }
 
@@ -133,7 +138,7 @@ body {
 .brand-text p {
   margin: 4px 0 0;
   font-size: 14px;
-  color: #626966;
+  color: #818685;
 }
 
 /* お知らせボタンとメニューボタンを横並びにする */
@@ -159,7 +164,7 @@ body {
   gap: 4px;
 
   padding: 6px;
-  color: #3f4543;
+  color: #515254;
 
   /* マウスを乗せたときにクリックできることを示す */
   cursor: pointer;
@@ -219,7 +224,7 @@ body {
   /* 画面幅に応じて文字サイズを変化させる */
   font-size: clamp(28px, 5vw, 44px);
 
-  color: #3f4543;
+  color: #515254;
   letter-spacing: 0.04em;
 }
 
@@ -228,7 +233,7 @@ body {
   margin: 12px 0 0;
   font-size: 16px;
   line-height: 1.8;
-  color: #626966;
+  color: #818685;
 }
 
 /* AIによる分析結果を表示するカード */
@@ -258,7 +263,7 @@ body {
 .ai-summary-header h2 {
   margin: 0;
   font-size: 22px;
-  color: #3f4543;
+  color: #515254;
 }
 
 /* 新しい情報であることを示すラベル */
@@ -303,6 +308,90 @@ body {
 
   /* カード同士の間隔 */
   gap: 12px;
+}
+
+/* 4つの主要メニューに共通するカードデザイン */
+.action-card {
+  /* ブラウザ標準のボタンデザインを整える */
+  border: 1px solid rgba(63, 69, 67, 0.12);
+  background-color: #f1e8dc;
+
+  /* カードらしい丸みを付ける */
+  border-radius: 20px;
+
+  /* カード内部に余白を作る */
+  padding: 20px;
+
+  /* 4枚の高さをそろえる */
+  min-height: 140px;
+
+  /* タイトルと説明文を縦に並べる */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+
+  /* ボタン内の文字を左揃えにする */
+  text-align: left;
+
+  /* ページ全体の文字色に合わせる */
+  color: #515254;
+
+  /* マウスを乗せたとき、操作できることを示す */
+  cursor: pointer;
+
+  /* ホバー時の動きをなめらかにする */
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+/* マウスを乗せたカードを少し浮かせる */
+.action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(63, 69, 67, 0.1);
+}
+
+
+/* キーボード操作で選択されたカードを見やすくする */
+.action-card:focus-visible {
+  outline: 3px solid rgba(241, 154, 82, 0.4);
+  outline-offset: 3px;
+}
+
+
+/* カード内の機能名 */
+.action-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.4;
+  color: #515254;
+}
+
+
+/* カード内の補足説明 */
+.action-card-description {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #818685;
+}
+
+/* 新規顧客登録カード */
+.action-card--new {
+  background-color: #f5b187;
+}
+
+/* 常連顧客更新カード */
+.action-card--regular {
+  background-color: #7d9680;
+}
+
+/* セージグリーン上でも読みやすい明るめの説明文 */
+.action-card--regular .action-card-description {
+  color: #e3e8e4;
 }
 
 
