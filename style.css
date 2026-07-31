@@ -376,6 +376,138 @@ body {
   line-height: 1.5;
 }
 
+/* メニューボタンとメニューパネルをまとめる領域 */
+.menu-area {
+  /* メニューパネルを配置する基準にする */
+  position: relative;
+}
+
+/* メニューボタンの下に表示するパネル */
+.menu-panel {
+  /* 最初は非表示にする */
+  display: none;
+
+  /* 通常のレイアウトから切り離して右上に浮かせる */
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+
+  /* スマホでも画面からはみ出しにくい横幅 */
+  width: min(320px, calc(100vw - 32px));
+
+  padding: 16px;
+
+  background-color: #f1e8dc;
+  border: 1px solid #c9bdaf;
+  border-radius: 20px;
+
+  box-shadow: 0 16px 40px rgb(81 82 84 / 18%);
+
+  /* ほかの要素より手前に表示する */
+  z-index: 100;
+}
+
+/* JavaScriptでこのクラスが付いたときに表示する */
+.menu-panel--open {
+  display: block;
+}
+
+/* メニューパネル上部 */
+.menu-panel-header {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #c9bdaf;
+}
+
+/* メニューパネルのタイトル */
+.menu-panel-title {
+  margin: 0;
+  font-size: 20px;
+  color: #515254;
+}
+
+/* メニュー項目を縦に並べる */
+.menu-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* メニュー1件分のボタン */
+.menu-item {
+  /* ブラウザ標準のボタンデザインを消す */
+  width: 100%;
+  border: none;
+  background-color: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 4px;
+
+  color: #515254;
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+
+  /* ホバー時の変化をなめらかにする */
+  transition:
+    background-color 0.2s ease,
+    padding 0.2s ease;
+}
+
+/* メニュー項目の間に区切り線を入れる */
+.menu-item:not(:last-child) {
+  border-bottom: 1px solid #d6cabd;
+}
+
+/* マウスを乗せた項目だけ少し明るくする */
+.menu-item:hover {
+  background-color: rgb(255 255 255 / 35%);
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+/* キーボード操作時に選択位置を見えるようにする */
+.menu-item:focus-visible {
+  outline: 2px solid #7d9680;
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+/* メニュー名と説明文を縦に並べる */
+.menu-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+/* メニュー名 */
+.menu-item-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* メニューの補足説明 */
+.menu-item-description {
+  color: #818685;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* メニュー右側の矢印 */
+.menu-item-arrow {
+  color: #7d9680;
+  font-size: 22px;
+  line-height: 1;
+
+  flex-shrink: 0;
+}
+
 /* メニューボタンのSVGアイコン */
 .header-menu-icon {
   width: 24px;

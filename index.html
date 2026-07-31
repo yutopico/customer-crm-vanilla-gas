@@ -113,27 +113,103 @@
                         </div>
                     </div>
 
-                    <button class="icon-button" type="button" aria-label="メニュー">
-                        <svg
-                            class="header-menu-icon"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
+                    <div class="menu-area">
+                        <button
+                            class="icon-button menu-button"
+                            type="button"
+                            aria-label="メニュー"
+                            aria-expanded="false"
+                            aria-controls="menu-panel"
                         >
-                            <!-- 上：横線＋小さな点 -->
-                            <path d="M2 3h16" />
-                            <circle cx="21" cy="3" r="0.9"
-                            fill="currentColor"
-                            stroke="none"
-                            />
+                            <svg
+                                class="header-menu-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <!-- 上：横線＋小さな点 -->
+                                <path d="M2 3h16" />
+                                <circle cx="21" cy="3" r="0.9"
+                                fill="currentColor"
+                                stroke="none"
+                                />
 
-                            <!-- 真ん中 -->
-                            <path d="M2 11h20" />
+                                <!-- 真ん中 -->
+                                <path d="M2 11h20" />
 
-                            <!-- 下：ほんの少しだけ短くする -->
-                            <path d="M2 19h18" />
-                        </svg>
-                        <span class="action-label">メニュー</span>
-                    </button>
+                                <!-- 下：ほんの少しだけ短くする -->
+                                <path d="M2 19h18" />
+                            </svg>
+                            <span class="action-label">メニュー</span>
+                        </button>
+
+                        <!-- メニューボタンを押したときに表示するパネル -->
+                        <div
+                            class="menu-panel"
+                            id="menu-panel"
+                            aria-label="メニュー一覧"
+                        >
+                            <div class="menu-panel-header">
+                                <h2 class="menu-panel-title">メニュー</h2>
+                            </div>
+
+                            <nav class="menu-list" aria-label="アプリメニュー">
+                                <button class="menu-item" type="button">
+                                    <span class="menu-item-text">
+                                        <span class="menu-item-title">新規顧客登録</span>
+                                        <span class="menu-item-description">
+                                            新しいお客様を登録する
+                                        </span>
+                                    </span>
+
+                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
+                                </button>
+
+                                <button class="menu-item" type="button">
+                                    <span class="menu-item-text">
+                                        <span class="menu-item-title">常連顧客更新</span>
+                                        <span class="menu-item-description">
+                                            お客様の情報を更新する
+                                        </span>
+                                    </span>
+
+                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
+                                </button>
+
+                                <button class="menu-item" type="button">
+                                    <span class="menu-item-text">
+                                        <span class="menu-item-title">通知一覧</span>
+                                        <span class="menu-item-description">
+                                            お知らせをまとめて確認する
+                                        </span>
+                                    </span>
+
+                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
+                                </button>
+
+                                <button class="menu-item" type="button">
+                                    <span class="menu-item-text">
+                                        <span class="menu-item-title">設定</span>
+                                        <span class="menu-item-description">
+                                            アプリの設定を確認する
+                                        </span>
+                                    </span>
+
+                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
+                                </button>
+
+                                <button class="menu-item" type="button">
+                                    <span class="menu-item-text">
+                                        <span class="menu-item-title">アプリについて</span>
+                                        <span class="menu-item-description">
+                                            このアプリの情報を確認する
+                                        </span>
+                                    </span>
+
+                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
             </header>
 
