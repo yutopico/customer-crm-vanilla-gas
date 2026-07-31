@@ -147,67 +147,119 @@
                             class="menu-panel"
                             id="menu-panel"
                             aria-label="メニュー一覧"
-                        >
-                            <div class="menu-panel-header">
-                                <h2 class="menu-panel-title">メニュー</h2>
+                        >   
+                            <div class="menu-panel-layout">
+                                <!-- 左側のビジュアルエリア -->
+                                <div class="menu-panel-visual" aria-hidden="true">
+                                    <div class="menu-panel-visual-placeholder">
+                                        <span class="menu-panel-visual-label">
+                                            CUSTOMER CARE
+                                        </span>
+
+                                        <span class="menu-panel-visual-text">
+                                            顧客情報を、もっとスマートに。
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- 右側のメニューエリア -->
+                                <div class="menu-panel-content">
+                                    <div class="menu-panel-top">
+                                        <h2 class="menu-panel-title">メニュー</h2>
+
+                                        <button
+                                            class="menu-close-button"
+                                            type="button"
+                                            aria-label="メニューを閉じる"
+                                        >
+                                            <span>close</span>
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+
+                                    <nav class="menu-list" aria-label="アプリメニュー">
+                                        <button class="menu-item" type="button">
+                                            <span class="menu-item-text">
+                                                <span class="menu-item-title">
+                                                    新規顧客登録
+                                                </span>
+
+                                                <span class="menu-item-description">
+                                                    新しいお客様を登録する
+                                                </span>
+                                            </span>
+
+                                            <span class="menu-item-arrow" aria-hidden="true">
+                                                ›
+                                            </span>
+                                        </button>
+
+                                        <button class="menu-item" type="button">
+                                            <span class="menu-item-text">
+                                                <span class="menu-item-title">
+                                                    常連顧客更新
+                                                </span>
+
+                                                <span class="menu-item-description">
+                                                    お客様の情報を更新する
+                                                </span>
+                                            </span>
+
+                                            <span class="menu-item-arrow" aria-hidden="true">
+                                                ›
+                                            </span>
+                                        </button>
+
+                                        <button class="menu-item" type="button">
+                                            <span class="menu-item-text">
+                                                <span class="menu-item-title">
+                                                    通知一覧
+                                                </span>
+
+                                                <span class="menu-item-description">
+                                                    お知らせをまとめて確認する
+                                                </span>
+                                            </span>
+
+                                            <span class="menu-item-arrow" aria-hidden="true">
+                                                ›
+                                            </span>
+                                        </button>
+
+                                        <button class="menu-item" type="button">
+                                            <span class="menu-item-text">
+                                                <span class="menu-item-title">
+                                                    設定
+                                                </span>
+
+                                                <span class="menu-item-description">
+                                                    アプリの設定を確認する
+                                                </span>
+                                            </span>
+
+                                            <span class="menu-item-arrow" aria-hidden="true">
+                                                ›
+                                            </span>
+                                        </button>
+
+                                        <button class="menu-item" type="button">
+                                            <span class="menu-item-text">
+                                                <span class="menu-item-title">
+                                                    アプリについて
+                                                </span>
+
+                                                <span class="menu-item-description">
+                                                    このアプリの情報を確認する
+                                                </span>
+                                            </span>
+
+                                            <span class="menu-item-arrow" aria-hidden="true">
+                                                ›
+                                            </span>
+                                        </button>
+                                    </nav>
+                                </div>
                             </div>
-
-                            <nav class="menu-list" aria-label="アプリメニュー">
-                                <button class="menu-item" type="button">
-                                    <span class="menu-item-text">
-                                        <span class="menu-item-title">新規顧客登録</span>
-                                        <span class="menu-item-description">
-                                            新しいお客様を登録する
-                                        </span>
-                                    </span>
-
-                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
-                                </button>
-
-                                <button class="menu-item" type="button">
-                                    <span class="menu-item-text">
-                                        <span class="menu-item-title">常連顧客更新</span>
-                                        <span class="menu-item-description">
-                                            お客様の情報を更新する
-                                        </span>
-                                    </span>
-
-                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
-                                </button>
-
-                                <button class="menu-item" type="button">
-                                    <span class="menu-item-text">
-                                        <span class="menu-item-title">通知一覧</span>
-                                        <span class="menu-item-description">
-                                            お知らせをまとめて確認する
-                                        </span>
-                                    </span>
-
-                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
-                                </button>
-
-                                <button class="menu-item" type="button">
-                                    <span class="menu-item-text">
-                                        <span class="menu-item-title">設定</span>
-                                        <span class="menu-item-description">
-                                            アプリの設定を確認する
-                                        </span>
-                                    </span>
-
-                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
-                                </button>
-
-                                <button class="menu-item" type="button">
-                                    <span class="menu-item-text">
-                                        <span class="menu-item-title">アプリについて</span>
-                                        <span class="menu-item-description">
-                                            このアプリの情報を確認する
-                                        </span>
-                                    </span>
-
-                                    <span class="menu-item-arrow" aria-hidden="true">›</span>
-                                </button>
-                            </nav>
                         </div>
                     </div>
                 </div>

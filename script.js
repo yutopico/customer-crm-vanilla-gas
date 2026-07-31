@@ -7,6 +7,7 @@ const notificationPanel = document.querySelector("#notification-panel");
 const menuArea = document.querySelector(".menu-area");
 const menuButton = document.querySelector(".menu-button");
 const menuPanel = document.querySelector("#menu-panel");
+const menuCloseButton = document.querySelector(".menu-close-button");
 
 // 通知パネルを閉じる共通処理
 const closeNotificationPanel = () => {
@@ -37,6 +38,17 @@ notificationButton.addEventListener("click", () => {
 
 // メニューボタンをクリックしたときにパネルの表示を切り替える
 menuButton.addEventListener("click", () => {
+  // メニューボタンの画面上の位置と大きさを取得する
+  const buttonRect = menuButton.getBoundingClientRect();
+
+  // ボタンの中心位置を開くアニメーションの起点にする
+  const originX = buttonRect.left + buttonRect.width / 2;
+  const originY = buttonRect.top + buttonRect.height / 2;
+
+  menuPanel.style.setProperty("--menu-origin-x", `${originX}px`);
+  menuPanel.style.setProperty("--menu-origin-y", `${originY}px`);
+
+  // メニューパネルの開閉状態を切り替える
   const isOpen = menuPanel.classList.toggle("menu-panel--open");
 
   // 支援技術にも現在の開閉状態を伝える
@@ -46,6 +58,30 @@ menuButton.addEventListener("click", () => {
   if (isOpen) {
     closeNotificationPanel();
   }
+});
+
+// closeボタンをクリックしたらメニューパネルを閉じる
+menuCloseButton.addEventListener("click", () => {
+  closeMenuPanel();
+
+  // 収束アニメーションが終わってからメニューボタンへ戻す
+  const returnFocusToMenuButton = (event) => {
+    if (event.propertyName !== "clip-path") {
+      return;
+    }
+
+    menuPanel.removeEventListener(
+      "transitionend",
+      returnFocusToMenuButton
+    );
+
+    menuButton.focus();
+  };
+
+  menuPanel.addEventListener(
+    "transitionend",
+    returnFocusToMenuButton
+  );
 });
 
 // 各パネルの外側をクリックしたら閉じる
