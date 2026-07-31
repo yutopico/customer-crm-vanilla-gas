@@ -1742,19 +1742,106 @@ body {
 
   /* スマホではメニューパネルを少しコンパクトにする */
   .menu-panel {
-    padding: 14px;
-  }
-
-  .menu-panel-header {
-    padding-bottom: 10px;
-  }
-
-  .menu-item {
-    padding: 11px 4px;
+    overflow-y: auto;
   }
 
   .menu-item-text {
     gap: 2px;
+  }
+
+  /* 内容の高さに合わせてメニュー全体を伸ばす */
+  .menu-panel-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 32dvh auto;
+
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  /* スマホでは画像エリアを上部に配置する */
+  .menu-panel-visual {
+    width: 100%;
+    min-width: 0;
+    height: 32dvh;
+    min-height: 0;
+  }
+
+  /* 画像上の文字をスマホ向けに調整する */
+  .menu-panel-visual-placeholder {
+    justify-content: flex-end;
+    gap: 8px;
+
+    padding: 20px;
+
+    /* デスク周辺が見えやすい位置に調整する */
+    background-position: center 42%;
+  }
+
+  /* 英字ラベルを少し小さくする */
+  .menu-panel-visual-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+  }
+
+  /* 日本語メッセージをスマホ向けの大きさにする */
+  .menu-panel-visual-text {
+    max-width: 300px;
+    font-size: 24px;
+    line-height: 1.4;
+  }
+
+  /* メニュー部分だけに付いていたスクロールを解除する */
+  .menu-panel-content {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+
+    overflow-y: visible;
+  }
+
+  /* タイトルとcloseボタン周辺 */
+  .menu-panel-top {
+    gap: 16px;
+    padding-bottom: 14px;
+  }
+
+  /* スマホではタイトルを少し小さくする */
+  .menu-panel-title {
+    font-size: 28px;
+  }
+
+  /* closeボタンをコンパクトにする */
+  .menu-close-button {
+    gap: 7px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  /* メニュー一覧を上から自然に並べる */
+  .menu-list {
+    align-self: start;
+
+    max-width: none;
+    margin: 12px 0 0;
+  }
+
+  /* 各メニュー項目の縦幅を少し抑える */
+  .menu-item {
+    gap: 12px;
+    padding: 13px 4px;
+  }
+
+  /* メニュー名 */
+  .menu-item-title {
+    font-size: 16px;
+  }
+
+  /* 補足説明 */
+  .menu-item-description {
+    font-size: 12px;
+    line-height: 1.5;
   }
 }
 
@@ -1835,4 +1922,9 @@ body {
     /* PCでは、1つ目以外の集計項目に区切り線を入れる */
     border-left: 1px solid rgba(129, 134, 133, 0.2);
   }
+}
+
+/* 全画面メニュー表示中は背後のページをスクロールさせない */
+body.menu-open {
+  overflow: hidden;
 }

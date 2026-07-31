@@ -19,6 +19,9 @@ const closeNotificationPanel = () => {
 const closeMenuPanel = () => {
   menuPanel.classList.remove("menu-panel--open");
   menuButton.setAttribute("aria-expanded", "false");
+
+   // 背後のページのスクロールを再開する
+  document.body.classList.remove("menu-open");
 };
 
 // 通知ボタンをクリックしたときにパネルの表示を切り替える
@@ -57,6 +60,11 @@ menuButton.addEventListener("click", () => {
   // メニューを開いたときは通知を閉じる
   if (isOpen) {
     closeNotificationPanel();
+
+    // 全画面メニュー表示中は背後のページを固定する
+    document.body.classList.add("menu-open");
+  } else {
+    document.body.classList.remove("menu-open");
   }
 });
 
