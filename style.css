@@ -63,6 +63,11 @@ body {
   display: block;
 }
 
+/* 表示する画面が決まるまでアプリを隠し、読み込み時の点滅を防ぐ */
+html.app-loading .app-container {
+  visibility: hidden;
+}
+
 
 /* ==================================================
    03. 上部ヘッダー
@@ -1722,6 +1727,1882 @@ body {
 
   background-color: #7d9680;
   border-radius: 999px;
+}
+
+
+/* ==================================================
+   新規顧客登録画面
+================================================== */
+
+/* 新規顧客登録画面の上部余白 */
+#new-customer-view {
+  padding-top: 12px;
+}
+
+/* 新規顧客登録画面の上部 */
+.page-header {
+  max-width: 760px;
+  margin: 0 auto;
+
+  text-align: center;
+}
+
+/* 英字ラベル・タイトル・説明文をまとめる領域 */
+.page-heading {
+  margin-top: 16px;
+}
+
+/* NEW CUSTOMERの英字ラベル */
+.page-heading-label {
+  margin: 0 0 6px;
+
+  color: #f19a52;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+/* 新規顧客登録のタイトル */
+.page-heading h2 {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+}
+
+/* タイトル下の説明文 */
+.page-heading > p:last-child {
+  margin: 6px 0 0;
+
+  color: #818685;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* 新規顧客登録フォーム全体 */
+.customer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  width: 100%;
+  max-width: 760px;
+
+  margin: 28px auto 0;
+}
+
+/* --------------------------------------------------
+   フォーム共通部品
+   カード・ラベル・入力欄・補足文・セレクト
+-------------------------------------------------- */
+/* 入力項目をまとめる白いカード */
+.form-card {
+  padding: 24px;
+
+  background-color: #f1e8dc;
+  border: 1px solid rgb(81 82 84 / 10%);
+  border-radius: 20px;
+
+  box-shadow: 0 8px 24px rgb(81 82 84 / 8%);
+}
+
+/* 1つの入力項目 */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 項目名と必須ラベルを横並びにする */
+.form-label-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 入力項目の名前 */
+.form-label {
+  color: #515254;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------
+ 必須を表すラベル 
+-------------------------------------------------- */
+/* 必須項目を表す淡いオレンジのラベル */
+.required-label {
+  padding: 4px 8px;
+
+  /* 淡いオレンジの背景 */
+  background-color: rgb(245 177 135 / 22%);
+
+  /* 丸すぎない、角丸の四角形 */
+  border-radius: 6px;
+
+  color: #e8945f;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 任意項目を表すセージ色のラベル */
+.optional-label {
+  padding: 4px 8px;
+
+  background-color: rgb(125 150 128 / 16%);
+  border-radius: 6px;
+
+  color: #7d9680;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* テキスト入力欄 */
+.form-input {
+  width: 100%;
+
+  padding: 15px 16px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 12px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* 入力例として表示する薄い文字 */
+.form-input::placeholder {
+  color: #a5aaa8;
+}
+
+/* 入力欄を選択したとき */
+.form-input:focus {
+  outline: none;
+
+  border-color: #7d9680;
+  box-shadow: 0 0 0 3px rgb(125 150 128 / 16%);
+}
+
+/* --------------------------------------------------
+似ている顧客のお知らせ
+-------------------------------------------------- */
+/* 類似する顧客が見つかったときの注意モジュール */
+.similar-customer-alert {
+  margin-top: 12px;
+  padding: 18px;
+
+  background-color: rgb(245 177 135 / 16%);
+  border: 1px solid rgb(232 148 95 / 35%);
+  border-radius: 14px;
+}
+
+/* 注意アイコンと見出しを横に並べる */
+.similar-customer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 丸い注意アイコン */
+.similar-customer-icon {
+  width: 24px;
+  height: 24px;
+
+  display: grid;
+  place-items: center;
+
+  background-color: rgb(245 177 135 / 28%);
+  border-radius: 50%;
+
+  color: #e8945f;
+  font-size: 14px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+/* 「似ている顧客がいます」の見出し */
+.similar-customer-header h3 {
+  margin: 0;
+
+  color: #d9824e;
+  font-size: 15px;
+}
+
+/* 見出し下の説明文 */
+.similar-customer-description {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 類似する顧客1件分のカード */
+.similar-customer-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-top: 16px;
+  padding: 16px;
+
+  background-color: rgb(255 255 255 / 60%);
+  border: 1px solid rgb(81 82 84 / 10%);
+  border-radius: 14px;
+}
+
+/* 顧客名と最終来店日を縦に並べる */
+.similar-customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+/* 類似する顧客の名前 */
+.similar-customer-name {
+  color: #515254;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* 類似する顧客の補足情報 */
+.similar-customer-meta {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* 顧客詳細を確認するボタン */
+.similar-customer-button {
+  border: 1px solid #7d9680;
+  background-color: transparent;
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 確認ボタンへマウスを乗せたとき */
+.similar-customer-button:hover {
+  background-color: #7d9680;
+  color: #ffffff;
+}
+
+/* キーボード操作時の選択位置 */
+.similar-customer-button:focus-visible {
+  outline: 3px solid rgb(125 150 128 / 22%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+ 誕生日入力 
+---------------------------------------------------*/
+/* fieldsetが持つブラウザ標準の余白を調整する */
+.birthday-card {
+  margin: 0;
+}
+
+/* 誕生日カードのタイトル */
+.birthday-card-title {
+  margin: 0 0 16px;
+}
+
+/* 誕生日入力と不明の選択肢 */
+.birthday-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 28px;
+
+  margin-bottom: 18px;
+}
+
+/* ラジオボタンと文字を横に並べる */
+.radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  color: #515254;
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+/* ブラウザ標準のラジオボタンを見えなくする */
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* オリジナルのラジオボタン */
+.radio-mark {
+  width: 22px;
+  height: 22px;
+
+  border: 2px solid #d6cabd;
+  border-radius: 50%;
+
+  background-color: #ffffff;
+
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* 選択中の外枠 */
+.radio-input:checked + .radio-mark {
+  border-color: #f19a52;
+}
+
+/* 選択中に中央の丸を表示する */
+.radio-input:checked + .radio-mark::after {
+  content: "";
+
+  position: absolute;
+  inset: 4px;
+
+  background-color: #f19a52;
+  border-radius: 50%;
+}
+
+/* キーボード操作時の選択位置 */
+.radio-input:focus-visible + .radio-mark {
+  outline: 3px solid rgb(241 154 82 / 22%);
+  outline-offset: 3px;
+}
+
+/* 年・月・日を横並びにする */
+.birthday-selects {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* セレクトボックスと矢印を配置する領域 */
+.birthday-select-field {
+  position: relative;
+  min-width: 0;
+}
+
+/* オリジナルの下向き矢印 */
+.birthday-select-field::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  right: 18px;
+
+  width: 8px;
+  height: 8px;
+
+  border-right: 2px solid #818685;
+  border-bottom: 2px solid #818685;
+
+  transform: translateY(-70%) rotate(45deg);
+
+  /* 矢印がクリックを邪魔しないようにする */
+  pointer-events: none;
+}
+
+/* --------------------------------------------------
+   特徴入力
+-------------------------------------------------- */
+
+/* 特徴カードのタイトル */
+.feature-card-title {
+  margin: 0 0 16px;
+}
+
+/* 特徴タグを横並びにする */
+.feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 特徴タグ */
+.feature-chip {
+  min-width: 112px;
+
+  padding: 10px 18px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 10px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 特徴タグへマウスを乗せたとき */
+.feature-chip:hover {
+  border-color: #f5b187;
+  transform: translateY(-1px);
+}
+
+/* 選択されている特徴タグ */
+.feature-chip--selected {
+  background-color: rgb(245 177 135 / 22%);
+  border-color: #f5b187;
+  color: #d9824e;
+  font-weight: 700;
+}
+
+/* キーボード操作時の選択位置 */
+.feature-chip:focus-visible {
+  outline: 3px solid rgb(245 177 135 / 24%);
+  outline-offset: 3px;
+}
+
+/* 特徴入力欄と追加ボタン */
+.feature-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+
+  margin-top: 16px;
+}
+
+/* 特徴を追加するボタン */
+.feature-add-button {
+  min-width: 96px;
+
+  padding: 0 20px;
+
+  background-color: transparent;
+  border: 1px solid #f19a52;
+  border-radius: 12px;
+
+  color: #e8945f;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 追加ボタンへマウスを乗せたとき */
+.feature-add-button:hover {
+  background-color: #f19a52;
+  color: #ffffff;
+}
+
+/* 追加ボタンをキーボードで選択したとき */
+.feature-add-button:focus-visible {
+  outline: 3px solid rgb(245 177 135 / 24%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+   特徴タグの編集
+-------------------------------------------------- */
+
+/* 特徴の見出しと編集ボタン */
+.feature-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 16px;
+}
+
+/* 見出しの余白を親要素側で管理する */
+.feature-card-title {
+  margin: 0;
+}
+
+/* タグ編集モードを開くボタン */
+.feature-edit-button {
+  padding: 7px 12px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 8px;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 編集ボタンへマウスを乗せたとき */
+.feature-edit-button:hover {
+  background-color: #7d9680;
+  color: #ffffff;
+}
+
+/* キーボード操作時の選択位置 */
+.feature-edit-button:focus-visible {
+  outline: 3px solid rgb(125 150 128 / 22%);
+  outline-offset: 3px;
+}
+
+/* 選択件数と削除ボタンを並べる編集バー */
+.feature-editor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-top: 16px;
+  padding: 12px 14px;
+
+  background-color: rgb(125 150 128 / 10%);
+  border-radius: 10px;
+}
+
+/* hidden属性が付いているときは非表示にする */
+.feature-editor-bar[hidden] {
+  display: none;
+}
+
+/* 選択件数 */
+.feature-selected-message {
+  margin: 0;
+
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 選択件数の数字 */
+.feature-selected-count {
+  color: #515254;
+  font-size: 15px;
+}
+
+/* 選択したタグを削除するボタン */
+.feature-delete-button {
+  padding: 8px 12px;
+
+  background-color: transparent;
+  border: 1px solid #c97863;
+  border-radius: 8px;
+
+  color: #c97863;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* 削除ボタンへマウスを乗せたとき */
+.feature-delete-button:hover:not(:disabled) {
+  background-color: #c97863;
+  color: #ffffff;
+}
+
+/* タグが未選択の場合 */
+.feature-delete-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 編集モード中の特徴タグ */
+.feature-card--editing .feature-chip {
+  position: relative;
+
+  /* 左側にチェック欄を置く */
+  padding-left: 44px;
+
+  background-color: #ffffff;
+  border-color: #d6cabd;
+
+  color: #515254;
+  font-weight: 400;
+}
+
+/* 編集モード中のチェック欄 */
+.feature-card--editing .feature-chip::before {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 14px;
+
+  width: 17px;
+  height: 17px;
+
+  background-color: #ffffff;
+  border: 2px solid #d6cabd;
+  border-radius: 5px;
+
+  transform: translateY(-50%);
+}
+
+/* 削除対象として選択したタグ */
+.feature-card--editing .feature-chip--edit-selected {
+  background-color: rgb(245 177 135 / 20%);
+  border-color: #f5b187;
+
+  color: #d9824e;
+  font-weight: 700;
+}
+
+/* 選択したタグのチェック欄 */
+.feature-card--editing .feature-chip--edit-selected::before {
+  background-color: #f5b187;
+  border-color: #f5b187;
+}
+
+/* チェックマーク */
+.feature-card--editing .feature-chip--edit-selected::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 20px;
+
+  width: 4px;
+  height: 8px;
+
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+
+  transform: translateY(-62%) rotate(45deg);
+}
+
+/* 編集中は新しい特徴の追加欄を隠す */
+.feature-card--editing .feature-add-row {
+  display: none;
+}
+
+/* 選択件数と編集方法を縦に並べる */
+.feature-editor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* タグ名の変更方法を伝える補足文 */
+.feature-edit-hint {
+  margin: 0;
+
+  color: #818685;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* タグ内の文字 */
+.feature-chip-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* タグ内の編集アイコン */
+.feature-chip-edit-icon {
+  display: none;
+
+  width: 22px;
+  height: 22px;
+
+  place-items: center;
+
+  background-color: rgb(125 150 128 / 12%);
+  border-radius: 6px;
+
+  color: #7d9680;
+  font-size: 13px;
+  line-height: 1;
+
+  flex-shrink: 0;
+}
+
+/* 編集モード中だけ鉛筆を表示する */
+.feature-card--editing .feature-chip-edit-icon {
+  display: grid;
+}
+
+/* 編集モード中は文字と鉛筆を横に並べる */
+.feature-card--editing .feature-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding-right: 9px;
+}
+
+/* タグ名を直接修正する入力欄 */
+.feature-chip-inline-input {
+  min-width: 112px;
+  max-width: 240px;
+
+  padding: 10px 14px;
+
+  background-color: #ffffff;
+  border: 2px solid #f5b187;
+  border-radius: 10px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  outline: none;
+
+  box-shadow: 0 0 0 3px rgb(245 177 135 / 18%);
+}
+
+/* --------------------------------------------------
+   特徴タグの重複警告
+-------------------------------------------------- */
+
+/* hidden属性が付いている間は警告を表示しない */
+.feature-duplicate-dialog[hidden] {
+  display: none;
+}
+
+/* 画面全体を覆う警告モーダル */
+.feature-duplicate-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 38%);
+  backdrop-filter: blur(3px);
+}
+
+/* 警告内容を表示するカード */
+.feature-duplicate-dialog-content {
+  width: min(100%, 420px);
+  padding: 32px 28px 28px;
+
+  background-color: #f1e8dc;
+  border: 1px solid #d6cabd;
+  border-radius: 24px;
+
+  text-align: center;
+
+  box-shadow: 0 24px 60px rgb(81 82 84 / 28%);
+}
+
+/* 警告アイコン */
+.feature-duplicate-dialog-icon {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+
+  background-color: #f5b187;
+  border-radius: 50%;
+
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* 英字の小さなラベル */
+.feature-duplicate-dialog-label {
+  margin: 0 0 8px;
+
+  color: #f19a52;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 警告タイトル */
+.feature-duplicate-dialog-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+/* 警告の説明文 */
+.feature-duplicate-dialog-message {
+  margin: 12px 0 24px;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* 入力欄へ戻るボタン */
+.feature-duplicate-dialog-button {
+  width: 100%;
+  padding: 13px 20px;
+
+  background-color: #f19a52;
+  border: none;
+  border-radius: 12px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* ボタンへマウスを乗せたとき */
+.feature-duplicate-dialog-button:hover {
+  background-color: #df8641;
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時の選択位置 */
+.feature-duplicate-dialog-button:focus-visible {
+  outline: 3px solid rgb(245 177 135 / 45%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+   特徴タグの削除確認
+-------------------------------------------------- */
+
+/* hidden属性が付いている間は確認画面を表示しない */
+.feature-delete-dialog[hidden] {
+  display: none;
+}
+
+/* 画面全体を覆う削除確認モーダル */
+.feature-delete-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 38%);
+  backdrop-filter: blur(3px);
+}
+
+/* 削除確認の内容を表示するカード */
+.feature-delete-dialog-content {
+  width: min(100%, 420px);
+  padding: 32px 28px 28px;
+
+  background-color: #f1e8dc;
+  border: 1px solid #d6cabd;
+  border-radius: 24px;
+
+  text-align: center;
+
+  box-shadow: 0 24px 60px rgb(81 82 84 / 28%);
+}
+
+/* 削除確認アイコン */
+.feature-delete-dialog-icon {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+
+  background-color: #c97863;
+  border-radius: 50%;
+
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* 英字の小さなラベル */
+.feature-delete-dialog-label {
+  margin: 0 0 8px;
+
+  color: #c97863;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 削除確認タイトル */
+.feature-delete-dialog-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+/* 削除内容の説明文 */
+.feature-delete-dialog-message {
+  margin: 12px 0 24px;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* キャンセルと削除ボタンを横並びにする */
+.feature-delete-dialog-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* 確認画面内のボタン共通設定 */
+.feature-delete-dialog-cancel,
+.feature-delete-dialog-confirm {
+  padding: 13px 16px;
+
+  border-radius: 12px;
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* キャンセルボタン */
+.feature-delete-dialog-cancel {
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+
+  color: #515254;
+}
+
+/* キャンセルボタンへマウスを乗せたとき */
+.feature-delete-dialog-cancel:hover {
+  background-color: #e3e8e4;
+  border-color: #7d9680;
+
+  transform: translateY(-1px);
+}
+
+/* 削除するボタン */
+.feature-delete-dialog-confirm {
+  background-color: #c97863;
+  border: 1px solid #c97863;
+
+  color: #ffffff;
+}
+
+/* 削除するボタンへマウスを乗せたとき */
+.feature-delete-dialog-confirm:hover {
+  background-color: #b76653;
+  border-color: #b76653;
+
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時の選択位置 */
+.feature-delete-dialog-cancel:focus-visible,
+.feature-delete-dialog-confirm:focus-visible {
+  outline: 3px solid rgb(201 120 99 / 30%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+ 会計金額入力
+-------------------------------------------------- */
+
+/* 金額入力欄と「円」を重ねる基準 */
+.payment-amount-field {
+  position: relative;
+}
+
+/* 「円」の表示スペースを右側に確保する */
+.payment-amount-input {
+  padding-right: 52px;
+}
+
+/* 入力欄右側の円単位 */
+.payment-amount-unit {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+
+  color: #818685;
+  font-size: 14px;
+  font-weight: 700;
+
+  transform: translateY(-50%);
+
+  /* 「円」をクリックしても入力欄を操作できるようにする */
+  pointer-events: none;
+}
+
+/* 数値入力欄の上下ボタンを非表示にする */
+.payment-amount-input::-webkit-inner-spin-button,
+.payment-amount-input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+/* 入力欄の下に表示する補足文 */
+.form-help-text {
+  margin: 8px 0 0;
+
+  color: #818685;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+
+/* --------------------------------------------------
+ 担当スタッフ選択
+-------------------------------------------------- */
+
+/* セレクトボックスと矢印を配置する領域 */
+.staff-select-field {
+  position: relative;
+}
+
+/* 担当スタッフ欄のオリジナル下向き矢印 */
+.staff-select-field::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  right: 18px;
+
+  width: 8px;
+  height: 8px;
+
+  border-right: 2px solid #818685;
+  border-bottom: 2px solid #818685;
+
+  transform: translateY(-70%) rotate(45deg);
+
+  /* 矢印がクリックを邪魔しないようにする */
+  pointer-events: none;
+}
+
+/* 未選択時の案内文を薄い色にする */
+.staff-select-field .form-select:invalid {
+  color: #a5aaa8;
+}
+
+/* スタッフを選択したあとは通常の文字色にする */
+.staff-select-field .form-select:valid {
+  color: #515254;
+}
+
+/* 年・月・日の入力欄 */
+.form-select {
+  width: 100%;
+
+  /* 右側は矢印用に広く空ける */
+  padding: 15px 48px 15px 16px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 12px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 15px;
+
+  /* ブラウザ標準の矢印を消す */
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* セレクトボックスを選択したとき */
+.form-select:focus {
+  outline: none;
+
+  border-color: #7d9680;
+  box-shadow: 0 0 0 3px rgb(125 150 128 / 16%);
+}
+
+/* 不明を選んだときの入力不可状態 */
+.form-select:disabled {
+  background-color: rgb(255 255 255 / 45%);
+  color: #a5aaa8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* 画面には表示せず、読み上げ機能には伝える文字 */
+.visually-hidden {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+
+  border: 0;
+}
+
+/* --------------------------------------------------
+ 新規顧客メモ
+-------------------------------------------------- */
+
+/* 複数行のメモ入力欄 */
+.form-textarea {
+  display: block;
+
+  width: 100%;
+  min-height: 82px;
+  padding: 15px 16px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 12px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.7;
+
+  /* JavaScriptで高さを自動調整するため、手動変更は無効にする */
+  overflow-y: hidden;
+  resize: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* 入力例として表示する薄い文字 */
+.form-textarea::placeholder {
+  color: #a5aaa8;
+}
+
+/* メモ欄を選択したとき */
+.form-textarea:focus {
+  outline: none;
+
+  border-color: #7d9680;
+  box-shadow: 0 0 0 3px rgb(125 150 128 / 16%);
+}
+
+/* --------------------------------------------------
+ 顧客写真
+-------------------------------------------------- */
+
+/* 写真についての補足文 */
+.photo-help-text {
+  margin-top: 8px;
+}
+
+/* 写真プレビュー全体 */
+.photo-preview {
+  width: 100%;
+  min-height: 220px;
+  margin: 20px auto 0;
+  padding: 16px;
+
+  background-color: rgb(241 232 220 / 45%);
+  border: 2px dashed #c9bdaf;
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  /* ドラッグ中の色変化をなめらかにする */
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 写真未選択時の案内を中央へ配置する */
+.photo-preview-placeholder {
+  justify-content: center;
+
+  min-height: 184px;
+}
+
+/* hidden属性が付いている間は案内を表示しない */
+.photo-preview-placeholder[hidden] {
+  display: none;
+}
+
+/* 選択した写真を並べる一覧 */
+.photo-preview-list {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+
+  width: 100%;
+}
+
+/* 写真が1枚もない間は一覧を表示しない */
+.photo-preview-list:empty {
+  display: none;
+}
+
+/* 写真1枚分のプレビュー */
+.photo-preview-item {
+  position: relative;
+
+  aspect-ratio: 1 / 1;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 14px;
+
+  overflow: hidden;
+}
+
+/* プレビュー内の写真 */
+.photo-preview-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* 写真右上の個別削除ボタン */
+.photo-preview-item-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  background-color: rgb(81 82 84 / 76%);
+  border: none;
+  border-radius: 50%;
+
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 個別削除ボタンへマウスを乗せたとき */
+.photo-preview-item-remove:hover {
+  background-color: #c97863;
+
+  transform: scale(1.06);
+}
+
+/* キーボード操作時の選択位置 */
+.photo-preview-item-remove:focus-visible {
+  outline: 3px solid rgb(245 177 135 / 55%);
+  outline-offset: 2px;
+}
+
+/* 写真を枠へ重ねている間の表示 */
+.photo-preview--dragging {
+  background-color: rgb(125 150 128 / 18%);
+  border-color: #7d9680;
+
+  box-shadow:
+    0 0 0 5px rgb(125 150 128 / 14%),
+    0 12px 28px rgb(81 82 84 / 12%);
+
+  transform: scale(1.01);
+}
+
+/* ドラッグ中は案内文を少し濃くする */
+.photo-preview--dragging .photo-preview-placeholder {
+  color: #607862;
+}
+
+/* 写真未選択時の表示 */
+.photo-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  padding: 24px;
+
+  color: #818685;
+  text-align: center;
+}
+
+/* 写真未選択時のアイコン */
+.photo-preview-icon {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+
+  background-color: rgb(245 177 135 / 20%);
+  border-radius: 50%;
+
+  color: #f19a52;
+}
+
+/* SVGアイコンの大きさ */
+.photo-preview-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* 写真未選択時の文章 */
+.photo-preview-placeholder p {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 選択した写真のプレビュー */
+.photo-preview-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* hidden属性がある間は写真を表示しない */
+.photo-preview-image[hidden] {
+  display: none;
+}
+
+/* 写真操作ボタンを並べる */
+.photo-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-top: 16px;
+}
+
+/* 写真選択ボタン */
+.photo-select-button {
+  padding: 12px 20px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 12px;
+
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 写真選択ボタンへマウスを乗せたとき */
+.photo-select-button:hover {
+  background-color: #6d856f;
+  border-color: #6d856f;
+
+  transform: translateY(-1px);
+}
+
+/* 写真削除ボタン */
+.photo-remove-button {
+  padding: 12px 20px;
+
+  background-color: transparent;
+  border: 1px solid #c97863;
+  border-radius: 12px;
+
+  color: #c97863;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 写真削除ボタンへマウスを乗せたとき */
+.photo-remove-button:hover {
+  background-color: #c97863;
+  color: #ffffff;
+
+  transform: translateY(-1px);
+}
+
+/* hidden属性がある間は削除ボタンを表示しない */
+.photo-remove-button[hidden] {
+  display: none;
+}
+
+/* キーボード操作時の選択位置 */
+.photo-select-button:focus-visible,
+.photo-remove-button:focus-visible {
+  outline: 3px solid rgb(125 150 128 / 28%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+   新規顧客登録ボタン
+-------------------------------------------------- */
+
+/* 登録ボタン周辺 */
+.form-submit-area {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+
+  padding: 8px 0 28px;
+}
+
+/* 登録前の補足文 */
+.form-submit-note {
+  margin: 0;
+
+  color: #818685;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* 新規顧客の登録ボタン */
+.new-customer-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
+  width: min(100%, 420px);
+  min-height: 58px;
+  padding: 15px 24px;
+
+  background-color: #f19a52;
+  border: 1px solid #f19a52;
+  border-radius: 16px;
+
+  box-shadow:
+    0 10px 24px rgb(241 154 82 / 24%);
+
+  color: #ffffff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 登録ボタンへマウスを乗せたとき */
+.new-customer-submit-button:hover {
+  background-color: #e98c43;
+  border-color: #e98c43;
+
+  box-shadow:
+    0 14px 30px rgb(241 154 82 / 32%);
+
+  transform: translateY(-2px);
+}
+
+/* 登録ボタンを押している間 */
+.new-customer-submit-button:active {
+  box-shadow:
+    0 6px 16px rgb(241 154 82 / 22%);
+
+  transform: translateY(0);
+}
+
+/* キーボード操作時の選択位置 */
+.new-customer-submit-button:focus-visible {
+  outline: 4px solid rgb(245 177 135 / 38%);
+  outline-offset: 4px;
+}
+
+/* 登録ボタン右側の矢印 */
+.new-customer-submit-icon {
+  font-size: 22px;
+  line-height: 1;
+
+  transition: transform 0.2s ease;
+}
+
+/* マウスを乗せたときに矢印を少し進める */
+.new-customer-submit-button:hover
+.new-customer-submit-icon {
+  transform: translateX(4px);
+}
+
+/* --------------------------------------------------
+   新規顧客の登録確認画面
+-------------------------------------------------- */
+
+/* 確認画面を開いている間は背後を固定する */
+body.confirm-dialog-open {
+  overflow: hidden;
+}
+
+/* 画面全体を覆う背景 */
+.new-customer-confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 52%);
+  backdrop-filter: blur(5px);
+}
+
+/* hidden属性が付いている間は表示しない */
+.new-customer-confirm-dialog[hidden] {
+  display: none;
+}
+
+/* 確認内容を表示するカード */
+.new-customer-confirm-content {
+  width: min(100%, 560px);
+  max-height: calc(100dvh - 48px);
+  padding: 32px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 24px;
+
+  box-shadow:
+    0 24px 70px rgb(81 82 84 / 28%);
+
+  overflow-y: auto;
+}
+
+/* 確認画面上部の英字 */
+.new-customer-confirm-label {
+  margin: 0 0 8px;
+
+  color: #f19a52;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 確認画面のタイトル */
+.new-customer-confirm-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(22px, 5vw, 30px);
+  line-height: 1.4;
+}
+
+/* タイトル下の説明 */
+.new-customer-confirm-message {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 入力内容を表示する領域 */
+.new-customer-confirm-summary {
+  margin-top: 24px;
+}
+
+/* 確認内容を並べる一覧 */
+.new-customer-confirm-list {
+  margin: 0;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 16px;
+
+  overflow: hidden;
+}
+
+/* 確認内容の1項目 */
+.new-customer-confirm-item {
+  display: grid;
+  grid-template-columns:
+    minmax(96px, 125px) minmax(0, 1fr);
+  gap: 16px;
+
+  padding: 15px 18px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* 最後の項目だけ区切り線を消す */
+.new-customer-confirm-item:last-child {
+  border-bottom: none;
+}
+
+/* 確認項目の名前 */
+.new-customer-confirm-item dt {
+  color: #7d9680;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 入力された内容 */
+.new-customer-confirm-item dd {
+  min-width: 0;
+  margin: 0;
+
+  color: #515254;
+  font-size: 14px;
+  line-height: 1.7;
+
+  overflow-wrap: anywhere;
+}
+
+/* 確認画面下部のボタン */
+.new-customer-confirm-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+
+  margin-top: 28px;
+}
+
+/* 戻って修正ボタン */
+.new-customer-confirm-back {
+  min-height: 52px;
+  padding: 12px 18px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #607862;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 登録するボタン */
+.new-customer-confirm-register {
+  min-height: 52px;
+  padding: 12px 18px;
+
+  background-color: #f19a52;
+  border: 1px solid #f19a52;
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 20px rgb(241 154 82 / 22%);
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 確認画面のボタンへマウスを乗せたとき */
+.new-customer-confirm-back:hover,
+.new-customer-confirm-register:hover {
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時の選択位置 */
+.new-customer-confirm-back:focus-visible,
+.new-customer-confirm-register:focus-visible {
+  outline: 4px solid rgb(245 177 135 / 38%);
+  outline-offset: 3px;
+}
+
+/* 登録処理中はボタンを操作できない見た目にする */
+.new-customer-confirm-register:disabled {
+  background-color: #c9bdaf;
+  border-color: #c9bdaf;
+  box-shadow: none;
+
+  cursor: wait;
+  transform: none;
+}
+
+/* 新規顧客の登録完了表示 */
+.new-customer-register-success {
+  display: grid;
+  justify-items: center;
+
+  padding: 20px 0 8px;
+
+  text-align: center;
+}
+
+/* hidden属性がある間は登録完了表示を隠す */
+.new-customer-register-success[hidden] {
+  display: none;
+}
+
+/* 登録完了のチェックアイコン */
+.new-customer-success-icon {
+  display: grid;
+  place-items: center;
+
+  width: 74px;
+  height: 74px;
+
+  background-color: rgb(125 150 128 / 16%);
+  border: 2px solid #7d9680;
+  border-radius: 50%;
+
+  color: #7d9680;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+/* 登録完了の英字ラベル */
+.new-customer-success-label {
+  margin: 20px 0 6px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 登録完了のタイトル */
+.new-customer-success-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(24px, 5vw, 30px);
+}
+
+/* 登録完了の説明 */
+.new-customer-success-message {
+  margin: 12px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 入力画面へ戻るボタン */
+.new-customer-success-back {
+  min-width: 210px;
+  min-height: 52px;
+  margin-top: 28px;
+  padding: 12px 20px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.new-customer-success-back:hover {
+  background-color: #6d856f;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 24%);
+
+  transform: translateY(-1px);
+}
+
+.new-customer-success-back:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 28%);
+  outline-offset: 3px;
 }
 
 

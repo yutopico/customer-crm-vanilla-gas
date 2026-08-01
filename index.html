@@ -9,6 +9,10 @@
         <!-- ブラウザのタブに表示されるページタイトル -->
         <title>顧客管理Webアプリ</title>
 
+        <script>
+            document.documentElement.classList.add("app-loading");
+        </script>
+
         <!-- 画面の見た目を管理するCSSファイルを読み込む -->
         <link rel="stylesheet" href="style.css">
     </head>
@@ -272,7 +276,7 @@
 
             <!-- 現在表示しているホーム画面 -->
             <div
-                class="app-view app-view--active"
+                class="app-view"
                 id="home-view"
             >
 
@@ -965,22 +969,761 @@
                 aria-labelledby="new-customer-title"
             >
                 <div class="page-header">
-                    <button
-                        class="page-back-button"
-                        type="button"
-                        data-view="home"
-                    >
-                        <span aria-hidden="true">←</span>
-                        <span>ホームへ戻る</span>
-                    </button>
-
                     <div class="page-heading">
                         <p class="page-heading-label">NEW CUSTOMER</p>
-                        <h2 id="new-customer-title">新規顧客登録</h2>
-                        <p>新しいお客様の基本情報を登録します。</p>
+                        <h2 id="new-customer-title">新規顧客</h2>
+                        <p>初めて来店するお客様を登録します。</p>
                     </div>
                 </div>
+
+                <!-- 新規顧客情報を入力するフォーム -->
+                <form
+                    class="customer-form"
+                    id="new-customer-form"
+                >
+                    <!-- 顧客名を入力するカード -->
+                    <section class="form-card">
+                        <div class="form-field">
+                            <!-- 項目名と必須ラベル -->
+                            <div class="form-label-row">
+                                <label
+                                    class="form-label"
+                                    for="customer-name"
+                                >
+                                    顧客名
+                                </label>
+
+                                <span class="required-label">
+                                    [必須]
+                                </span>
+                            </div>
+
+                            <!-- 顧客名の入力欄 -->
+                            <input
+                                class="form-input"
+                                id="customer-name"
+                                name="customerName"
+                                type="text"
+                                placeholder="顧客名を入力してください"
+                                autocomplete="name"
+                                required
+                            >
+                        </div>
+
+                        <!-- 登録済みの似ている顧客を知らせる領域 -->
+                        <section
+                            class="similar-customer-alert"
+                            aria-labelledby="similar-customer-title"
+                            aria-live="polite"
+                        >
+                            <div class="similar-customer-header">
+                                <span
+                                    class="similar-customer-icon"
+                                    aria-hidden="true"
+                                >
+                                    !
+                                </span>
+
+                                <h3 id="similar-customer-title">
+                                    似ている顧客がいます
+                                </h3>
+                            </div>
+
+                            <p class="similar-customer-description">
+                                同じお客様を重複して登録しないよう、登録済みの情報をご確認ください。
+                            </p>
+
+                            <div class="similar-customer-card">
+                                <div class="similar-customer-info">
+                                    <span class="similar-customer-name">
+                                        山田 太郎
+                                    </span>
+
+                                    <span class="similar-customer-meta">
+                                        最終来店：2026/07/15
+                                    </span>
+                                </div>
+
+                                <button
+                                    class="similar-customer-button"
+                                    type="button"
+                                >
+                                    この顧客を確認する
+                                    <span aria-hidden="true">→</span>
+                                </button>
+                            </div>
+                        </section>
+                    </section>
+
+                    <!-- 来店日を入力するカード -->
+                    <section class="form-card">
+                        <div class="form-field">
+                            <!-- 項目名と必須ラベル -->
+                            <div class="form-label-row">
+                                <label
+                                    class="form-label"
+                                    for="visit-date"
+                                >
+                                    来店日
+                                </label>
+
+                                <span class="required-label">
+                                    [必須]
+                                </span>
+                            </div>
+
+                            <!-- 来店日の入力欄 -->
+                            <input
+                                class="form-input"
+                                id="visit-date"
+                                name="visitDate"
+                                type="date"
+                                required
+                            >
+                        </div>
+                    </section>
+
+                    <!-- 誕生日を入力するカード -->
+                    <section class="form-card birthday-card">
+                        <!-- 誕生日の項目名 -->
+                        <p class="form-label birthday-card-title">
+                            誕生日
+                        </p>
+
+                        <!-- 誕生日を入力するか、不明かを選択する -->
+                        <div class="birthday-status">
+                            <label class="radio-label">
+                                <input
+                                    class="radio-input"
+                                    type="radio"
+                                    name="birthdayStatus"
+                                    value="known"
+                                    checked
+                                >
+
+                                <span class="radio-mark"></span>
+                                <span>誕生日を入力する</span>
+                            </label>
+
+                            <label class="radio-label">
+                                <input
+                                    class="radio-input"
+                                    type="radio"
+                                    name="birthdayStatus"
+                                    value="unknown"
+                                >
+
+                                <span class="radio-mark"></span>
+                                <span>不明</span>
+                            </label>
+                        </div>
+
+                        <!-- 生年月日の選択欄 -->
+                        <div class="birthday-selects">
+                            <label class="birthday-select-field">
+                                <span class="visually-hidden">
+                                    生まれた年
+                                </span>
+
+                                <select
+                                    class="form-select"
+                                    id="birth-year"
+                                    name="birthYear"
+                                >
+                                    <option value="">年</option>
+                                </select>
+                            </label>
+
+                            <label class="birthday-select-field">
+                                <span class="visually-hidden">
+                                    生まれた月
+                                </span>
+
+                                <select
+                                    class="form-select"
+                                    id="birth-month"
+                                    name="birthMonth"
+                                >
+                                    <option value="">月</option>
+                                </select>
+                            </label>
+
+                            <label class="birthday-select-field">
+                                <span class="visually-hidden">
+                                    生まれた日
+                                </span>
+
+                                <select
+                                    class="form-select"
+                                    id="birth-day"
+                                    name="birthDay"
+                                >
+                                    <option value="">日</option>
+                                </select>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- お客様の特徴を登録するカード -->
+                    <section class="form-card feature-card">
+                        <!-- 特徴の見出しと編集ボタン -->
+                        <div class="feature-card-header">
+                            <p class="form-label feature-card-title">
+                                特徴
+                            </p>
+
+                            <button
+                                class="feature-edit-button"
+                                type="button"
+                                aria-expanded="false"
+                            >
+                                タグを編集
+                            </button>
+                        </div>
+
+                        <!-- よく使用する特徴タグ -->
+                        <div
+                            class="feature-list"
+                            aria-label="お客様の特徴"
+                        >
+                            <button
+                                class="feature-chip"
+                                type="button"
+                                aria-pressed="false"
+                            >
+                                短髪
+                            </button>
+
+                            <button
+                                class="feature-chip"
+                                type="button"
+                                aria-pressed="false"
+                            >
+                                髭
+                            </button>
+
+                            <button
+                                class="feature-chip"
+                                type="button"
+                                aria-pressed="false"
+                            >
+                                筋肉質
+                            </button>
+
+                            <button
+                                class="feature-chip"
+                                type="button"
+                                aria-pressed="false"
+                            >
+                                細身
+                            </button>
+
+                            <button
+                                class="feature-chip"
+                                type="button"
+                                aria-pressed="false"
+                            >
+                                体育会系
+                            </button>
+
+                            <button
+                                class="feature-chip"
+                                type="button"
+                                aria-pressed="false"
+                            >
+                                お酒好き
+                            </button>
+
+                            <button
+                                class="feature-chip"
+                                type="button"
+                                aria-pressed="false"
+                            >
+                                社長
+                            </button>
+                        </div>
+
+                        <!-- 特徴タグの編集操作 -->
+                        <div
+                            class="feature-editor-bar"
+                            hidden
+                        >
+                            <div class="feature-editor-info">
+                                <p class="feature-selected-message">
+                                    <strong class="feature-selected-count">0</strong>
+                                    件選択中
+                                </p>
+
+                                <p class="feature-edit-hint">
+                                    鉛筆を押すとタグ名を変更できます
+                                </p>
+                            </div>
+
+                            <button
+                                class="feature-delete-button"
+                                type="button"
+                                disabled
+                            >
+                                選択したタグを削除
+                            </button>
+                        </div>
+
+                        <!-- 一覧にない特徴を追加する入力欄 -->
+                        <div class="feature-add-row">
+                            <label
+                                class="visually-hidden"
+                                for="custom-feature"
+                            >
+                                新しい特徴
+                            </label>
+
+                            <input
+                                class="form-input"
+                                id="custom-feature"
+                                name="customFeature"
+                                type="text"
+                                placeholder="特徴を入力してください"
+                            >
+
+                            <button
+                                class="feature-add-button"
+                                type="button"
+                            >
+                                追加
+                            </button>
+                        </div>
+                    </section>
+
+                                        <!-- お客様の会計金額を入力するカード -->
+                    <section class="form-card">
+                        <div class="form-field">
+                            <!-- 項目名と必須ラベル -->
+                            <div class="form-label-row">
+                                <label
+                                    class="form-label"
+                                    for="payment-amount"
+                                >
+                                    会計金額
+                                </label>
+
+                                <span class="required-label">
+                                    [必須]
+                                </span>
+                            </div>
+
+                            <!-- 金額入力欄と円単位 -->
+                            <div class="payment-amount-field">
+                                <input
+                                    class="form-input payment-amount-input"
+                                    id="payment-amount"
+                                    name="paymentAmount"
+                                    type="number"
+                                    inputmode="numeric"
+                                    min="0"
+                                    step="1"
+                                    placeholder="0"
+                                    aria-describedby="payment-amount-help"
+                                    required
+                                >
+
+                                <span
+                                    class="payment-amount-unit"
+                                    aria-hidden="true"
+                                >
+                                    円
+                                </span>
+                            </div>
+
+                            <p
+                                class="form-help-text"
+                                id="payment-amount-help"
+                            >
+                                半角数字で入力してください。
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- 担当スタッフを選択するカード -->
+                    <section class="form-card">
+                        <div class="form-field">
+                            <!-- 項目名と必須ラベル -->
+                            <div class="form-label-row">
+                                <label
+                                    class="form-label"
+                                    for="staff-member"
+                                >
+                                    担当スタッフ
+                                </label>
+
+                                <span class="required-label">
+                                    [必須]
+                                </span>
+                            </div>
+
+                            <!-- 担当スタッフの選択欄 -->
+                            <div class="staff-select-field">
+                                <select
+                                    class="form-select"
+                                    id="staff-member"
+                                    name="staffMember"
+                                    required
+                                >
+                                    <option value="">
+                                        担当スタッフを選択してください
+                                    </option>
+
+                                    <!-- 現在は画面確認用の仮データ -->
+                                    <option value="staff-a">スタッフA</option>
+                                    <option value="staff-b">スタッフB</option>
+                                    <option value="staff-c">スタッフC</option>
+                                </select>
+                            </div>
+
+                            <p class="form-help-text">
+                                当日お客様を担当したスタッフを選択してください。
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- 新規顧客についてのメモを入力するカード -->
+                    <section class="form-card">
+                        <div class="form-field">
+                            <div class="form-label-row">
+                                <label
+                                    class="form-label"
+                                    for="new-customer-memo"
+                                >
+                                    新規顧客メモ
+                                </label>
+
+                                <span class="optional-label">
+                                    [任意]
+                                </span>
+                            </div>
+
+                            <textarea
+                                class="form-textarea"
+                                id="new-customer-memo"
+                                name="newCustomerMemo"
+                                rows="2"
+                                maxlength="500"
+                                placeholder="会話した内容や好み、次回来店時に確認したいことなどを入力してください。"
+                                aria-describedby="new-customer-memo-help"
+                            ></textarea>
+
+                            <p
+                                class="form-help-text"
+                                id="new-customer-memo-help"
+                            >
+                                500文字以内で入力してください。
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- お客様の写真を登録するカード -->
+                    <section class="form-card photo-card">
+                        <div class="form-label-row">
+                            <p class="form-label">
+                                顧客写真
+                            </p>
+
+                            <span class="optional-label">
+                                [任意]
+                            </span>
+                        </div>
+
+                        <p
+                            class="form-help-text photo-help-text"
+                            id="customer-photo-help"
+                        >
+                            お客様を見分けやすくするための写真を登録できます。
+                        </p>
+
+                        <!-- 写真のプレビューを表示する領域 -->
+                        <div class="photo-preview">
+                            <!-- 写真が未選択のときに表示する内容 -->
+                            <div class="photo-preview-placeholder">
+                                <span
+                                    class="photo-preview-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <rect
+                                            x="3"
+                                            y="5"
+                                            width="18"
+                                            height="14"
+                                            rx="3"
+                                        ></rect>
+
+                                        <circle
+                                            cx="9"
+                                            cy="10"
+                                            r="2"
+                                        ></circle>
+
+                                        <path d="M4 17l5-5 4 4 3-3 4 4"></path>
+                                    </svg>
+                                </span>
+
+                                <p>写真が選択されていません</p>
+                            </div>
+
+                            <!-- 選択した複数の写真を表示する一覧 -->
+                            <div
+                                class="photo-preview-list"
+                                aria-live="polite"
+                            >
+                            </div>
+                        </div>
+
+                        <!-- 実際のファイル選択欄 -->
+                        <input
+                            class="customer-photo-input visually-hidden"
+                            id="customer-photo"
+                            name="customerPhoto"
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            aria-describedby="customer-photo-help"
+                        >
+
+                        <div class="photo-actions">
+                            <label
+                                class="photo-select-button"
+                                for="customer-photo"
+                            >
+                                写真を選択
+                            </label>
+
+                            <button
+                                class="photo-remove-button"
+                                type="button"
+                                hidden
+                            >
+                                写真をすべて削除
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- 新規顧客を登録する操作エリア -->
+                    <div class="form-submit-area">
+                        <p class="form-submit-note">
+                            入力内容を確認してから登録してください。
+                        </p>
+
+                        <button
+                            class="new-customer-submit-button"
+                            id="new-customer-submit-button"
+                            type="submit"
+                            form="new-customer-form"
+                        >
+                            <span>
+                                この内容で登録する
+                            </span>
+
+                            <span
+                                class="new-customer-submit-icon"
+                                aria-hidden="true"
+                            >
+                                →
+                            </span>
+                        </button>
+                    </div>
+                </form>
             </section>
+
+                        <!-- 新規顧客の登録内容を確認する画面 -->
+            <div
+                class="new-customer-confirm-dialog"
+                id="new-customer-confirm-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="new-customer-confirm-title"
+                hidden
+            >
+                <div class="new-customer-confirm-content">
+                    <div class="new-customer-confirm-main">
+                        <p class="new-customer-confirm-label">
+                            CONFIRM
+                        </p>
+
+                        <h2
+                            class="new-customer-confirm-title"
+                            id="new-customer-confirm-title"
+                        >
+                            この内容で登録しますか？
+                        </h2>
+
+                        <p class="new-customer-confirm-message">
+                            入力内容を確認し、問題がなければ登録してください。
+                        </p>
+
+                        <!-- 次の工程で入力内容を表示する領域 -->
+                        <div
+                            class="new-customer-confirm-summary"
+                            id="new-customer-confirm-summary"
+                        ></div>
+
+                        <div class="new-customer-confirm-actions">
+                            <button
+                                class="new-customer-confirm-back"
+                                type="button"
+                            >
+                                戻って修正
+                            </button>
+
+                            <button
+                                class="new-customer-confirm-register"
+                                type="button"
+                            >
+                                登録する
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 新規顧客の登録完了表示 -->
+                    <div
+                        class="new-customer-register-success"
+                        hidden
+                    >
+                        <span
+                            class="new-customer-success-icon"
+                            aria-hidden="true"
+                        >
+                            ✓
+                        </span>
+
+                        <p class="new-customer-success-label">
+                            REGISTERED
+                        </p>
+
+                        <h2 class="new-customer-success-title">
+                            登録が完了しました
+                        </h2>
+
+                        <p class="new-customer-success-message">
+                            新規顧客情報を受け付けました。
+                        </p>
+
+                        <button
+                            class="new-customer-success-back"
+                            type="button"
+                        >
+                            入力画面へ戻る
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 特徴タグの重複を知らせるオリジナル警告 -->
+            <div
+                class="feature-duplicate-dialog"
+                id="feature-duplicate-dialog"
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="feature-duplicate-title"
+                aria-describedby="feature-duplicate-message"
+                hidden
+            >
+                <div class="feature-duplicate-dialog-content">
+                    <!-- 警告を表すアイコン -->
+                    <span
+                        class="feature-duplicate-dialog-icon"
+                        aria-hidden="true"
+                    >
+                        !
+                    </span>
+
+                    <p class="feature-duplicate-dialog-label">
+                        CHECK TAG
+                    </p>
+
+                    <h2
+                        class="feature-duplicate-dialog-title"
+                        id="feature-duplicate-title"
+                    >
+                        同じタグがあります
+                    </h2>
+
+                    <p
+                        class="feature-duplicate-dialog-message"
+                        id="feature-duplicate-message"
+                    >
+                        同じ名前の特徴タグがすでに登録されています。
+                        別の名前を入力してください。
+                    </p>
+
+                    <button
+                        class="feature-duplicate-dialog-button"
+                        type="button"
+                    >
+                        入力に戻る
+                    </button>
+                </div>
+            </div>
+
+            <!-- 特徴タグを削除する前の確認画面 -->
+            <div
+                class="feature-delete-dialog"
+                id="feature-delete-dialog"
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="feature-delete-dialog-title"
+                aria-describedby="feature-delete-dialog-message"
+                hidden
+            >
+                <div class="feature-delete-dialog-content">
+                    <!-- 削除確認を表すアイコン -->
+                    <span
+                        class="feature-delete-dialog-icon"
+                        aria-hidden="true"
+                    >
+                        !
+                    </span>
+
+                    <p class="feature-delete-dialog-label">
+                        DELETE TAG
+                    </p>
+
+                    <h2
+                        class="feature-delete-dialog-title"
+                        id="feature-delete-dialog-title"
+                    >
+                        タグを削除しますか？
+                    </h2>
+
+                    <p
+                        class="feature-delete-dialog-message"
+                        id="feature-delete-dialog-message"
+                    >
+                        選択した特徴タグを削除します。
+                    </p>
+
+                    <div class="feature-delete-dialog-actions">
+                        <button
+                            class="feature-delete-dialog-cancel"
+                            type="button"
+                        >
+                            キャンセル
+                        </button>
+
+                        <button
+                            class="feature-delete-dialog-confirm"
+                            type="button"
+                        >
+                            削除する
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <!-- ホーム画面の主要機能へ移動する下部ナビゲーション -->
             <nav class="bottom-navigation" aria-label="メインナビゲーション">
@@ -989,6 +1732,7 @@
                 <button
                     class="bottom-nav-item bottom-nav-item--active"
                     type="button"
+                    data-view="home"
                     aria-current="page"
                 >
                     <!-- ホームを表す家アイコン -->
