@@ -179,7 +179,11 @@
                                     </div>
 
                                     <nav class="menu-list" aria-label="アプリメニュー">
-                                        <button class="menu-item" type="button">
+                                        <button
+                                            class="menu-item"
+                                            type="button"
+                                            data-view="new-customer"
+                                        >
                                             <span class="menu-item-text">
                                                 <span class="menu-item-title">
                                                     新規顧客登録
@@ -266,495 +270,311 @@
                 </div>
             </header>
 
-            <!-- ホーム画面上部の挨拶とAIサマリーをまとめる領域 -->
-            <section class="home-overview">
-                <!-- 利用者への挨拶を表示する領域 -->
-                <div class="welcome-message">
-                    <h2>おかえりなさい！</h2>
-                    <p>今日も素敵な一日になりますように。</p>
-                </div>
+            <!-- 現在表示しているホーム画面 -->
+            <div
+                class="app-view app-view--active"
+                id="home-view"
+            >
 
-                <!-- AIが顧客情報を分析した結果を表示するカード -->
-                <section class="ai-summary-card">
-                    <!-- AIサマリーカードの見出し -->
-                    <div class="ai-summary-header">
-                        <h2>AIサマリー</h2>
-                        <span class="new-label">NEW</span>
+                <!-- ホーム画面上部の挨拶とAIサマリーをまとめる領域 -->
+                <section class="home-overview">
+                    <!-- 利用者への挨拶を表示する領域 -->
+                    <div class="welcome-message">
+                        <h2>おかえりなさい！</h2>
+                        <p>今日も素敵な一日になりますように。</p>
                     </div>
 
-                    <!-- 現在は画面確認用の仮データ -->
-                    <ul class="ai-summary-list">
-                        <li>今月お誕生日のお客様が9名います。</li>
-                        <li>今月の新規登録は12名です。</li>
-                        <li>最近30日間来店がない常連が5名います。</li>
-                    </ul>
+                    <!-- AIが顧客情報を分析した結果を表示するカード -->
+                    <section class="ai-summary-card">
+                        <!-- AIサマリーカードの見出し -->
+                        <div class="ai-summary-header">
+                            <h2>AIサマリー</h2>
+                            <span class="new-label">NEW</span>
+                        </div>
+
+                        <!-- 現在は画面確認用の仮データ -->
+                        <ul class="ai-summary-list">
+                            <li>今月お誕生日のお客様が9名います。</li>
+                            <li>今月の新規登録は12名です。</li>
+                            <li>最近30日間来店がない常連が5名います。</li>
+                        </ul>
+                    </section>
                 </section>
-            </section>
 
-            <!-- ホーム画面の主要機能へ移動するメニュー -->
-            <section class="quick-actions">
+                <!-- ホーム画面の主要機能へ移動するメニュー -->
+                <section class="quick-actions">
 
-                <!-- 主要機能のカードを並べる領域 -->
-                <div class="action-grid">
+                    <!-- 主要機能のカードを並べる領域 -->
+                    <div class="action-grid">
 
-                    <!-- 新しい顧客を登録するメニュー -->
-                    <button class="action-card action-card--new" type="button">
+                        <!-- 新しい顧客を登録するメニュー -->
+                        <button class="action-card action-card--new" type="button">
 
-                        <!-- アイコンと機能名を横並びにする -->
-                        <span class="action-card-header">
-                            <!-- 人物とプラス記号を組み合わせた新規登録アイコン -->
-                            <span class="action-card-icon" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                
-                                    <!-- 人物の頭 -->
-                                    <circle cx="9" cy="7" r="4"></circle>
+                            <!-- アイコンと機能名を横並びにする -->
+                            <span class="action-card-header">
+                                <!-- 人物とプラス記号を組み合わせた新規登録アイコン -->
+                                <span class="action-card-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                    
+                                        <!-- 人物の頭 -->
+                                        <circle cx="9" cy="7" r="4"></circle>
 
-                                    <!-- 人物の肩から身体の部分 -->
-                                    <path d="M3 21v-2a6 6 0 0 1 6-6h2"></path>
+                                        <!-- 人物の肩から身体の部分 -->
+                                        <path d="M3 21v-2a6 6 0 0 1 6-6h2"></path>
 
-                                    <!-- 新規追加を表すプラス記号 -->
-                                    <path d="M19 14v6"></path>
-                                    <path d="M16 17h6"></path>
-                                </svg>
+                                        <!-- 新規追加を表すプラス記号 -->
+                                        <path d="M19 14v6"></path>
+                                        <path d="M16 17h6"></path>
+                                    </svg>
+                                </span>
+                                <span class="action-card-title">新規顧客登録</span>
                             </span>
-                            <span class="action-card-title">新規顧客登録</span>
-                        </span>
-                        <span class="action-card-description">新しく登録する</span>
-                    </button>
+                            <span class="action-card-description">新しく登録する</span>
+                        </button>
 
-                    <!-- 常連顧客の情報を更新するメニュー -->
-                    <button class="action-card action-card--regular" type="button">
+                        <!-- 常連顧客の情報を更新するメニュー -->
+                        <button class="action-card action-card--regular" type="button">
 
-                        <!-- アイコンと機能名を横並びにする -->
-                        <span class="action-card-header">
-                            <!-- 人物と鉛筆を組み合わせた顧客情報更新アイコン -->
-                            <span class="action-card-icon" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- 人物の頭 -->
-                                    <circle cx="8" cy="7" r="4"></circle>
+                            <!-- アイコンと機能名を横並びにする -->
+                            <span class="action-card-header">
+                                <!-- 人物と鉛筆を組み合わせた顧客情報更新アイコン -->
+                                <span class="action-card-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 人物の頭 -->
+                                        <circle cx="8" cy="7" r="4"></circle>
 
-                                    <!-- 人物の肩から身体の部分 -->
-                                    <path d="M2 21v-2a6 6 0 0 1 6-6h3"></path>
+                                        <!-- 人物の肩から身体の部分 -->
+                                        <path d="M2 21v-2a6 6 0 0 1 6-6h3"></path>
 
-                                    <!-- 顧客情報の編集を表す鉛筆 -->
-                                    <path d="M14 20l1-4 5-5 3 3-5 5-4 1z"></path>
+                                        <!-- 顧客情報の編集を表す鉛筆 -->
+                                        <path d="M14 20l1-4 5-5 3 3-5 5-4 1z"></path>
 
-                                    <!-- 鉛筆の先端側を表す線 -->
-                                    <path d="M18 12l3 3"></path>
-                                </svg>
+                                        <!-- 鉛筆の先端側を表す線 -->
+                                        <path d="M18 12l3 3"></path>
+                                    </svg>
+                                </span>
+                                <span class="action-card-title">常連顧客更新</span>
                             </span>
-                            <span class="action-card-title">常連顧客更新</span>
-                        </span>
-                        <span class="action-card-description">情報を更新する</span>
-                    </button>
+                            <span class="action-card-description">情報を更新する</span>
+                        </button>
 
-                    <!-- 登録済みの顧客を探すメニュー -->
-                    <button class="action-card action-card--search" type="button">
+                        <!-- 登録済みの顧客を探すメニュー -->
+                        <button class="action-card action-card--search" type="button">
 
-                        <!-- アイコンと機能名を横並びにする -->
-                        <span class="action-card-header">
-                            <!-- 人物と虫眼鏡を組み合わせた顧客検索アイコン -->
-                            <span class="action-card-icon" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- 人物の頭 -->
-                                    <circle cx="8" cy="7" r="4"></circle>
+                            <!-- アイコンと機能名を横並びにする -->
+                            <span class="action-card-header">
+                                <!-- 人物と虫眼鏡を組み合わせた顧客検索アイコン -->
+                                <span class="action-card-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 人物の頭 -->
+                                        <circle cx="8" cy="7" r="4"></circle>
 
-                                    <!-- 人物の肩から身体の部分 -->
-                                    <path d="M2 21v-2a6 6 0 0 1 6-6h2"></path>
+                                        <!-- 人物の肩から身体の部分 -->
+                                        <path d="M2 21v-2a6 6 0 0 1 6-6h2"></path>
 
-                                    <!-- 顧客を探すことを表す虫眼鏡 -->
-                                    <circle cx="17" cy="16" r="4"></circle>
+                                        <!-- 顧客を探すことを表す虫眼鏡 -->
+                                        <circle cx="17" cy="16" r="4"></circle>
 
-                                    <!-- 虫眼鏡の持ち手 -->
-                                    <path d="M20 19l3 3"></path>
-                                </svg>
+                                        <!-- 虫眼鏡の持ち手 -->
+                                        <path d="M20 19l3 3"></path>
+                                    </svg>
+                                </span>
+                                <span class="action-card-title">顧客検索</span>
                             </span>
-                            <span class="action-card-title">顧客検索</span>
-                        </span>
-                        <span class="action-card-description">お客様を検索する</span>
-                    </button>
+                            <span class="action-card-description">お客様を検索する</span>
+                        </button>
 
-                    <!-- 顧客や来店状況を確認するメニュー -->
-                    <button class="action-card action-card--summary" type="button">
+                        <!-- 顧客や来店状況を確認するメニュー -->
+                        <button class="action-card action-card--summary" type="button">
 
-                        <!-- アイコンと機能名を横並びにする -->
-                        <span class="action-card-header">
-                            <!-- データの集計を表す棒グラフアイコン -->
-                            <span class="action-card-icon" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- 左から右へ高くなる4本の棒 -->
-                                    <rect x="3" y="15" width="3" height="6" rx="1"></rect>
-                                    <rect x="8" y="11" width="3" height="10" rx="1"></rect>
-                                    <rect x="13" y="7" width="3" height="14" rx="1"></rect>
-                                    <rect x="18" y="3" width="3" height="18" rx="1"></rect>
-                                </svg>
+                            <!-- アイコンと機能名を横並びにする -->
+                            <span class="action-card-header">
+                                <!-- データの集計を表す棒グラフアイコン -->
+                                <span class="action-card-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 左から右へ高くなる4本の棒 -->
+                                        <rect x="3" y="15" width="3" height="6" rx="1"></rect>
+                                        <rect x="8" y="11" width="3" height="10" rx="1"></rect>
+                                        <rect x="13" y="7" width="3" height="14" rx="1"></rect>
+                                        <rect x="18" y="3" width="3" height="18" rx="1"></rect>
+                                    </svg>
+                                </span>
+                                <span class="action-card-title">サマリー</span>
                             </span>
-                            <span class="action-card-title">サマリー</span>
-                        </span>
-                        <span class="action-card-description">状況を確認する</span>
-                    </button>
-                </div>
-            </section>
-
-            <!-- 顧客数や売上など、ホーム画面の主要な数値を表示する集計エリア -->
-            <section class="stats-summary" aria-label="顧客データ集計">
-
-                <!-- 項目名と数値を組み合わせた集計一覧 -->
-                <dl class="stats-grid">
-
-                    <!-- 登録されている顧客数 -->
-                    <div class="stat-item">
-
-                        <!-- アイコンと項目名を横並びにする -->
-                        <dt class="stat-label">
-                            <!-- 登録されている複数の顧客を表すアイコン -->
-                            <span class="stat-icon" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- 中央の人物 -->
-                                    <circle cx="12" cy="7" r="3"></circle>
-                                    <path d="M7 20v-1a5 5 0 0 1 10 0v1"></path>
-
-                                    <!-- 左側の人物 -->
-                                    <circle cx="5" cy="9" r="2"></circle>
-                                    <path d="M1.5 19v-1a4 4 0 0 1 4-4"></path>
-
-                                    <!-- 右側の人物 -->
-                                    <circle cx="19" cy="9" r="2"></circle>
-                                    <path d="M22.5 19v-1a4 4 0 0 0-4-4"></path>
-                                </svg>
-                            </span>
-                            <span>顧客数</span>
-                        </dt>
-                        <dd class="stat-value">
-                            128<span class="stat-unit">名</span>
-                        </dd>
-                        <dd class="stat-description">
-                            登録済みのお客様
-                        </dd>
+                            <span class="action-card-description">状況を確認する</span>
+                        </button>
                     </div>
+                </section>
 
-                    <!-- 全期間の売上合計 -->
-                    <div class="stat-item">
+                <!-- 顧客数や売上など、ホーム画面の主要な数値を表示する集計エリア -->
+                <section class="stats-summary" aria-label="顧客データ集計">
 
-                        <!-- アイコンと項目名を横並びにする -->
-                        <dt class="stat-label">
-                            <!-- 売上金額を表す円マークのアイコン -->
-                            <span class="stat-icon" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- 金額を囲む円 -->
-                                    <circle cx="12" cy="12" r="9"></circle>
+                    <!-- 項目名と数値を組み合わせた集計一覧 -->
+                    <dl class="stats-grid">
 
-                                    <!-- 円マーク -->
-                                    <path d="M8.5 7.5 12 12l3.5-4.5"></path>
-                                    <path d="M8.5 13h7"></path>
-                                    <path d="M8.5 16h7"></path>
-                                    <path d="M12 12v6"></path>
-                                </svg>
-                            </span>
-                            <span>累計売上</span>
-                        </dt>
-                        <dd class="stat-value">¥5,480,000</dd>
-                        <dd class="stat-description">全期間の累計売上</dd>
-                    </div>
+                        <!-- 登録されている顧客数 -->
+                        <div class="stat-item">
 
-                    <!-- 今月誕生日を迎える顧客数 -->
-                    <div class="stat-item">
+                            <!-- アイコンと項目名を横並びにする -->
+                            <dt class="stat-label">
+                                <!-- 登録されている複数の顧客を表すアイコン -->
+                                <span class="stat-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 中央の人物 -->
+                                        <circle cx="12" cy="7" r="3"></circle>
+                                        <path d="M7 20v-1a5 5 0 0 1 10 0v1"></path>
 
-                        <!-- アイコンと項目名を横並びにする -->
-                        <dt class="stat-label">
-                            <!-- 今月誕生日を迎えるお客様を表すケーキアイコン -->
-                            <span class="stat-icon stat-icon--birthday" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- ろうそくの炎 -->
-                                    <path d="M12 2.5c1 1 1.4 1.8 1.4 2.6A1.4 1.4 0 0 1 12 6.5a1.4 1.4 0 0 1-1.4-1.4c0-.8.4-1.6 1.4-2.6z"></path>
+                                        <!-- 左側の人物 -->
+                                        <circle cx="5" cy="9" r="2"></circle>
+                                        <path d="M1.5 19v-1a4 4 0 0 1 4-4"></path>
 
-                                    <!-- ろうそく -->
-                                    <path d="M12 6.5V9"></path>
+                                        <!-- 右側の人物 -->
+                                        <circle cx="19" cy="9" r="2"></circle>
+                                        <path d="M22.5 19v-1a4 4 0 0 0-4-4"></path>
+                                    </svg>
+                                </span>
+                                <span>顧客数</span>
+                            </dt>
+                            <dd class="stat-value">
+                                128<span class="stat-unit">名</span>
+                            </dd>
+                            <dd class="stat-description">
+                                登録済みのお客様
+                            </dd>
+                        </div>
 
-                                    <!-- ケーキ上部 -->
-                                    <path d="M5 12h14"></path>
-                                    <path d="M7 8h10a2 2 0 0 1 2 2v2H5v-2a2 2 0 0 1 2-2z"></path>
+                        <!-- 全期間の売上合計 -->
+                        <div class="stat-item">
 
-                                    <!-- ケーキ本体 -->
-                                    <path d="M5 12v7h14v-7"></path>
+                            <!-- アイコンと項目名を横並びにする -->
+                            <dt class="stat-label">
+                                <!-- 売上金額を表す円マークのアイコン -->
+                                <span class="stat-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 金額を囲む円 -->
+                                        <circle cx="12" cy="12" r="9"></circle>
 
-                                    <!-- デコレーション -->
-                                    <path d="M5 15c2 2 4-2 7 0s5-2 7 0"></path>
-                                </svg>
-                            </span>
-                            <span>今月誕生日</span>
-                        </dt>
-                        <dd class="stat-value">
-                            9<span class="stat-unit">名</span>
-                        </dd>
-                        <dd class="stat-description">今月お誕生日のお客様</dd>
-                    </div>
+                                        <!-- 円マーク -->
+                                        <path d="M8.5 7.5 12 12l3.5-4.5"></path>
+                                        <path d="M8.5 13h7"></path>
+                                        <path d="M8.5 16h7"></path>
+                                        <path d="M12 12v6"></path>
+                                    </svg>
+                                </span>
+                                <span>累計売上</span>
+                            </dt>
+                            <dd class="stat-value">¥5,480,000</dd>
+                            <dd class="stat-description">全期間の累計売上</dd>
+                        </div>
 
-                    <!-- 今月新しく登録された顧客数 -->
-                    <div class="stat-item">
+                        <!-- 今月誕生日を迎える顧客数 -->
+                        <div class="stat-item">
 
-                        <!-- アイコンと項目名を横並びにする -->
-                        <dt class="stat-label">
-                            <!-- 今月新しく登録された件数を表すNEWバッジ -->
-                            <span class="stat-icon stat-icon--new-badge" aria-hidden="true">NEW</span>
-                            <span>今月登録</span>
-                        </dt>
-                        <dd class="stat-value">
-                            12<span class="stat-unit">名</span>
-                        </dd>
-                        <dd class="stat-description">今月の新規登録</dd>
-                    </div>
-                </dl>
-            </section>
+                            <!-- アイコンと項目名を横並びにする -->
+                            <dt class="stat-label">
+                                <!-- 今月誕生日を迎えるお客様を表すケーキアイコン -->
+                                <span class="stat-icon stat-icon--birthday" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- ろうそくの炎 -->
+                                        <path d="M12 2.5c1 1 1.4 1.8 1.4 2.6A1.4 1.4 0 0 1 12 6.5a1.4 1.4 0 0 1-1.4-1.4c0-.8.4-1.6 1.4-2.6z"></path>
 
-            <!-- 登録情報の不足など、対応が必要な項目を表示する領域 -->
-            <section class="todo-section">
+                                        <!-- ろうそく -->
+                                        <path d="M12 6.5V9"></path>
 
-                <!-- セクション名と一覧表示ボタンを横並びにする -->
-                <div class="section-header">
+                                        <!-- ケーキ上部 -->
+                                        <path d="M5 12h14"></path>
+                                        <path d="M7 8h10a2 2 0 0 1 2 2v2H5v-2a2 2 0 0 1 2-2z"></path>
 
-                    <!-- アイコンとセクション名 -->
-                    <h2 class="section-title">
-                        <!-- 対応項目の一覧を表すチェックリストアイコン -->
-                        <span class="section-title-icon" aria-hidden="true">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <!-- クリップボード本体 -->
-                                <rect x="5" y="4" width="14" height="16" rx="2"></rect>
+                                        <!-- ケーキ本体 -->
+                                        <path d="M5 12v7h14v-7"></path>
 
-                                <!-- 上のクリップ部分 -->
-                                <path d="M9 4.5h6"></path>
-                                <path d="M10 3h4a1 1 0 0 1 1 1v1H9V4a1 1 0 0 1 1-1z"></path>
+                                        <!-- デコレーション -->
+                                        <path d="M5 15c2 2 4-2 7 0s5-2 7 0"></path>
+                                    </svg>
+                                </span>
+                                <span>今月誕生日</span>
+                            </dt>
+                            <dd class="stat-value">
+                                9<span class="stat-unit">名</span>
+                            </dd>
+                            <dd class="stat-description">今月お誕生日のお客様</dd>
+                        </div>
 
-                                <!-- チェックマーク -->
-                                <path d="m8 10 1.5 1.5L12 9"></path>
-                                <path d="m8 15 1.5 1.5L12 14"></path>
+                        <!-- 今月新しく登録された顧客数 -->
+                        <div class="stat-item">
 
-                                <!-- 項目の線 -->
-                                <path d="M14 10h2"></path>
-                                <path d="M14 15h2"></path>
-                            </svg>
-                        </span>
-                        <span>やることリスト</span>
-                    </h2>
+                            <!-- アイコンと項目名を横並びにする -->
+                            <dt class="stat-label">
+                                <!-- 今月新しく登録された件数を表すNEWバッジ -->
+                                <span class="stat-icon stat-icon--new-badge" aria-hidden="true">NEW</span>
+                                <span>今月登録</span>
+                            </dt>
+                            <dd class="stat-value">
+                                12<span class="stat-unit">名</span>
+                            </dd>
+                            <dd class="stat-description">今月の新規登録</dd>
+                        </div>
+                    </dl>
+                </section>
 
-                    <!-- 後から一覧画面へ移動する機能を追加する予定 -->
-                    <button class="section-link" type="button">
-                        すべて見る
-                        <span aria-hidden="true"></span>
-                    </button>
-                </div>
-
-                <!-- 対応が必要な項目をカード形式で並べる領域 -->
-                <div class="todo-grid">
-
-                    <!-- 顧客写真が未登録のお客様を確認するカード -->
-                    <button class="todo-card" type="button">
-
-                        <!-- アイコンと項目名を横並びにする -->
-                        <span class="todo-card-header">
-                            <!-- 写真未登録を表すカメラアイコン -->
-                            <span class="todo-card-icon todo-card-icon--photo" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- カメラ本体 -->
-                                    <path d="M4 7h4l1.5-2h5L16 7h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
-
-                                    <!-- カメラのレンズ -->
-                                    <circle cx="12" cy="13" r="4"></circle>
-                                </svg>
-                            </span>
-                            <span class="todo-card-title">写真未登録</span>
-                        </span>
-                        <span class="todo-card-value">
-                            5<span class="todo-card-unit">名</span>
-                        </span>
-                        <span class="todo-card-description">写真を登録しましょう</span>
-                        <span class="todo-card-arrow" aria-hidden="true"></span>
-                    </button>
-
-                    <!-- 誕生日が未登録のお客様を確認するカード -->
-                    <button class="todo-card" type="button">
-
-                        <!-- アイコンと項目名を横並びにする -->
-                        <span class="todo-card-header">
-                            <!-- 誕生日未登録を表すケーキアイコン -->
-                            <span class="todo-card-icon todo-card-icon--birthday" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- ろうそくの炎 -->
-                                    <path d="M12 2.5c1 1 1.4 1.8 1.4 2.6A1.4 1.4 0 0 1 12 6.5a1.4 1.4 0 0 1-1.4-1.4c0-.8.4-1.6 1.4-2.6z"></path>
-
-                                    <!-- ろうそく -->
-                                    <path d="M12 6.5V9"></path>
-
-                                    <!-- ケーキ上部 -->
-                                    <path d="M5 12h14"></path>
-                                    <path d="M7 8h10a2 2 0 0 1 2 2v2H5v-2a2 2 0 0 1 2-2z"></path>
-
-                                    <!-- ケーキ本体 -->
-                                    <path d="M5 12v7h14v-7"></path>
-
-                                    <!-- デコレーション -->
-                                    <path d="M5 15c2 2 4-2 7 0s5-2 7 0"></path>
-                                </svg>
-                            </span>
-                            <span class="todo-card-title">誕生日未登録</span>
-                        </span>
-                        <span class="todo-card-value">
-                            18<span class="todo-card-unit">名</span>
-                        </span>
-                        <span class="todo-card-description">誕生日を登録しましょう</span>
-                        <span class="todo-card-arrow" aria-hidden="true"></span>
-                    </button>
-
-                    <!-- 顧客メモが未登録のお客様を確認するカード -->
-                    <button class="todo-card" type="button">
-
-                        <!-- アイコンと項目名を横並びにする -->
-                        <span class="todo-card-header">
-                        <!-- メモ未登録を表す書類アイコン -->
-                            <span class="todo-card-icon todo-card-icon--memo" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- 書類本体 -->
-                                    <path d="M6 3h9l3 3v15H6z"></path>
-
-                                    <!-- 右上の折り返し -->
-                                    <path d="M15 3v4h4"></path>
-
-                                    <!-- メモを表す線 -->
-                                    <path d="M9 12h6"></path>
-                                    <path d="M9 16h4"></path>
-                                </svg>
-                            </span>
-                            <span class="todo-card-title">メモ未登録</span>
-                        </span>
-                        <span class="todo-card-value">
-                            3<span class="todo-card-unit">名</span>
-                        </span>
-                        <span class="todo-card-description">接客メモを残しましょう</span>
-                        <span class="todo-card-arrow" aria-hidden="true"></span>
-                    </button>
-
-                    <!-- 顧客の特徴が未登録のお客様を確認するカード -->
-                    <button class="todo-card" type="button">
-                        
-                        <!-- アイコンと項目名を横並びにする -->
-                        <span class="todo-card-header">
-                            <!-- 特徴未登録を表すタグアイコン -->
-                            <span class="todo-card-icon todo-card-icon--feature" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- タグ本体 -->
-                                    <path d="M3 12 12 3h7l2 2v7l-9 9z"></path>
-
-                                    <!-- タグの穴 -->
-                                    <circle cx="16.5" cy="7.5" r="1.5"></circle>
-                                </svg>
-                            </span>
-                            <span class="todo-card-title">特徴未登録</span>
-                        </span>
-                        <span class="todo-card-value">
-                            7<span class="todo-card-unit">名</span>
-                        </span>
-                        <span class="todo-card-description">特徴を登録しましょう</span>
-                        <span class="todo-card-arrow" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </section>
-
-            <!-- 最近利用した顧客情報をまとめる領域 -->
-            <div class="recent-customers-grid">
-
-                <!-- 最近追加したお客様を表示する領域 -->
-                <section class="recent-customers-section">
+                <!-- 登録情報の不足など、対応が必要な項目を表示する領域 -->
+                <section class="todo-section">
 
                     <!-- セクション名と一覧表示ボタンを横並びにする -->
                     <div class="section-header">
 
                         <!-- アイコンとセクション名 -->
                         <h2 class="section-title">
-                            <!-- 新しく追加された顧客を表す人物追加アイコン -->
+                            <!-- 対応項目の一覧を表すチェックリストアイコン -->
                             <span class="section-title-icon" aria-hidden="true">
                                 <svg
                                     viewBox="0 0 24 24"
@@ -764,188 +584,403 @@
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                 >
-                                    <!-- 人物の頭 -->
-                                    <circle cx="9" cy="7" r="3"></circle>
+                                    <!-- クリップボード本体 -->
+                                    <rect x="5" y="4" width="14" height="16" rx="2"></rect>
 
-                                    <!-- 人物の肩から身体 -->
-                                    <path d="M4 20v-1a5 5 0 0 1 5-5h2"></path>
+                                    <!-- 上のクリップ部分 -->
+                                    <path d="M9 4.5h6"></path>
+                                    <path d="M10 3h4a1 1 0 0 1 1 1v1H9V4a1 1 0 0 1 1-1z"></path>
 
-                                    <!-- 新規追加を表すプラス記号 -->
-                                    <path d="M18 13v7"></path>
-                                    <path d="M14.5 16.5h7"></path>
+                                    <!-- チェックマーク -->
+                                    <path d="m8 10 1.5 1.5L12 9"></path>
+                                    <path d="m8 15 1.5 1.5L12 14"></path>
+
+                                    <!-- 項目の線 -->
+                                    <path d="M14 10h2"></path>
+                                    <path d="M14 15h2"></path>
                                 </svg>
                             </span>
-
-                            <span>最近追加したお客様</span>
+                            <span>やることリスト</span>
                         </h2>
 
-                        <!-- 後から顧客一覧画面へ移動する機能を追加する予定 -->
-                        <button class="section-link" type="button">
-                            すべて見る
-                            <span aria-hidden="true"></span>
-                        </button>
-
-                    </div>
-
-                    <!-- 最近追加した顧客カードを並べる領域 -->
-                    <div class="customer-list customer-list--recent">
-
-                        <!-- 1人目の顧客カード -->
-                        <button class="customer-card" type="button">
-
-                            <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                            <span class="customer-avatar" aria-hidden="true">
-                                浅
-                            </span>
-
-                            <!-- 顧客名と登録情報 -->
-                            <span class="customer-card-info">
-                                <span class="customer-name">浅田 けん</span>
-                                <span class="customer-meta">2026/07/30 登録</span>
-                            </span>
-
-                            <!-- 顧客詳細へ進むことを表す矢印 -->
-                            <span class="customer-card-arrow" aria-hidden="true"></span>
-                        </button>
-
-                        <!-- 2人目の顧客カード -->
-                        <button class="customer-card" type="button">
-
-                            <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                            <span class="customer-avatar" aria-hidden="true">
-                                田
-                            </span>
-
-                            <!-- 顧客名と登録情報 -->
-                            <span class="customer-card-info">
-                                <span class="customer-name">田中 翔</span>
-                                <span class="customer-meta">2026/07/29 登録</span>
-                            </span>
-
-                            <!-- 顧客詳細へ進むことを表す矢印 -->
-                            <span class="customer-card-arrow" aria-hidden="true"></span>
-                        </button>
-
-                        <!-- 3人目の顧客カード -->
-                        <button class="customer-card" type="button">
-
-                            <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                            <span class="customer-avatar" aria-hidden="true">
-                                山
-                            </span>
-
-                            <!-- 顧客名と登録情報 -->
-                            <span class="customer-card-info">
-                                <span class="customer-name">山本 大輔</span>
-                                <span class="customer-meta">2026/07/27 登録</span>
-                            </span>
-
-                            <!-- 顧客詳細へ進むことを表す矢印 -->
-                            <span class="customer-card-arrow" aria-hidden="true"></span>
-                        </button>
-                    </div>
-
-                </section>
-
-                <!-- 最近見たお客様を表示する領域 -->
-                <section class="recent-customers-section">
-
-                    <!-- セクション名と一覧表示ボタンを横並びにする -->
-                    <div class="section-header">
-
-                        <!-- アイコンとセクション名 -->
-                        <h2 class="section-title">
-                            <!-- 最近確認した顧客を表す人物と時計のアイコン -->
-                            <span class="section-title-icon" aria-hidden="true">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <!-- 人物の頭 -->
-                                    <circle cx="8" cy="7" r="3"></circle>
-
-                                    <!-- 人物の肩から身体 -->
-                                    <path d="M3 20v-1a5 5 0 0 1 5-5h3"></path>
-
-                                    <!-- 最近見たことを表す時計 -->
-                                    <circle cx="17" cy="16" r="5"></circle>
-                                    <path d="M17 13v3l2 1"></path>
-                                </svg>
-                            </span>
-
-                            <span>最近見たお客様</span>
-                        </h2>
-
-                        <!-- 後から閲覧履歴の一覧へ移動する機能を追加する予定 -->
+                        <!-- 後から一覧画面へ移動する機能を追加する予定 -->
                         <button class="section-link" type="button">
                             すべて見る
                             <span aria-hidden="true"></span>
                         </button>
                     </div>
 
-                    <!-- 最近見た顧客カードを並べる領域 -->
-                    <div class="customer-list customer-list--viewed">
+                    <!-- 対応が必要な項目をカード形式で並べる領域 -->
+                    <div class="todo-grid">
 
-                        <!-- 1人目の顧客カード -->
-                        <button class="customer-card" type="button">
+                        <!-- 顧客写真が未登録のお客様を確認するカード -->
+                        <button class="todo-card" type="button">
 
-                            <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                            <span class="customer-avatar" aria-hidden="true">
-                                浅
+                            <!-- アイコンと項目名を横並びにする -->
+                            <span class="todo-card-header">
+                                <!-- 写真未登録を表すカメラアイコン -->
+                                <span class="todo-card-icon todo-card-icon--photo" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- カメラ本体 -->
+                                        <path d="M4 7h4l1.5-2h5L16 7h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+
+                                        <!-- カメラのレンズ -->
+                                        <circle cx="12" cy="13" r="4"></circle>
+                                    </svg>
+                                </span>
+                                <span class="todo-card-title">写真未登録</span>
                             </span>
-
-                            <!-- 顧客名と閲覧情報 -->
-                            <span class="customer-card-info">
-                                <span class="customer-name">浅田 けん</span>
-                                <span class="customer-meta">2026/07/30 11:03 閲覧</span>
+                            <span class="todo-card-value">
+                                5<span class="todo-card-unit">名</span>
                             </span>
-
-                            <!-- 顧客詳細へ進むことを表す矢印 -->
-                            <span class="customer-card-arrow" aria-hidden="true"></span>
+                            <span class="todo-card-description">写真を登録しましょう</span>
+                            <span class="todo-card-arrow" aria-hidden="true"></span>
                         </button>
 
-                        <!-- 2人目の顧客カード -->
-                        <button class="customer-card" type="button">
+                        <!-- 誕生日が未登録のお客様を確認するカード -->
+                        <button class="todo-card" type="button">
 
-                            <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                            <span class="customer-avatar" aria-hidden="true">
-                                田
+                            <!-- アイコンと項目名を横並びにする -->
+                            <span class="todo-card-header">
+                                <!-- 誕生日未登録を表すケーキアイコン -->
+                                <span class="todo-card-icon todo-card-icon--birthday" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- ろうそくの炎 -->
+                                        <path d="M12 2.5c1 1 1.4 1.8 1.4 2.6A1.4 1.4 0 0 1 12 6.5a1.4 1.4 0 0 1-1.4-1.4c0-.8.4-1.6 1.4-2.6z"></path>
+
+                                        <!-- ろうそく -->
+                                        <path d="M12 6.5V9"></path>
+
+                                        <!-- ケーキ上部 -->
+                                        <path d="M5 12h14"></path>
+                                        <path d="M7 8h10a2 2 0 0 1 2 2v2H5v-2a2 2 0 0 1 2-2z"></path>
+
+                                        <!-- ケーキ本体 -->
+                                        <path d="M5 12v7h14v-7"></path>
+
+                                        <!-- デコレーション -->
+                                        <path d="M5 15c2 2 4-2 7 0s5-2 7 0"></path>
+                                    </svg>
+                                </span>
+                                <span class="todo-card-title">誕生日未登録</span>
                             </span>
-
-                            <!-- 顧客名と閲覧情報 -->
-                            <span class="customer-card-info">
-                                <span class="customer-name">田中 翔</span>
-                                <span class="customer-meta">2026/07/29 22:15 閲覧</span>
+                            <span class="todo-card-value">
+                                18<span class="todo-card-unit">名</span>
                             </span>
-
-                            <!-- 顧客詳細へ進むことを表す矢印 -->
-                            <span class="customer-card-arrow" aria-hidden="true"></span>
+                            <span class="todo-card-description">誕生日を登録しましょう</span>
+                            <span class="todo-card-arrow" aria-hidden="true"></span>
                         </button>
 
-                        <!-- 3人目の顧客カード -->
-                        <button class="customer-card" type="button">
+                        <!-- 顧客メモが未登録のお客様を確認するカード -->
+                        <button class="todo-card" type="button">
 
-                            <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                            <span class="customer-avatar" aria-hidden="true">
-                                R
+                            <!-- アイコンと項目名を横並びにする -->
+                            <span class="todo-card-header">
+                            <!-- メモ未登録を表す書類アイコン -->
+                                <span class="todo-card-icon todo-card-icon--memo" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 書類本体 -->
+                                        <path d="M6 3h9l3 3v15H6z"></path>
+
+                                        <!-- 右上の折り返し -->
+                                        <path d="M15 3v4h4"></path>
+
+                                        <!-- メモを表す線 -->
+                                        <path d="M9 12h6"></path>
+                                        <path d="M9 16h4"></path>
+                                    </svg>
+                                </span>
+                                <span class="todo-card-title">メモ未登録</span>
                             </span>
-
-                            <!-- 顧客名と閲覧情報 -->
-                            <span class="customer-card-info">
-                                <span class="customer-name">Ren</span>
-                                <span class="customer-meta">2026/07/28 19:42 閲覧</span>
+                            <span class="todo-card-value">
+                                3<span class="todo-card-unit">名</span>
                             </span>
+                            <span class="todo-card-description">接客メモを残しましょう</span>
+                            <span class="todo-card-arrow" aria-hidden="true"></span>
+                        </button>
 
-                            <!-- 顧客詳細へ進むことを表す矢印 -->
-                            <span class="customer-card-arrow" aria-hidden="true"></span>
+                        <!-- 顧客の特徴が未登録のお客様を確認するカード -->
+                        <button class="todo-card" type="button">
+                            
+                            <!-- アイコンと項目名を横並びにする -->
+                            <span class="todo-card-header">
+                                <!-- 特徴未登録を表すタグアイコン -->
+                                <span class="todo-card-icon todo-card-icon--feature" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- タグ本体 -->
+                                        <path d="M3 12 12 3h7l2 2v7l-9 9z"></path>
+
+                                        <!-- タグの穴 -->
+                                        <circle cx="16.5" cy="7.5" r="1.5"></circle>
+                                    </svg>
+                                </span>
+                                <span class="todo-card-title">特徴未登録</span>
+                            </span>
+                            <span class="todo-card-value">
+                                7<span class="todo-card-unit">名</span>
+                            </span>
+                            <span class="todo-card-description">特徴を登録しましょう</span>
+                            <span class="todo-card-arrow" aria-hidden="true"></span>
                         </button>
                     </div>
                 </section>
+
+                <!-- 最近利用した顧客情報をまとめる領域 -->
+                <div class="recent-customers-grid">
+
+                    <!-- 最近追加したお客様を表示する領域 -->
+                    <section class="recent-customers-section">
+
+                        <!-- セクション名と一覧表示ボタンを横並びにする -->
+                        <div class="section-header">
+
+                            <!-- アイコンとセクション名 -->
+                            <h2 class="section-title">
+                                <!-- 新しく追加された顧客を表す人物追加アイコン -->
+                                <span class="section-title-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 人物の頭 -->
+                                        <circle cx="9" cy="7" r="3"></circle>
+
+                                        <!-- 人物の肩から身体 -->
+                                        <path d="M4 20v-1a5 5 0 0 1 5-5h2"></path>
+
+                                        <!-- 新規追加を表すプラス記号 -->
+                                        <path d="M18 13v7"></path>
+                                        <path d="M14.5 16.5h7"></path>
+                                    </svg>
+                                </span>
+
+                                <span>最近追加したお客様</span>
+                            </h2>
+
+                            <!-- 後から顧客一覧画面へ移動する機能を追加する予定 -->
+                            <button class="section-link" type="button">
+                                すべて見る
+                                <span aria-hidden="true"></span>
+                            </button>
+
+                        </div>
+
+                        <!-- 最近追加した顧客カードを並べる領域 -->
+                        <div class="customer-list customer-list--recent">
+
+                            <!-- 1人目の顧客カード -->
+                            <button class="customer-card" type="button">
+
+                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
+                                <span class="customer-avatar" aria-hidden="true">
+                                    浅
+                                </span>
+
+                                <!-- 顧客名と登録情報 -->
+                                <span class="customer-card-info">
+                                    <span class="customer-name">浅田 けん</span>
+                                    <span class="customer-meta">2026/07/30 登録</span>
+                                </span>
+
+                                <!-- 顧客詳細へ進むことを表す矢印 -->
+                                <span class="customer-card-arrow" aria-hidden="true"></span>
+                            </button>
+
+                            <!-- 2人目の顧客カード -->
+                            <button class="customer-card" type="button">
+
+                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
+                                <span class="customer-avatar" aria-hidden="true">
+                                    田
+                                </span>
+
+                                <!-- 顧客名と登録情報 -->
+                                <span class="customer-card-info">
+                                    <span class="customer-name">田中 翔</span>
+                                    <span class="customer-meta">2026/07/29 登録</span>
+                                </span>
+
+                                <!-- 顧客詳細へ進むことを表す矢印 -->
+                                <span class="customer-card-arrow" aria-hidden="true"></span>
+                            </button>
+
+                            <!-- 3人目の顧客カード -->
+                            <button class="customer-card" type="button">
+
+                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
+                                <span class="customer-avatar" aria-hidden="true">
+                                    山
+                                </span>
+
+                                <!-- 顧客名と登録情報 -->
+                                <span class="customer-card-info">
+                                    <span class="customer-name">山本 大輔</span>
+                                    <span class="customer-meta">2026/07/27 登録</span>
+                                </span>
+
+                                <!-- 顧客詳細へ進むことを表す矢印 -->
+                                <span class="customer-card-arrow" aria-hidden="true"></span>
+                            </button>
+                        </div>
+
+                    </section>
+
+                    <!-- 最近見たお客様を表示する領域 -->
+                    <section class="recent-customers-section">
+
+                        <!-- セクション名と一覧表示ボタンを横並びにする -->
+                        <div class="section-header">
+
+                            <!-- アイコンとセクション名 -->
+                            <h2 class="section-title">
+                                <!-- 最近確認した顧客を表す人物と時計のアイコン -->
+                                <span class="section-title-icon" aria-hidden="true">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 人物の頭 -->
+                                        <circle cx="8" cy="7" r="3"></circle>
+
+                                        <!-- 人物の肩から身体 -->
+                                        <path d="M3 20v-1a5 5 0 0 1 5-5h3"></path>
+
+                                        <!-- 最近見たことを表す時計 -->
+                                        <circle cx="17" cy="16" r="5"></circle>
+                                        <path d="M17 13v3l2 1"></path>
+                                    </svg>
+                                </span>
+
+                                <span>最近見たお客様</span>
+                            </h2>
+
+                            <!-- 後から閲覧履歴の一覧へ移動する機能を追加する予定 -->
+                            <button class="section-link" type="button">
+                                すべて見る
+                                <span aria-hidden="true"></span>
+                            </button>
+                        </div>
+
+                        <!-- 最近見た顧客カードを並べる領域 -->
+                        <div class="customer-list customer-list--viewed">
+
+                            <!-- 1人目の顧客カード -->
+                            <button class="customer-card" type="button">
+
+                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
+                                <span class="customer-avatar" aria-hidden="true">
+                                    浅
+                                </span>
+
+                                <!-- 顧客名と閲覧情報 -->
+                                <span class="customer-card-info">
+                                    <span class="customer-name">浅田 けん</span>
+                                    <span class="customer-meta">2026/07/30 11:03 閲覧</span>
+                                </span>
+
+                                <!-- 顧客詳細へ進むことを表す矢印 -->
+                                <span class="customer-card-arrow" aria-hidden="true"></span>
+                            </button>
+
+                            <!-- 2人目の顧客カード -->
+                            <button class="customer-card" type="button">
+
+                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
+                                <span class="customer-avatar" aria-hidden="true">
+                                    田
+                                </span>
+
+                                <!-- 顧客名と閲覧情報 -->
+                                <span class="customer-card-info">
+                                    <span class="customer-name">田中 翔</span>
+                                    <span class="customer-meta">2026/07/29 22:15 閲覧</span>
+                                </span>
+
+                                <!-- 顧客詳細へ進むことを表す矢印 -->
+                                <span class="customer-card-arrow" aria-hidden="true"></span>
+                            </button>
+
+                            <!-- 3人目の顧客カード -->
+                            <button class="customer-card" type="button">
+
+                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
+                                <span class="customer-avatar" aria-hidden="true">
+                                    R
+                                </span>
+
+                                <!-- 顧客名と閲覧情報 -->
+                                <span class="customer-card-info">
+                                    <span class="customer-name">Ren</span>
+                                    <span class="customer-meta">2026/07/28 19:42 閲覧</span>
+                                </span>
+
+                                <!-- 顧客詳細へ進むことを表す矢印 -->
+                                <span class="customer-card-arrow" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </section>
+                </div>
             </div>
+
+            <!-- 新規顧客登録画面 -->
+            <section
+                class="app-view"
+                id="new-customer-view"
+                aria-labelledby="new-customer-title"
+            >
+                <div class="page-header">
+                    <button
+                        class="page-back-button"
+                        type="button"
+                        data-view="home"
+                    >
+                        <span aria-hidden="true">←</span>
+                        <span>ホームへ戻る</span>
+                    </button>
+
+                    <div class="page-heading">
+                        <p class="page-heading-label">NEW CUSTOMER</p>
+                        <h2 id="new-customer-title">新規顧客登録</h2>
+                        <p>新しいお客様の基本情報を登録します。</p>
+                    </div>
+                </div>
+            </section>
 
             <!-- ホーム画面の主要機能へ移動する下部ナビゲーション -->
             <nav class="bottom-navigation" aria-label="メインナビゲーション">

@@ -9,6 +9,10 @@ const menuButton = document.querySelector(".menu-button");
 const menuPanel = document.querySelector("#menu-panel");
 const menuCloseButton = document.querySelector(".menu-close-button");
 
+// 画面切り替えボタンと、アプリ内の各画面を取得する
+const viewButtons = document.querySelectorAll("[data-view]");
+const appViews = document.querySelectorAll(".app-view");
+
 // 通知パネルを閉じる共通処理
 const closeNotificationPanel = () => {
   notificationPanel.classList.remove("notification-panel--open");
@@ -20,8 +24,33 @@ const closeMenuPanel = () => {
   menuPanel.classList.remove("menu-panel--open");
   menuButton.setAttribute("aria-expanded", "false");
 
-   // 背後のページのスクロールを再開する
+  // 背後のページのスクロールを再開する
   document.body.classList.remove("menu-open");
+};
+
+// 指定された画面だけを表示する共通処理
+const showView = (viewName) => {
+  // data-viewの値に対応する画面を探す
+  const nextView = document.querySelector(`#${viewName}-view`);
+
+  // 対応する画面が見つからなければ処理を終了する
+  if (!nextView) {
+    return;
+  }
+
+  // すべての画面をいったん非表示にする
+  appViews.forEach((view) => {
+    view.classList.remove("app-view--active");
+  });
+
+  // 選択された画面だけを表示する
+  nextView.classList.add("app-view--active");
+
+  // 切り替え後は画面の先頭へ移動する
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
 };
 
 // 通知ボタンをクリックしたときにパネルの表示を切り替える
@@ -131,4 +160,18 @@ document.addEventListener("keydown", (event) => {
     // 閉じたあと、操作位置をメニューボタンへ戻す
     menuButton.focus();
   }
+});
+
+// data-viewを持つボタンで画面を切り替える
+viewButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    // クリックされたボタンの移動先を取得する
+    const targetView = button.dataset.view;
+
+    // 全画面メニューを閉じる
+    closeMenuPanel();
+
+    // 指定された画面へ切り替える
+    showView(targetView);
+  });
 });
