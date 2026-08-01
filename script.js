@@ -14,17 +14,13 @@ const viewButtons = document.querySelectorAll("[data-view]");
 const appViews = document.querySelectorAll(".app-view");
 
 // 新規顧客登録フォームを取得する
-const newCustomerForm = document.querySelector(
-  "#new-customer-form"
-);
+const newCustomerForm = document.querySelector("#new-customer-form");
 
 // 来店日の入力欄を取得する
 const visitDateInput = document.querySelector("#visit-date");
 
 // 誕生日入力に使用する要素を取得する
-const birthdayStatusInputs = document.querySelectorAll(
-  'input[name="birthdayStatus"]'
-);
+const birthdayStatusInputs = document.querySelectorAll('input[name="birthdayStatus"]');
 
 const birthYearSelect = document.querySelector("#birth-year");
 const birthMonthSelect = document.querySelector("#birth-month");
@@ -35,121 +31,273 @@ const featureButtons = document.querySelectorAll(".feature-chip");
 
 // 特徴の追加に使用する要素を取得する
 const featureList = document.querySelector(".feature-list");
+const featureRequiredMessage =document.querySelector("#feature-required-message");
 const customFeatureInput = document.querySelector("#custom-feature");
 const featureAddButton = document.querySelector(".feature-add-button");
 
 // 特徴タグの編集に使用する要素を取得する
 const featureCard = document.querySelector(".feature-card");
-const featureEditButton = document.querySelector(
-  ".feature-edit-button"
-);
-const featureEditorBar = document.querySelector(
-  ".feature-editor-bar"
-);
-const featureSelectedCount = document.querySelector(
-  ".feature-selected-count"
-);
-const featureDeleteButton = document.querySelector(
-  ".feature-delete-button"
-);
+const featureEditButton = document.querySelector(".feature-edit-button");
+const featureEditorBar = document.querySelector(".feature-editor-bar");
+const featureSelectedCount = document.querySelector(".feature-selected-count");
+const featureDeleteButton = document.querySelector(".feature-delete-button");
 
 // 特徴タグの重複警告に使用する要素を取得する
-const featureDuplicateDialog = document.querySelector(
-  "#feature-duplicate-dialog"
-);
+const featureDuplicateDialog = document.querySelector("#feature-duplicate-dialog");
 
-const featureDuplicateDialogButton = document.querySelector(
-  ".feature-duplicate-dialog-button"
-);
+const featureDuplicateDialogButton = document.querySelector(".feature-duplicate-dialog-button");
 
 // 特徴タグの削除確認に使用する要素を取得する
-const featureDeleteDialog = document.querySelector(
-  "#feature-delete-dialog"
-);
+const featureDeleteDialog = document.querySelector("#feature-delete-dialog");
 
-const featureDeleteDialogMessage = document.querySelector(
-  ".feature-delete-dialog-message"
-);
+const featureDeleteDialogMessage = document.querySelector(".feature-delete-dialog-message");
 
-const featureDeleteDialogCancel = document.querySelector(
-  ".feature-delete-dialog-cancel"
-);
+const featureDeleteDialogCancel = document.querySelector(".feature-delete-dialog-cancel");
 
-const featureDeleteDialogConfirm = document.querySelector(
-  ".feature-delete-dialog-confirm"
-);
+const featureDeleteDialogConfirm = document.querySelector(".feature-delete-dialog-confirm");
 
 // 新規顧客メモの入力欄を取得する
-const newCustomerMemo = document.querySelector(
-  "#new-customer-memo"
-);
+const newCustomerMemo = document.querySelector("#new-customer-memo");
 
 // 顧客写真のプレビューに使用する要素を取得する
-const customerPhotoInput = document.querySelector(
-  "#customer-photo"
-);
+const customerPhotoInput = document.querySelector("#customer-photo");
 
-const photoPreview = document.querySelector(
-  ".photo-preview"
-);
+const photoPreview = document.querySelector(".photo-preview");
 
-const photoPreviewPlaceholder = document.querySelector(
-  ".photo-preview-placeholder"
-);
+const photoPreviewPlaceholder = document.querySelector(".photo-preview-placeholder");
 
-const photoPreviewList = document.querySelector(
-  ".photo-preview-list"
-);
+const photoPreviewList = document.querySelector(".photo-preview-list");
 
-const photoRemoveButton = document.querySelector(
-  ".photo-remove-button"
-);
+const photoRemoveButton = document.querySelector(".photo-remove-button");
 
 // 新規顧客の登録確認画面に使用する要素を取得する
-const newCustomerConfirmDialog =document.querySelector(
-  "#new-customer-confirm-dialog"
-);
+const newCustomerConfirmDialog =document.querySelector("#new-customer-confirm-dialog");
 
-const newCustomerConfirmSummary =document.querySelector(
-  "#new-customer-confirm-summary"
-);
+const newCustomerConfirmSummary =document.querySelector("#new-customer-confirm-summary");
 
-const newCustomerConfirmBack =document.querySelector(
-  ".new-customer-confirm-back"
-);
+const newCustomerConfirmBack =document.querySelector(".new-customer-confirm-back");
 
-const newCustomerSubmitButton =document.querySelector(
-  "#new-customer-submit-button"
-);
+const newCustomerSubmitButton =document.querySelector("#new-customer-submit-button");
 
-const newCustomerConfirmMain =document.querySelector(
-  ".new-customer-confirm-main"
-);
+const newCustomerConfirmMain =document.querySelector(".new-customer-confirm-main");
 
-const newCustomerConfirmRegister =document.querySelector(
-  ".new-customer-confirm-register"
-);
+const newCustomerConfirmRegister =document.querySelector(".new-customer-confirm-register");
 
-const newCustomerRegisterSuccess =document.querySelector(
-  ".new-customer-register-success"
-);
+const newCustomerRegisterSuccess =document.querySelector(".new-customer-register-success");
 
-const newCustomerSuccessBack =document.querySelector(
-  ".new-customer-success-back"
-);
+const newCustomerSuccessBack =document.querySelector(".new-customer-success-back");
 
 // 確認画面へ表示する入力欄を取得する
-const customerNameInput = document.querySelector(
-  "#customer-name"
+const customerNameInput = document.querySelector("#customer-name");
+
+// 似ている顧客のお知らせ欄を取得する
+const similarCustomerAlert =document.querySelector(".similar-customer-alert");
+
+const paymentAmountInput = document.querySelector("#payment-amount");
+
+// 会計金額からカンマを除き、数値として取得する
+const getPaymentAmountNumber = () => {
+  const numberText =
+    paymentAmountInput.value.replace(
+      /,/g,
+      ""
+    );
+
+  if (numberText === "") {
+    return null;
+  }
+
+  return Number(numberText);
+};
+
+// 会計金額へ3桁ごとのカンマを付ける
+// 会計金額へ3桁ごとのカンマを付ける
+const formatPaymentAmountInput = () => {
+  // 全角数字を1文字ずつ半角数字へ変換する
+  const convertedValue =
+    paymentAmountInput.value.replace(
+      /[０-９]/g,
+      (character) => {
+        return String.fromCharCode(
+          character.charCodeAt(0) - 0xfee0
+        );
+      }
+    );
+
+  // 全角カンマも半角カンマへ変換する
+  const normalizedValue =
+    convertedValue.replace(
+      /，/g,
+      ","
+    );
+
+  // 数字以外を取り除く
+  const enteredNumbers =
+    normalizedValue.replace(
+      /[^0-9]/g,
+      ""
+    );
+
+  // 数字がなければ空欄にする
+  if (enteredNumbers === "") {
+    paymentAmountInput.value = "";
+
+    return;
+  }
+
+  // 先頭の不要な0を取り除く
+  const normalizedNumbers =
+    enteredNumbers.replace(
+      /^0+(?=\d)/,
+      ""
+    );
+
+  // 3桁ごとにカンマを追加する
+  paymentAmountInput.value =
+    normalizedNumbers.replace(
+      /\B(?=(\d{3})+(?!\d))/g,
+      ","
+    );
+};
+
+// 入力するたびに会計金額を整形する
+paymentAmountInput.addEventListener(
+  "input",
+  (event) => {
+    // 日本語入力の変換途中では処理しない
+    if (event.isComposing) {
+      return;
+    }
+
+    formatPaymentAmountInput();
+  }
 );
 
-const paymentAmountInput = document.querySelector(
-  "#payment-amount"
+// 全角入力の変換が確定したあとに整形する
+paymentAmountInput.addEventListener(
+  "compositionend",
+  formatPaymentAmountInput
 );
 
-const staffMemberSelect = document.querySelector(
-  "#staff-member"
-);
+const staffMemberInput =document.querySelector("#staff-member");
+
+// スタッフ名の候補を表示するdatalistを取得する
+const staffMemberOptions =
+  document.querySelector(
+    "#staff-member-options"
+  );
+
+// 保存時に使用する名前
+const staffMemberStorageKey =
+  "customerCrmStaffMembers";
+
+// HTMLに最初から用意されているスタッフ名を取得する
+const defaultStaffMembers =
+  Array.from(
+    staffMemberOptions.options
+  ).map((option) => {
+    return option.value;
+  });
+
+// ブラウザに保存されているスタッフ名を取得する
+const getSavedStaffMembers = () => {
+  const savedData =
+    localStorage.getItem(
+      staffMemberStorageKey
+    );
+
+  if (!savedData) {
+    return [];
+  }
+
+  try {
+    const staffMembers =
+      JSON.parse(savedData);
+
+    return Array.isArray(staffMembers)
+      ? staffMembers
+      : [];
+  } catch {
+    return [];
+  }
+};
+
+// datalistへスタッフ候補を表示する
+const renderStaffMemberOptions = () => {
+  const savedStaffMembers =
+    getSavedStaffMembers();
+
+  // 初期候補と保存済み候補をまとめ、重複をなくす
+  const staffMembers = [
+    ...new Set([
+      ...defaultStaffMembers,
+      ...savedStaffMembers
+    ])
+  ];
+
+  staffMemberOptions.textContent = "";
+
+  staffMembers.forEach((staffName) => {
+    const option =
+      document.createElement("option");
+
+    option.value = staffName;
+
+    staffMemberOptions.appendChild(
+      option
+    );
+  });
+};
+
+// 入力されたスタッフ名を保存する
+const saveStaffMemberName = () => {
+  const staffName =
+    staffMemberInput.value.trim();
+
+  if (!staffName) {
+    return;
+  }
+
+  const savedStaffMembers =
+    getSavedStaffMembers();
+
+  // 同じ名前が保存済みか確認する
+  const isDuplicate =
+    savedStaffMembers.some(
+      (savedName) => {
+        return (
+          savedName.toLocaleLowerCase() ===
+          staffName.toLocaleLowerCase()
+        );
+      }
+    );
+
+  if (isDuplicate) {
+    return;
+  }
+
+  savedStaffMembers.push(staffName);
+
+  localStorage.setItem(
+    staffMemberStorageKey,
+    JSON.stringify(savedStaffMembers)
+  );
+
+  renderStaffMemberOptions();
+};
+
+// ページを開いたときに保存済み候補を反映する
+renderStaffMemberOptions();
+
+// 似ている顧客のお知らせを表示する
+const showSimilarCustomerAlert = () => {
+  similarCustomerAlert.hidden = false;
+};
+
+// 似ている顧客のお知らせを非表示にする
+const hideSimilarCustomerAlert = () => {
+  similarCustomerAlert.hidden = true;
+};
 
 // 通知パネルを閉じる共通処理
 const closeNotificationPanel = () => {
@@ -374,18 +522,26 @@ for (let year = currentYear; year >= 1900; year -= 1) {
 addSelectOptions(birthMonthSelect, 1, 12);
 addSelectOptions(birthDaySelect, 1, 31);
 
-// 「不明」の選択状態に合わせて入力欄を切り替える
+// 誕生日の選択状態に合わせて入力欄と必須設定を切り替える
 const updateBirthdayInputs = () => {
   const selectedStatus = document.querySelector(
     'input[name="birthdayStatus"]:checked'
   );
 
-  const isUnknown = selectedStatus?.value === "unknown";
+  const isUnknown =
+    selectedStatus?.value === "unknown";
 
+  // 「誕生日を入力する」の場合だけ必須にする
+  birthYearSelect.required = !isUnknown;
+  birthMonthSelect.required = !isUnknown;
+  birthDaySelect.required = !isUnknown;
+
+  // 「不明」の場合は入力欄を操作できなくする
   birthYearSelect.disabled = isUnknown;
   birthMonthSelect.disabled = isUnknown;
   birthDaySelect.disabled = isUnknown;
 
+  // 「不明」へ切り替えたら入力済みの誕生日を消す
   if (isUnknown) {
     birthYearSelect.value = "";
     birthMonthSelect.value = "";
@@ -434,6 +590,100 @@ const clearFeatureEditSelection = () => {
   updateFeatureEditor();
 };
 
+// フォームカードのエラー表示を切り替える
+const setFormCardError = (
+  card,
+  isInvalid
+) => {
+  card.classList.toggle(
+    "form-card--invalid",
+    isInvalid
+  );
+
+  const errorMessage =
+    card.querySelector(
+      ".form-error-message"
+    );
+
+  if (errorMessage) {
+    errorMessage.hidden = !isInvalid;
+  }
+
+  card
+    .querySelectorAll("[required]")
+    .forEach((field) => {
+      if (isInvalid) {
+        field.setAttribute(
+          "aria-invalid",
+          "true"
+        );
+      } else {
+        field.removeAttribute(
+          "aria-invalid"
+        );
+      }
+    });
+};
+
+// 通常の必須項目が未入力か確認する
+const isRequiredFieldInvalid = (
+  field
+) => {
+  // 空白だけの顧客名も未入力として扱う
+  if (field === customerNameInput) {
+    return field.value.trim() === "";
+  }
+
+  // 会計金額はカンマを除いた数値で確認する
+  if (field === paymentAmountInput) {
+    const paymentAmount =
+      getPaymentAmountNumber();
+
+    return (
+      paymentAmount === null ||
+      Number.isNaN(paymentAmount) ||
+      paymentAmount < 0
+    );
+  }
+
+  return !field.checkValidity();
+};
+
+// 特徴の必須エラーを非表示にする
+const hideFeatureRequiredError = () => {
+  setFormCardError(
+    featureCard,
+    false
+  );
+
+  featureList.removeAttribute(
+    "aria-invalid"
+  );
+};
+
+// 特徴が1つ以上選択されているか確認する
+const validateFeatureSelection = () => {
+  const selectedFeature =
+    featureList.querySelector(
+      ".feature-chip--selected"
+    );
+
+  const isValid =
+    Boolean(selectedFeature);
+
+  setFormCardError(
+    featureCard,
+    !isValid
+  );
+
+  featureList.setAttribute(
+    "aria-invalid",
+    String(!isValid)
+  );
+
+  return isValid;
+};
+
 // 顧客へ登録する特徴の選択状態を切り替える
 const toggleFeatureButton = (button) => {
   const isSelected = button.classList.toggle(
@@ -442,6 +692,11 @@ const toggleFeatureButton = (button) => {
 
   // 支援技術にも選択状態を伝える
   button.setAttribute("aria-pressed", String(isSelected));
+
+  // 1件でも選択されたら必須エラーを消す
+  if (isSelected) {
+    hideFeatureRequiredError();
+  }
 };
 
 // 編集モード中に削除対象を選択する
@@ -1128,18 +1383,21 @@ const renderNewCustomerConfirmSummary = () => {
       ? selectedFeatureNames.join("、")
       : "なし";
 
-  // 会計金額をカンマ付きで表示する
-  const paymentText =
-    paymentAmountInput.value === ""
-      ? "未入力"
-      : `${Number(
-          paymentAmountInput.value
-        ).toLocaleString("ja-JP")}円`;
+  // 会計金額を円記号とカンマ付きで表示する
+  const paymentAmount =
+    getPaymentAmountNumber();
 
-  // 選択中のスタッフ名を取得する
+  const paymentText =
+    paymentAmount === null
+      ? "未入力"
+      : `¥${paymentAmount.toLocaleString(
+          "ja-JP"
+        )}`;
+
+  // 入力されたスタッフ名を取得する
   const staffText =
-    staffMemberSelect.selectedOptions[0]
-      ?.textContent.trim() || "未選択";
+    staffMemberInput.value.trim() ||
+    "未入力";
 
   // メモが空欄の場合は「なし」と表示する
   const memoText =
@@ -1215,13 +1473,181 @@ const closeNewCustomerConfirmDialog = () => {
   newCustomerSubmitButton.focus();
 };
 
-// 必須項目を通過したあと、登録確認画面を開く
+// 入力内容を確認してから登録確認画面を開く
 newCustomerForm.addEventListener(
   "submit",
   (event) => {
     event.preventDefault();
 
+    // 最初に見つかったエラーを記録する
+    let firstInvalidCard = null;
+    let firstInvalidTarget = null;
+
+    // フォーム内のカードを上から順番に確認する
+    newCustomerForm
+      .querySelectorAll(".form-card")
+      .forEach((card) => {
+        // 特徴カードはタグの選択状態を確認する
+        if (
+          card.classList.contains(
+            "feature-card"
+          )
+        ) {
+          const isFeatureValid =
+            validateFeatureSelection();
+
+          if (
+            !isFeatureValid &&
+            !firstInvalidTarget
+          ) {
+            firstInvalidCard = card;
+
+            firstInvalidTarget =
+              featureList.querySelector(
+                ".feature-chip"
+              );
+          }
+
+          return;
+        }
+
+        // カード内の必須入力欄を取得する
+        const requiredFields =
+          Array.from(
+            card.querySelectorAll(
+              "[required]"
+            )
+          );
+
+        // 必須入力欄がないカードは確認しない
+        if (
+          requiredFields.length === 0
+        ) {
+          return;
+        }
+
+        // 未入力になっている欄を探す
+        const invalidField =
+          requiredFields.find(
+            isRequiredFieldInvalid
+          );
+
+        // カードのエラー表示を切り替える
+        setFormCardError(
+          card,
+          Boolean(invalidField)
+        );
+
+        // 最初のエラーだけ記録する
+        if (
+          invalidField &&
+          !firstInvalidTarget
+        ) {
+          firstInvalidCard = card;
+          firstInvalidTarget =
+            invalidField;
+        }
+      });
+
+    // エラーがある場合は確認画面を開かない
+    if (firstInvalidTarget) {
+      firstInvalidCard.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+      firstInvalidTarget.focus({
+        preventScroll: true
+      });
+
+      return;
+    }
+
+    // すべて入力済みなら確認画面を開く
     openNewCustomerConfirmDialog();
+  }
+);
+
+// 入力内容が正しくなったらカードのエラーを自動で消す
+newCustomerForm
+  .querySelectorAll("[required]")
+  .forEach((field) => {
+    const clearCardError = () => {
+      const card =
+        field.closest(".form-card");
+
+      // カードがない場合は何もしない
+      if (!card) {
+        return;
+      }
+
+      // カード内にある必須項目をすべて取得する
+      const requiredFields =
+        Array.from(
+          card.querySelectorAll(
+            "[required]"
+          )
+        );
+
+      // まだ未入力の必須項目があるか確認する
+      const hasInvalidField =
+        requiredFields.some(
+          isRequiredFieldInvalid
+        );
+
+      // すべて入力されたらエラーを消す
+      if (!hasInvalidField) {
+        setFormCardError(
+          card,
+          false
+        );
+      }
+    };
+
+    // 文字入力したとき
+    field.addEventListener(
+      "input",
+      clearCardError
+    );
+
+    // 日付や選択肢を変更したとき
+    field.addEventListener(
+      "change",
+      clearCardError
+    );
+  });
+
+// 誕生日を「不明」に変更した場合もエラーを消す
+birthdayStatusInputs.forEach(
+  (input) => {
+    input.addEventListener(
+      "change",
+      () => {
+        const birthdayCard =
+          birthYearSelect.closest(
+            ".form-card"
+          );
+
+        const requiredFields =
+          Array.from(
+            birthdayCard.querySelectorAll(
+              "[required]"
+            )
+          );
+
+        const hasInvalidField =
+          requiredFields.some(
+            isRequiredFieldInvalid
+          );
+
+        if (!hasInvalidField) {
+          setFormCardError(
+            birthdayCard,
+            false
+          );
+        }
+      }
+    );
   }
 );
 
@@ -1242,6 +1668,9 @@ newCustomerConfirmRegister.addEventListener(
 
     // 現段階では通信を想定した仮処理
     setTimeout(() => {
+      // 今回入力したスタッフ名を候補として保存する
+      saveStaffMemberName();
+
       newCustomerConfirmMain.hidden = true;
       newCustomerRegisterSuccess.hidden = false;
 
@@ -1258,6 +1687,9 @@ newCustomerConfirmRegister.addEventListener(
 const resetNewCustomerForm = () => {
   // 通常の入力欄・選択欄を初期化する
   newCustomerForm.reset();
+
+  // 似ている顧客のお知らせを非表示へ戻す
+  hideSimilarCustomerAlert();
 
   // 選択されている特徴タグをすべて解除する
   featureList
@@ -1276,6 +1708,9 @@ const resetNewCustomerForm = () => {
 
   // 特徴タグの編集モードも終了する
   setFeatureEditMode(false);
+
+  // 特徴の必須エラーも初期化する
+  hideFeatureRequiredError();
 
   // 選択されている顧客写真をすべて解除する
   customerPhotoFiles = [];

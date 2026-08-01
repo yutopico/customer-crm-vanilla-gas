@@ -980,6 +980,7 @@
                 <form
                     class="customer-form"
                     id="new-customer-form"
+                    novalidate
                 >
                     <!-- 顧客名を入力するカード -->
                     <section class="form-card">
@@ -1008,6 +1009,14 @@
                                 autocomplete="name"
                                 required
                             >
+
+                            <p
+                                class="form-error-message"
+                                role="alert"
+                                hidden
+                            >
+                                顧客名を入力してください。
+                            </p>
                         </div>
 
                         <!-- 登録済みの似ている顧客を知らせる領域 -->
@@ -1015,6 +1024,7 @@
                             class="similar-customer-alert"
                             aria-labelledby="similar-customer-title"
                             aria-live="polite"
+                            hidden
                         >
                             <div class="similar-customer-header">
                                 <span
@@ -1080,15 +1090,29 @@
                                 type="date"
                                 required
                             >
+
+                            <p
+                                class="form-error-message"
+                                role="alert"
+                                hidden
+                            >
+                                来店日を入力してください。
+                            </p>
                         </div>
                     </section>
 
                     <!-- 誕生日を入力するカード -->
                     <section class="form-card birthday-card">
-                        <!-- 誕生日の項目名 -->
-                        <p class="form-label birthday-card-title">
-                            誕生日
-                        </p>
+                        <!-- 誕生日の項目名と必須ラベル -->
+                        <div class="form-label-row">
+                            <p class="form-label birthday-card-title">
+                                誕生日
+                            </p>
+
+                            <span class="required-label">
+                                [必須]
+                            </span>
+                        </div>
 
                         <!-- 誕生日を入力するか、不明かを選択する -->
                         <div class="birthday-status">
@@ -1118,6 +1142,14 @@
                             </label>
                         </div>
 
+                        <p
+                            class="form-error-message"
+                            role="alert"
+                            hidden
+                        >
+                            生年月日の年・月・日をすべて選択してください。
+                        </p>
+
                         <!-- 生年月日の選択欄 -->
                         <div class="birthday-selects">
                             <label class="birthday-select-field">
@@ -1129,6 +1161,7 @@
                                     class="form-select"
                                     id="birth-year"
                                     name="birthYear"
+                                    required
                                 >
                                     <option value="">年</option>
                                 </select>
@@ -1143,6 +1176,7 @@
                                     class="form-select"
                                     id="birth-month"
                                     name="birthMonth"
+                                    required
                                 >
                                     <option value="">月</option>
                                 </select>
@@ -1157,6 +1191,7 @@
                                     class="form-select"
                                     id="birth-day"
                                     name="birthDay"
+                                    required
                                 >
                                     <option value="">日</option>
                                 </select>
@@ -1168,9 +1203,15 @@
                     <section class="form-card feature-card">
                         <!-- 特徴の見出しと編集ボタン -->
                         <div class="feature-card-header">
-                            <p class="form-label feature-card-title">
-                                特徴
-                            </p>
+                            <div class="form-label-row">
+                                <p class="form-label feature-card-title">
+                                    特徴
+                                </p>
+
+                                <span class="required-label">
+                                    [必須]
+                                </span>
+                            </div>
 
                             <button
                                 class="feature-edit-button"
@@ -1185,6 +1226,7 @@
                         <div
                             class="feature-list"
                             aria-label="お客様の特徴"
+                            aria-describedby="feature-required-message"
                         >
                             <button
                                 class="feature-chip"
@@ -1243,6 +1285,15 @@
                             </button>
                         </div>
 
+                        <p
+                            class="form-error-message feature-required-message"
+                            id="feature-required-message"
+                            role="alert"
+                            hidden
+                        >
+                            特徴を1つ以上選択してください。
+                        </p>
+
                         <!-- 特徴タグの編集操作 -->
                         <div
                             class="feature-editor-bar"
@@ -1294,7 +1345,7 @@
                         </div>
                     </section>
 
-                                        <!-- お客様の会計金額を入力するカード -->
+                    <!-- お客様の会計金額を入力するカード -->
                     <section class="form-card">
                         <div class="form-field">
                             <!-- 項目名と必須ラベル -->
@@ -1311,17 +1362,17 @@
                                 </span>
                             </div>
 
-                            <!-- 金額入力欄と円単位 -->
+                            <!-- 円記号と会計金額の入力欄 -->
                             <div class="payment-amount-field">
                                 <input
                                     class="form-input payment-amount-input"
                                     id="payment-amount"
                                     name="paymentAmount"
-                                    type="number"
+                                    type="text"
                                     inputmode="numeric"
-                                    min="0"
-                                    step="1"
+                                    pattern="[0-9,]*"
                                     placeholder="0"
+                                    autocomplete="off"
                                     aria-describedby="payment-amount-help"
                                     required
                                 >
@@ -1330,15 +1381,23 @@
                                     class="payment-amount-unit"
                                     aria-hidden="true"
                                 >
-                                    円
+                                    ¥
                                 </span>
                             </div>
+
+                            <p
+                                class="form-error-message"
+                                role="alert"
+                                hidden
+                            >
+                                0円以上の会計金額を入力してください。
+                            </p>
 
                             <p
                                 class="form-help-text"
                                 id="payment-amount-help"
                             >
-                                半角数字で入力してください。
+                                数字を入力すると、カンマが自動で追加されます。
                             </p>
                         </div>
                     </section>
@@ -1360,24 +1419,34 @@
                                 </span>
                             </div>
 
-                            <!-- 担当スタッフの選択欄 -->
-                            <div class="staff-select-field">
-                                <select
-                                    class="form-select"
+                            <!-- 担当スタッフの入力欄 -->
+                            <div class="staff-input-field">
+                                <input
+                                    class="form-input"
                                     id="staff-member"
                                     name="staffMember"
+                                    type="text"
+                                    list="staff-member-options"
+                                    placeholder="担当スタッフ名を入力してください"
+                                    autocomplete="off"
                                     required
                                 >
-                                    <option value="">
-                                        担当スタッフを選択してください
-                                    </option>
 
-                                    <!-- 現在は画面確認用の仮データ -->
-                                    <option value="staff-a">スタッフA</option>
-                                    <option value="staff-b">スタッフB</option>
-                                    <option value="staff-c">スタッフC</option>
-                                </select>
+                                <!-- 入力時に表示するスタッフ候補 -->
+                                <datalist id="staff-member-options">
+                                    <option value="スタッフA"></option>
+                                    <option value="スタッフB"></option>
+                                    <option value="スタッフC"></option>
+                                </datalist>
                             </div>
+
+                            <p
+                                class="form-error-message"
+                                role="alert"
+                                hidden
+                            >
+                                担当スタッフを入力してください。
+                            </p>
 
                             <p class="form-help-text">
                                 当日お客様を担当したスタッフを選択してください。
@@ -1515,10 +1584,6 @@
 
                     <!-- 新規顧客を登録する操作エリア -->
                     <div class="form-submit-area">
-                        <p class="form-submit-note">
-                            入力内容を確認してから登録してください。
-                        </p>
-
                         <button
                             class="new-customer-submit-button"
                             id="new-customer-submit-button"
@@ -1526,14 +1591,7 @@
                             form="new-customer-form"
                         >
                             <span>
-                                この内容で登録する
-                            </span>
-
-                            <span
-                                class="new-customer-submit-icon"
-                                aria-hidden="true"
-                            >
-                                →
+                                登録内容を確認する
                             </span>
                         </button>
                     </div>
