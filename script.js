@@ -31,7 +31,6 @@ const featureButtons = document.querySelectorAll(".feature-chip");
 
 // 特徴の追加に使用する要素を取得する
 const featureList = document.querySelector(".feature-list");
-const featureRequiredMessage =document.querySelector("#feature-required-message");
 const customFeatureInput = document.querySelector("#custom-feature");
 const featureAddButton = document.querySelector(".feature-add-button");
 
@@ -110,7 +109,6 @@ const getPaymentAmountNumber = () => {
   return Number(numberText);
 };
 
-// 会計金額へ3桁ごとのカンマを付ける
 // 会計金額へ3桁ごとのカンマを付ける
 const formatPaymentAmountInput = () => {
   // 全角数字を1文字ずつ半角数字へ変換する
@@ -1118,7 +1116,6 @@ const renderCustomerPhotoPreviews = () => {
   // 写真がない場合は未選択表示へ戻す
   if (customerPhotoFiles.length === 0) {
     photoPreviewPlaceholder.hidden = false;
-    photoPreviewPlaceholder.style.display = "";
 
     photoRemoveButton.hidden = true;
 
@@ -1127,7 +1124,6 @@ const renderCustomerPhotoPreviews = () => {
 
   // 写真がある場合は未選択表示を隠す
   photoPreviewPlaceholder.hidden = true;
-  photoPreviewPlaceholder.style.display = "none";
 
   // 写真の枚数に合わせて削除ボタンの文字を変更する
   photoRemoveButton.textContent =

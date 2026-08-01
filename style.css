@@ -719,11 +719,6 @@ html.app-loading .app-container {
   transform: translateY(3px);
 }
 
-/* メニューアイコンの真ん中の線だけ点線にする */
-.header-menu-line--dashed {
-  stroke-dasharray: 2.5 2.5;
-}
-
 /* ボタン内の最初のspanをアイコンとして扱う */
 .icon-button > span:first-child {
   font-size: 24px;
@@ -1409,14 +1404,6 @@ html.app-loading .app-container {
   font-size: 20px;
   line-height: 1;
   color: #818685;
-}
-
-/* マウスを乗せたときの動きをなめらかにする */
-.todo-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
 }
 
 /* やることカードのアイコンと項目名 */
@@ -2232,12 +2219,6 @@ html.app-loading .app-container {
 /* --------------------------------------------------
    特徴入力
 -------------------------------------------------- */
-
-/* 特徴カードのタイトル */
-.feature-card-title {
-  margin: 0 0 16px;
-}
-
 /* 特徴タグを横並びにする */
 .feature-list {
   display: flex;
@@ -3122,19 +3103,6 @@ html.app-loading .app-container {
 
   font-size: 13px;
   line-height: 1.6;
-}
-
-/* 選択した写真のプレビュー */
-.photo-preview-image {
-  width: 100%;
-  height: 100%;
-
-  object-fit: cover;
-}
-
-/* hidden属性がある間は写真を表示しない */
-.photo-preview-image[hidden] {
-  display: none;
 }
 
 /* 写真操作ボタンを並べる */

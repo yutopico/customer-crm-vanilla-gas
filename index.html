@@ -559,7 +559,7 @@
                             <!-- アイコンと項目名を横並びにする -->
                             <dt class="stat-label">
                                 <!-- 今月新しく登録された件数を表すNEWバッジ -->
-                                <span class="stat-icon stat-icon--new-badge" aria-hidden="true">NEW</span>
+                                <span class="stat-icon stat-icon--new" aria-hidden="true">NEW</span>
                                 <span>今月登録</span>
                             </dt>
                             <dd class="stat-value">
@@ -817,9 +817,6 @@
                                     <span class="customer-name">浅田 けん</span>
                                     <span class="customer-meta">2026/07/30 登録</span>
                                 </span>
-
-                                <!-- 顧客詳細へ進むことを表す矢印 -->
-                                <span class="customer-card-arrow" aria-hidden="true"></span>
                             </button>
 
                             <!-- 2人目の顧客カード -->
@@ -835,9 +832,6 @@
                                     <span class="customer-name">田中 翔</span>
                                     <span class="customer-meta">2026/07/29 登録</span>
                                 </span>
-
-                                <!-- 顧客詳細へ進むことを表す矢印 -->
-                                <span class="customer-card-arrow" aria-hidden="true"></span>
                             </button>
 
                             <!-- 3人目の顧客カード -->
@@ -853,9 +847,6 @@
                                     <span class="customer-name">山本 大輔</span>
                                     <span class="customer-meta">2026/07/27 登録</span>
                                 </span>
-
-                                <!-- 顧客詳細へ進むことを表す矢印 -->
-                                <span class="customer-card-arrow" aria-hidden="true"></span>
                             </button>
                         </div>
 
@@ -917,9 +908,6 @@
                                     <span class="customer-name">浅田 けん</span>
                                     <span class="customer-meta">2026/07/30 11:03 閲覧</span>
                                 </span>
-
-                                <!-- 顧客詳細へ進むことを表す矢印 -->
-                                <span class="customer-card-arrow" aria-hidden="true"></span>
                             </button>
 
                             <!-- 2人目の顧客カード -->
@@ -935,9 +923,6 @@
                                     <span class="customer-name">田中 翔</span>
                                     <span class="customer-meta">2026/07/29 22:15 閲覧</span>
                                 </span>
-
-                                <!-- 顧客詳細へ進むことを表す矢印 -->
-                                <span class="customer-card-arrow" aria-hidden="true"></span>
                             </button>
 
                             <!-- 3人目の顧客カード -->
@@ -953,9 +938,6 @@
                                     <span class="customer-name">Ren</span>
                                     <span class="customer-meta">2026/07/28 19:42 閲覧</span>
                                 </span>
-
-                                <!-- 顧客詳細へ進むことを表す矢印 -->
-                                <span class="customer-card-arrow" aria-hidden="true"></span>
                             </button>
                         </div>
                     </section>
@@ -1286,7 +1268,7 @@
                         </div>
 
                         <p
-                            class="form-error-message feature-required-message"
+                            class="form-error-message"
                             id="feature-required-message"
                             role="alert"
                             hidden
@@ -1370,7 +1352,6 @@
                                     name="paymentAmount"
                                     type="text"
                                     inputmode="numeric"
-                                    pattern="[0-9,]*"
                                     placeholder="0"
                                     autocomplete="off"
                                     aria-describedby="payment-amount-help"
@@ -1555,7 +1536,7 @@
 
                         <!-- 実際のファイル選択欄 -->
                         <input
-                            class="customer-photo-input visually-hidden"
+                            class="visually-hidden"
                             id="customer-photo"
                             name="customerPhoto"
                             type="file"
@@ -1588,7 +1569,6 @@
                             class="new-customer-submit-button"
                             id="new-customer-submit-button"
                             type="submit"
-                            form="new-customer-form"
                         >
                             <span>
                                 登録内容を確認する
