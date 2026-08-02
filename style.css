@@ -1835,19 +1835,6 @@ html.app-loading .app-container {
   line-height: 1;
 }
 
-/* 任意項目を表すセージ色のラベル */
-.optional-label {
-  padding: 4px 8px;
-
-  background-color: rgb(125 150 128 / 16%);
-  border-radius: 6px;
-
-  color: #7d9680;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-}
-
 /* テキスト入力欄 */
 .form-input {
   width: 100%;

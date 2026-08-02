@@ -2166,11 +2166,6 @@ const resetRegularCustomerForm = () => {
   );
 
   // 誕生日エラーを解除する
-  const regularBirthdayCard =
-    regularBirthYearSelect.closest(
-      ".form-card"
-    );
-
   setFormCardError(
     regularBirthdayCard,
     false
