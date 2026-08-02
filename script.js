@@ -13,6 +13,72 @@ const menuCloseButton = document.querySelector(".menu-close-button");
 const viewButtons = document.querySelectorAll("[data-view]");
 const appViews = document.querySelectorAll(".app-view");
 
+// 下部ナビゲーションの各ボタンを取得する
+const bottomNavItems = document.querySelectorAll(".bottom-nav-item[data-view]");
+
+// 常連顧客の検索に使用する要素を取得する
+const regularCustomerSearchInput = document.querySelector("#regular-customer-search");
+
+const regularCustomerSearchResults = document.querySelector("#regular-customer-search-results");
+
+const regularCustomerResultItems = document.querySelectorAll(".regular-customer-result-item");
+
+const regularCustomerNoResults = document.querySelector(".regular-customer-no-results");
+
+// 選択中のお客様カードに使用する要素を取得する
+const regularCustomerSelectButtons = document.querySelectorAll(".regular-customer-select-button");
+
+const regularSelectedCustomer = document.querySelector("#regular-selected-customer");
+
+const regularCustomerChangeButton = document.querySelector(".regular-customer-change-button");
+
+const regularSelectedAvatar = document.querySelector("#regular-selected-avatar");
+
+const regularSelectedName = document.querySelector("#regular-selected-name");
+
+const regularSelectedId = document.querySelector("#regular-selected-id");
+
+const regularSelectedLastVisit = document.querySelector("#regular-selected-last-visit");
+
+const regularSelectedVisitCount = document.querySelector("#regular-selected-visit-count");
+
+const regularSelectedTotalSales = document.querySelector("#regular-selected-total-sales");
+
+const regularSelectedAverageSpend = document.querySelector("#regular-selected-average-spend");
+
+const regularSelectedFeatures = document.querySelector("#regular-selected-features");
+
+const regularSelectedMemo = document.querySelector("#regular-selected-memo");
+
+const regularSelectedCustomerIdInput = document.querySelector("#regular-selected-customer-id");
+
+// 常連顧客の誕生日入力に使用する要素を取得する
+const regularBirthdayStatusInputs = document.querySelectorAll('input[name="regularBirthdayStatus"]');
+const regularBirthdayKnownInput = document.querySelector("#regular-birthday-known");
+const regularBirthdayUnknownInput = document.querySelector("#regular-birthday-unknown");
+const regularBirthYearSelect = document.querySelector("#regular-birth-year");
+const regularBirthMonthSelect = document.querySelector("#regular-birth-month");
+const regularBirthDaySelect = document.querySelector("#regular-birth-day");
+const regularBirthdayCard = document.querySelector(".regular-birthday-card");
+
+// 常連顧客更新フォームに使用する要素を取得する
+const regularCustomerForm = document.querySelector("#regular-customer-form");
+const regularCustomerSearchCard = document.querySelector(".regular-customer-search-card");
+const regularVisitDateInput = document.querySelector("#regular-visit-date");
+const regularPaymentAmountInput = document.querySelector("#regular-payment-amount");
+const regularStaffMemberInput = document.querySelector("#regular-staff-member");
+
+// 常連顧客の更新確認画面に使用する要素を取得する
+const regularCustomerMemo = document.querySelector("#regular-customer-memo");
+const regularCustomerSubmitButton = document.querySelector("#regular-customer-submit-button");
+const regularCustomerConfirmDialog = document.querySelector("#regular-customer-confirm-dialog");
+const regularCustomerConfirmSummary = document.querySelector("#regular-customer-confirm-summary");
+const regularCustomerConfirmMain = document.querySelector(".regular-customer-confirm-main");
+const regularCustomerConfirmBack = document.querySelector(".regular-customer-confirm-back");
+const regularCustomerUpdateSuccess = document.querySelector(".regular-customer-update-success");
+const regularCustomerConfirmUpdate = document.querySelector(".regular-customer-confirm-update");
+const regularCustomerSuccessBack = document.querySelector(".regular-customer-success-back");
+
 // 新規顧客登録フォームを取得する
 const newCustomerForm = document.querySelector("#new-customer-form");
 
@@ -70,21 +136,21 @@ const photoPreviewList = document.querySelector(".photo-preview-list");
 const photoRemoveButton = document.querySelector(".photo-remove-button");
 
 // 新規顧客の登録確認画面に使用する要素を取得する
-const newCustomerConfirmDialog =document.querySelector("#new-customer-confirm-dialog");
+const newCustomerConfirmDialog = document.querySelector("#new-customer-confirm-dialog");
 
-const newCustomerConfirmSummary =document.querySelector("#new-customer-confirm-summary");
+const newCustomerConfirmSummary = document.querySelector("#new-customer-confirm-summary");
 
-const newCustomerConfirmBack =document.querySelector(".new-customer-confirm-back");
+const newCustomerConfirmBack = document.querySelector(".new-customer-confirm-back");
 
-const newCustomerSubmitButton =document.querySelector("#new-customer-submit-button");
+const newCustomerSubmitButton = document.querySelector("#new-customer-submit-button");
 
-const newCustomerConfirmMain =document.querySelector(".new-customer-confirm-main");
+const newCustomerConfirmMain = document.querySelector(".new-customer-confirm-main");
 
-const newCustomerConfirmRegister =document.querySelector(".new-customer-confirm-register");
+const newCustomerConfirmRegister = document.querySelector(".new-customer-confirm-register");
 
-const newCustomerRegisterSuccess =document.querySelector(".new-customer-register-success");
+const newCustomerRegisterSuccess = document.querySelector(".new-customer-register-success");
 
-const newCustomerSuccessBack =document.querySelector(".new-customer-success-back");
+const newCustomerSuccessBack = document.querySelector(".new-customer-success-back");
 
 // 確認画面へ表示する入力欄を取得する
 const customerNameInput = document.querySelector("#customer-name");
@@ -177,7 +243,67 @@ paymentAmountInput.addEventListener(
   formatPaymentAmountInput
 );
 
-const staffMemberInput =document.querySelector("#staff-member");
+const staffMemberInput = document.querySelector("#staff-member");
+
+// 常連顧客の会計金額を数値として取得する
+const getRegularPaymentAmountNumber = () => {
+  const numberText = regularPaymentAmountInput.value.replace(/,/g, "");
+
+  if (numberText === "") {
+    return null;
+  }
+
+  return Number(numberText);
+};
+
+// 常連顧客の会計金額へ3桁ごとのカンマを付ける
+const formatRegularPaymentAmountInput = () => {
+  const convertedValue = regularPaymentAmountInput.value.replace(
+    /[０-９]/g,
+    (character) => {
+      return String.fromCharCode(
+        character.charCodeAt(0) - 0xfee0
+      );
+    }
+  );
+
+  const enteredNumbers = convertedValue
+    .replace(/，/g, ",")
+    .replace(/[^0-9]/g, "");
+
+  if (enteredNumbers === "") {
+    regularPaymentAmountInput.value = "";
+    return;
+  }
+
+  const normalizedNumbers = enteredNumbers.replace(
+    /^0+(?=\d)/,
+    ""
+  );
+
+  regularPaymentAmountInput.value = normalizedNumbers.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ","
+  );
+};
+
+// 入力するたびに常連顧客の会計金額を整形する
+regularPaymentAmountInput.addEventListener(
+  "input",
+  (event) => {
+    if (event.isComposing) {
+      return;
+    }
+
+    formatRegularPaymentAmountInput();
+  }
+);
+
+// 全角入力の変換が確定したあとに整形する
+regularPaymentAmountInput.addEventListener(
+  "compositionend",
+  formatRegularPaymentAmountInput
+);
 
 // スタッフ名の候補を表示するdatalistを取得する
 const staffMemberOptions =
@@ -248,9 +374,9 @@ const renderStaffMemberOptions = () => {
 };
 
 // 入力されたスタッフ名を保存する
-const saveStaffMemberName = () => {
+const saveStaffMemberName = (inputElement = staffMemberInput) => {
   const staffName =
-    staffMemberInput.value.trim();
+    inputElement.value.trim();
 
   if (!staffName) {
     return;
@@ -312,6 +438,278 @@ const closeMenuPanel = () => {
   document.body.classList.remove("menu-open");
 };
 
+// 表示中の画面に合わせて下部ナビの選択状態を更新する
+const updateBottomNavigation = (viewName) => {
+  // 来店登録に含まれる3つの画面
+  const visitRegistrationViews = [
+    "visit-registration",
+    "new-customer",
+    "regular-customer",
+  ];
+
+  // 新規・常連画面では「来店登録」を選択中にする
+  const activeNavView =
+    visitRegistrationViews.includes(viewName)
+      ? "visit-registration"
+      : viewName;
+
+  bottomNavItems.forEach((navItem) => {
+    const isActive =
+      navItem.dataset.view === activeNavView;
+
+    navItem.classList.toggle(
+      "bottom-nav-item--active",
+      isActive
+    );
+
+    // 読み上げ機能にも現在地を伝える
+    if (isActive) {
+      navItem.setAttribute(
+        "aria-current",
+        "page"
+      );
+    } else {
+      navItem.removeAttribute(
+        "aria-current"
+      );
+    }
+  });
+};
+
+// 検索文字を比較しやすい形へ整える
+const normalizeRegularCustomerSearchText = (
+  value
+) => {
+  return value
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/\s+/g, "");
+};
+
+// 入力文字に合う常連顧客だけを表示する
+const updateRegularCustomerSearchResults =
+  () => {
+    const searchText =
+      normalizeRegularCustomerSearchText(
+        regularCustomerSearchInput.value
+      );
+
+    // 入力欄が空の場合は検索結果を閉じる
+    if (searchText === "") {
+      regularCustomerSearchResults.hidden =
+        true;
+
+      regularCustomerResultItems.forEach(
+        (resultItem) => {
+          resultItem.hidden = false;
+        }
+      );
+
+      regularCustomerNoResults.hidden =
+        true;
+
+      return;
+    }
+
+    let matchCount = 0;
+
+    regularCustomerResultItems.forEach(
+      (resultItem) => {
+        const customerSearchText =
+          normalizeRegularCustomerSearchText(
+            resultItem.dataset.searchText || ""
+          );
+
+        const isMatch =
+          customerSearchText.includes(
+            searchText
+          );
+
+        resultItem.hidden = !isMatch;
+
+        if (isMatch) {
+          matchCount += 1;
+        }
+      }
+    );
+
+    // 文字が入力されたら検索結果欄を開く
+    regularCustomerSearchResults.hidden =
+      false;
+
+    // 一致する顧客がいない場合だけ案内を表示する
+    regularCustomerNoResults.hidden =
+      matchCount > 0;
+  };
+
+// 検索欄へ文字を入力するたびに結果を更新する
+regularCustomerSearchInput.addEventListener(
+  "input",
+  updateRegularCustomerSearchResults
+);
+
+// 選択した顧客の情報をプロフィールカードへ表示する
+const showSelectedRegularCustomer = (
+  resultItem
+) => {
+  const customerData = resultItem.dataset;
+
+  // 基本情報を表示する
+  regularSelectedAvatar.textContent =
+    customerData.customerInitial || "客";
+
+  regularSelectedName.textContent =
+    customerData.customerName || "";
+   regularSelectedId.textContent =
+    customerData.customerId || "";
+
+  regularSelectedLastVisit.textContent =
+    customerData.lastVisit || "未登録";
+
+  regularSelectedVisitCount.textContent =
+    customerData.visitCount || "0";
+
+// 売上金額をカンマ付きで表示する
+const totalSales =
+  Number(customerData.totalSales || 0);
+
+const averageSpend =
+  Number(customerData.averageSpend || 0);
+
+  regularSelectedTotalSales.textContent =
+    `${totalSales.toLocaleString("ja-JP")}円`;
+
+  regularSelectedAverageSpend.textContent =
+    `${averageSpend.toLocaleString("ja-JP")}円`;
+
+  // 特徴タグを一度すべて消す
+  regularSelectedFeatures.replaceChildren();
+
+// カンマ区切りの特徴をタグとして表示する
+const featureNames =
+  (customerData.features || "")
+    .split(",")
+    .map((featureName) => {
+      return featureName.trim();
+    })
+    .filter(Boolean);
+
+featureNames.forEach((featureName) => {
+  const featureTag =
+    document.createElement("span");
+
+  featureTag.textContent = featureName;
+
+  regularSelectedFeatures.appendChild(
+    featureTag
+  );
+});
+
+  // 最近のメモを表示する
+  regularSelectedMemo.textContent =
+    customerData.recentMemo || "なし";
+
+  // 更新時に使用する顧客IDを保持する
+  regularSelectedCustomerIdInput.value =
+    customerData.customerId || "";
+
+  // 来店日が空欄なら今日の日付を入れる
+  setTodayToRegularVisitDate();
+
+  // 登録済みの誕生日をフォームへ反映する
+  const isBirthdayUnknown =
+    customerData.birthdayStatus ===
+    "unknown";
+
+  regularBirthdayKnownInput.checked =
+    !isBirthdayUnknown;
+
+  regularBirthdayUnknownInput.checked =
+    isBirthdayUnknown;
+
+  regularBirthYearSelect.value =
+    isBirthdayUnknown
+      ? ""
+      : customerData.birthYear || "";
+
+  regularBirthMonthSelect.value =
+    isBirthdayUnknown
+      ? ""
+      : customerData.birthMonth || "";
+
+  regularBirthDaySelect.value =
+    isBirthdayUnknown
+      ? ""
+      : customerData.birthDay || "";
+
+  updateRegularBirthdayInputs();
+
+  // 誕生日が未登録のお客様だけ入力カードを表示する
+  regularBirthdayCard.hidden =
+    !isBirthdayUnknown;
+
+  // 自動入力されたため、誕生日のエラーを解除する
+  setFormCardError(
+    regularBirthdayCard,
+    false
+  );
+
+  // 顧客選択の必須エラーを消す
+  setFormCardError(
+    regularCustomerSearchCard,
+    false
+  );
+
+  // 選択中のお客様カードを表示する
+  regularSelectedCustomer.hidden = false;
+
+  // 検索結果は閉じる
+  regularCustomerSearchResults.hidden = true;
+
+  // 選択中のお客様カードまで移動する
+  regularSelectedCustomer.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+};
+
+// 各「この顧客を選択」ボタンに処理を登録する
+regularCustomerSelectButtons.forEach(
+  (selectButton) => {
+    selectButton.addEventListener(
+      "click",
+      () => {
+        const resultItem =
+          selectButton.closest(
+            ".regular-customer-result-item"
+          );
+
+        if (!resultItem) {
+          return;
+        }
+
+        showSelectedRegularCustomer(
+          resultItem
+        );
+      }
+    );
+  }
+);
+
+// 「変更」を押したら顧客を選び直せるようにする
+regularCustomerChangeButton.addEventListener(
+  "click",
+  () => {
+    regularSelectedCustomer.hidden = true;
+    regularBirthdayCard.hidden = true;
+    regularSelectedCustomerIdInput.value = "";
+
+    updateRegularCustomerSearchResults();
+
+    regularCustomerSearchInput.focus();
+  }
+);
+
 // 指定された画面だけを表示する共通処理
 const showView = (viewName, scrollBehavior = "smooth") => {
   // data-viewの値に対応する画面を探す
@@ -329,6 +727,9 @@ const showView = (viewName, scrollBehavior = "smooth") => {
 
   // 選択された画面だけを表示する
   nextView.classList.add("app-view--active");
+
+  // 下部ナビの選択状態も現在の画面に合わせる
+  updateBottomNavigation(viewName);
 
   // 現在の画面を、このタブが開いている間だけ記憶する
   sessionStorage.setItem("currentView", viewName);
@@ -492,6 +893,32 @@ const setTodayToVisitDate = () => {
 // ページを表示したときに今日の日付を設定する
 setTodayToVisitDate();
 
+// 常連顧客の来店日が未入力の場合、今日の日付を設定する
+const setTodayToRegularVisitDate = () => {
+  if (
+    !regularVisitDateInput ||
+    regularVisitDateInput.value
+  ) {
+    return;
+  }
+
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = String(
+    today.getMonth() + 1
+  ).padStart(2, "0");
+  const day = String(
+    today.getDate()
+  ).padStart(2, "0");
+
+  regularVisitDateInput.value =
+    `${year}-${month}-${day}`;
+};
+
+// ページ表示時に常連顧客の来店日も設定する
+setTodayToRegularVisitDate();
+
 // セレクトボックスへ選択肢を追加する共通処理
 const addSelectOptions = (selectElement, start, end) => {
   for (let number = start; number <= end; number += 1) {
@@ -519,6 +946,80 @@ for (let year = currentYear; year >= 1900; year -= 1) {
 // 誕生月と誕生日の選択肢を追加する
 addSelectOptions(birthMonthSelect, 1, 12);
 addSelectOptions(birthDaySelect, 1, 31);
+
+// 常連顧客の誕生年を今年から1900年まで追加する
+for (
+  let year = currentYear;
+  year >= 1900;
+  year -= 1
+) {
+  const option =
+    document.createElement("option");
+
+  option.value = String(year);
+  option.textContent = String(year);
+
+  regularBirthYearSelect.appendChild(
+    option
+  );
+}
+
+// 常連顧客の誕生月と誕生日を追加する
+addSelectOptions(
+  regularBirthMonthSelect,
+  1,
+  12
+);
+
+addSelectOptions(
+  regularBirthDaySelect,
+  1,
+  31
+);
+
+// 常連顧客の誕生日状態に合わせて入力欄を切り替える
+const updateRegularBirthdayInputs = () => {
+  const isUnknown =
+    regularBirthdayUnknownInput.checked;
+
+  regularBirthYearSelect.required =
+    !isUnknown;
+
+  regularBirthMonthSelect.required =
+    !isUnknown;
+
+  regularBirthDaySelect.required =
+    !isUnknown;
+
+  regularBirthYearSelect.disabled =
+    isUnknown;
+
+  regularBirthMonthSelect.disabled =
+    isUnknown;
+
+  regularBirthDaySelect.disabled =
+    isUnknown;
+
+  // 「不明」を選んだ場合は年月日を空にする
+  if (isUnknown) {
+    regularBirthYearSelect.value = "";
+    regularBirthMonthSelect.value = "";
+    regularBirthDaySelect.value = "";
+  }
+};
+
+// ラジオボタンを変更したときに入力欄を更新する
+regularBirthdayStatusInputs.forEach(
+  (input) => {
+    input.addEventListener(
+      "change",
+      updateRegularBirthdayInputs
+    );
+  }
+);
+
+// 最初の表示状態を反映する
+updateRegularBirthdayInputs();
 
 // 誕生日の選択状態に合わせて入力欄と必須設定を切り替える
 const updateBirthdayInputs = () => {
@@ -646,6 +1147,196 @@ const isRequiredFieldInvalid = (
 
   return !field.checkValidity();
 };
+
+// 常連顧客フォームの必須項目が未入力か確認する
+const isRegularRequiredFieldInvalid = (field) => {
+  if (field === regularPaymentAmountInput) {
+    const paymentAmount = getRegularPaymentAmountNumber();
+
+    return (
+      paymentAmount === null ||
+      Number.isNaN(paymentAmount) ||
+      paymentAmount < 0
+    );
+  }
+
+  if (field === regularStaffMemberInput) {
+    return field.value.trim() === "";
+  }
+
+  return !field.checkValidity();
+};
+
+// 常連顧客フォームの入力内容を確認する
+regularCustomerForm.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+
+    let firstInvalidCard = null;
+    let firstInvalidTarget = null;
+
+    // 顧客が選択されているか確認する
+    const isCustomerNotSelected =
+      regularSelectedCustomerIdInput.value === "";
+
+    setFormCardError(
+      regularCustomerSearchCard,
+      isCustomerNotSelected
+    );
+
+    if (isCustomerNotSelected) {
+      firstInvalidCard = regularCustomerSearchCard;
+      firstInvalidTarget = regularCustomerSearchInput;
+    }
+
+    // 誕生日が正しく選択されているか確認する
+    const regularBirthdayCard =
+      regularBirthYearSelect.closest(".form-card");
+
+    const isBirthdayUnknown =
+      regularBirthdayUnknownInput.checked;
+
+    const isBirthdayInvalid =
+      !isBirthdayUnknown &&
+      (
+        regularBirthYearSelect.value === "" ||
+        regularBirthMonthSelect.value === "" ||
+        regularBirthDaySelect.value === ""
+      );
+
+    setFormCardError(
+      regularBirthdayCard,
+      isBirthdayInvalid
+    );
+
+    if (
+      isBirthdayInvalid &&
+      !firstInvalidTarget
+    ) {
+      firstInvalidCard = regularBirthdayCard;
+      firstInvalidTarget = regularBirthYearSelect;
+    }
+
+    // 来店情報の必須項目を確認する
+    const regularRequiredFields = [
+      regularVisitDateInput,
+      regularPaymentAmountInput,
+      regularStaffMemberInput,
+    ];
+
+    regularRequiredFields.forEach((field) => {
+      const fieldCard =
+        field.closest(".regular-visit-field");
+
+      const isInvalid =
+        isRegularRequiredFieldInvalid(field);
+
+      setFormCardError(
+        fieldCard,
+        isInvalid
+      );
+
+      if (
+        isInvalid &&
+        !firstInvalidTarget
+      ) {
+        firstInvalidCard = fieldCard;
+        firstInvalidTarget = field;
+      }
+    });
+
+    // 最初に見つかったエラーまで移動する
+    if (firstInvalidTarget) {
+      firstInvalidCard.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      firstInvalidTarget.focus({
+        preventScroll: true,
+      });
+
+      return;
+    }
+
+    // すべて入力済みなら更新確認画面を開く
+    openRegularCustomerConfirmDialog();
+  }
+);
+
+// 常連顧客の必須項目が入力されたらエラーを消す
+[
+  regularVisitDateInput,
+  regularPaymentAmountInput,
+  regularStaffMemberInput,
+].forEach((field) => {
+  const clearRegularFieldError = () => {
+    const fieldCard =
+      field.closest(".regular-visit-field");
+
+    if (
+      !isRegularRequiredFieldInvalid(field)
+    ) {
+      setFormCardError(
+        fieldCard,
+        false
+      );
+    }
+  };
+
+  field.addEventListener(
+    "input",
+    clearRegularFieldError
+  );
+
+  field.addEventListener(
+    "change",
+    clearRegularFieldError
+  );
+});
+
+// 誕生日がすべて選択されたらエラーを消す
+const clearRegularBirthdayError = () => {
+  const regularBirthdayCard =
+    regularBirthYearSelect.closest(".form-card");
+
+  const isBirthdayUnknown =
+    regularBirthdayUnknownInput.checked;
+
+  const isComplete =
+    regularBirthYearSelect.value !== "" &&
+    regularBirthMonthSelect.value !== "" &&
+    regularBirthDaySelect.value !== "";
+
+  if (
+    isBirthdayUnknown ||
+    isComplete
+  ) {
+    setFormCardError(
+      regularBirthdayCard,
+      false
+    );
+  }
+};
+
+regularBirthdayStatusInputs.forEach((input) => {
+  input.addEventListener(
+    "change",
+    clearRegularBirthdayError
+  );
+});
+
+[
+  regularBirthYearSelect,
+  regularBirthMonthSelect,
+  regularBirthDaySelect,
+].forEach((select) => {
+  select.addEventListener(
+    "change",
+    clearRegularBirthdayError
+  );
+});
 
 // 特徴の必須エラーを非表示にする
 const hideFeatureRequiredError = () => {
@@ -1335,6 +2026,225 @@ const createCustomerConfirmItem = (
 
   return item;
 };
+
+// 常連顧客の更新内容を確認画面へ表示する
+const renderRegularCustomerConfirmSummary = () => {
+  const confirmList =
+    document.createElement("dl");
+
+  confirmList.className =
+    "new-customer-confirm-list";
+
+  // 誕生日の表示内容を作る
+  const birthdayText =
+    regularBirthdayUnknownInput.checked
+      ? "不明"
+      : (
+          `${regularBirthYearSelect.value}年` +
+          `${Number(regularBirthMonthSelect.value)}月` +
+          `${Number(regularBirthDaySelect.value)}日`
+        );
+
+  // 会計金額を円記号とカンマ付きで表示する
+  const paymentAmount =
+    getRegularPaymentAmountNumber();
+
+  const paymentText =
+    `¥${paymentAmount.toLocaleString(
+      "ja-JP"
+    )}`;
+
+  // メモが空欄の場合は「なし」と表示する
+  const memoText =
+    regularCustomerMemo.value.trim() ||
+    "なし";
+
+  confirmList.append(
+    createCustomerConfirmItem(
+      "お客様",
+      `${regularSelectedName.textContent.trim()}（${regularSelectedId.textContent.trim()}）`
+    ),
+    createCustomerConfirmItem(
+      "誕生日",
+      birthdayText
+    ),
+    createCustomerConfirmItem(
+      "来店日",
+      formatCustomerDate(
+        regularVisitDateInput.value
+      )
+    ),
+    createCustomerConfirmItem(
+      "会計金額",
+      paymentText
+    ),
+    createCustomerConfirmItem(
+      "担当スタッフ",
+      regularStaffMemberInput.value.trim()
+    ),
+    createCustomerConfirmItem(
+      "常連顧客メモ",
+      memoText
+    )
+  );
+
+  regularCustomerConfirmSummary.replaceChildren(
+    confirmList
+  );
+};
+
+// 常連顧客の更新確認画面を開く
+const openRegularCustomerConfirmDialog = () => {
+  regularCustomerConfirmMain.hidden = false;
+  regularCustomerUpdateSuccess.hidden = true;
+
+  // 現在の入力内容を確認画面へ反映する
+  renderRegularCustomerConfirmSummary();
+
+  regularCustomerConfirmDialog.hidden = false;
+
+  document.body.classList.add(
+    "confirm-dialog-open"
+  );
+
+  regularCustomerConfirmBack.focus();
+};
+
+// 常連顧客の更新確認画面を閉じる
+const closeRegularCustomerConfirmDialog = () => {
+  regularCustomerConfirmDialog.hidden = true;
+
+  document.body.classList.remove(
+    "confirm-dialog-open"
+  );
+
+  regularCustomerSubmitButton.focus();
+};
+
+// 「戻って修正」を押したとき
+regularCustomerConfirmBack.addEventListener(
+  "click",
+  closeRegularCustomerConfirmDialog
+);
+
+// 常連顧客更新フォームを初期状態へ戻す
+const resetRegularCustomerForm = () => {
+  // 入力欄を初期化する
+  regularCustomerForm.reset();
+
+  // 選択中のお客様を解除する
+  regularSelectedCustomer.hidden = true;
+  regularSelectedCustomerIdInput.value = "";
+
+  // 検索欄と検索結果を初期化する
+  regularCustomerSearchInput.value = "";
+  regularCustomerSearchResults.hidden = true;
+  regularCustomerNoResults.hidden = true;
+
+  regularCustomerResultItems.forEach(
+    (resultItem) => {
+      resultItem.hidden = false;
+    }
+  );
+
+  // 誕生日を「入力する」の初期状態へ戻す
+  regularBirthdayKnownInput.checked = true;
+  regularBirthdayUnknownInput.checked = false;
+
+  updateRegularBirthdayInputs();
+
+  // 誕生日カードを初期状態では隠す
+  regularBirthdayCard.hidden = true;
+
+  // 来店日に今日の日付を設定する
+  setTodayToRegularVisitDate();
+
+  // 顧客選択エラーを解除する
+  setFormCardError(
+    regularCustomerSearchCard,
+    false
+  );
+
+  // 誕生日エラーを解除する
+  const regularBirthdayCard =
+    regularBirthYearSelect.closest(
+      ".form-card"
+    );
+
+  setFormCardError(
+    regularBirthdayCard,
+    false
+  );
+
+  // 来店情報のエラーをすべて解除する
+  regularCustomerForm
+    .querySelectorAll(
+      ".regular-visit-field"
+    )
+    .forEach((fieldCard) => {
+      setFormCardError(
+        fieldCard,
+        false
+      );
+    });
+};
+
+// 確認画面の「更新する」を押したとき
+regularCustomerConfirmUpdate.addEventListener(
+  "click",
+  () => {
+    // 更新処理中の表示へ切り替える
+    regularCustomerConfirmUpdate.disabled =
+      true;
+
+    regularCustomerConfirmUpdate.textContent =
+      "更新中...";
+
+    // 現段階では通信を想定した仮処理
+    setTimeout(() => {
+      // 今回入力したスタッフ名を候補として保存する
+      saveStaffMemberName(
+        regularStaffMemberInput
+      );
+
+      // 確認内容を隠して更新完了画面を表示する
+      regularCustomerConfirmMain.hidden =
+        true;
+
+      regularCustomerUpdateSuccess.hidden =
+        false;
+
+      // 更新ボタンを元の状態へ戻す
+      regularCustomerConfirmUpdate.disabled =
+        false;
+
+      regularCustomerConfirmUpdate.textContent =
+        "更新する";
+
+      regularCustomerSuccessBack.focus();
+    }, 900);
+  }
+);
+
+// 「検索画面へ戻る」を押したとき
+regularCustomerSuccessBack.addEventListener(
+  "click",
+  () => {
+    resetRegularCustomerForm();
+    closeRegularCustomerConfirmDialog();
+
+    // 検索画面の上部へ戻る
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+    // 次の顧客を検索できるよう入力欄へ移動する
+    regularCustomerSearchInput.focus({
+      preventScroll: true,
+    });
+  }
+);
 
 // 入力内容を確認画面へ表示する
 const renderNewCustomerConfirmSummary = () => {

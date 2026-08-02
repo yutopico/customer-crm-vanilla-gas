@@ -3546,7 +3546,1188 @@ body.confirm-dialog-open {
 
 
 /* ==================================================
-   11. レスポンシブ設定
+   11. 来店登録の種類選択画面
+   新規顧客・常連顧客の入口
+================================================== */
+
+/* 来店登録画面全体 */
+#visit-registration-view {
+  padding: 40px 0 32px;
+}
+
+/* 英字ラベル・タイトル・説明文を中央に並べる */
+.visit-registration-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+
+  text-align: center;
+}
+
+/* 来店登録画面の英字ラベル */
+#visit-registration-view .page-heading-label {
+  margin: 0 0 8px;
+
+  color: #7d9680;
+}
+
+/* 来店登録画面のタイトル */
+.visit-registration-heading h2 {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.08em;
+}
+
+/* タイトル下の点線装飾 */
+.visit-registration-heading-line {
+  display: block;
+
+  width: min(360px, 72%);
+  height: 5px;
+  margin: 18px auto 22px;
+
+  background:
+    radial-gradient(
+      circle,
+      #aeb6a5 2px,
+      transparent 2.5px
+    )
+    left center / 16px 5px repeat-x;
+
+  opacity: 0.9;
+}
+
+/* お客様の種類を選ぶ案内文 */
+.visit-registration-description {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(15px, 2vw, 19px);
+  line-height: 1.7;
+  letter-spacing: 0.05em;
+}
+
+/* 新規顧客・常連顧客カードを並べる領域 */
+.visit-registration-options {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+
+  width: 100%;
+  max-width: 820px;
+  margin: 44px auto 0;
+}
+
+/* 来店登録の種類を選択する共通カード */
+.visit-registration-card {
+  position: relative;
+
+  display: grid;
+  grid-template-columns:
+    104px
+    1px
+    minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+
+  width: 100%;
+  min-height: 200px;
+  padding: 32px 76px 32px 32px;
+
+  border: 1px solid rgb(81 82 84 / 10%);
+  border-radius: 30px;
+
+  color: #515254;
+  font: inherit;
+  text-align: left;
+
+  box-shadow:
+    0 14px 30px rgb(81 82 84 / 12%);
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* 新規顧客カード */
+.visit-registration-card--new {
+  background:
+    linear-gradient(
+      135deg,
+      rgb(255 255 255 / 16%),
+      transparent 56%
+    ),
+    #f5b187;
+
+  border-color: rgb(245 177 135 / 72%);
+}
+
+/* 常連顧客カード */
+.visit-registration-card--regular {
+  background:
+    linear-gradient(
+      135deg,
+      rgb(255 255 255 / 24%),
+      transparent 58%
+    ),
+    rgb(125 150 128 / 62%);
+
+  border-color: rgb(125 150 128 / 58%);
+}
+
+/* カード左側のアイコン領域 */
+.visit-registration-card-icon {
+  display: grid;
+  place-items: center;
+
+  width: 92px;
+  height: 92px;
+
+  background-color: rgb(255 255 255 / 38%);
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 50%;
+
+  color: #515254;
+
+  flex-shrink: 0;
+}
+
+/* カード内のSVGアイコン */
+.visit-registration-card-icon svg {
+  width: 54px;
+  height: 54px;
+}
+
+/* アイコンと文字の間に置く点線 */
+.visit-registration-card-divider {
+  width: 1px;
+  height: 92px;
+
+  border-left: 2px dotted rgb(81 82 84 / 24%);
+
+  justify-self: center;
+}
+
+/* カードのタイトルと説明文 */
+.visit-registration-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+
+  min-width: 0;
+}
+
+/* 新規顧客・常連顧客のタイトル */
+.visit-registration-card-title {
+  color: #515254;
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+}
+
+/* カードの補足説明 */
+.visit-registration-card-description {
+  color: rgb(81 82 84 / 82%);
+  font-size: clamp(14px, 2vw, 18px);
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+
+/* カード右側の矢印 */
+.visit-registration-card-arrow {
+  position: absolute;
+  top: 50%;
+  right: 30px;
+
+  color: #515254;
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1;
+
+  transform: translateY(-54%);
+
+  transition: transform 0.2s ease;
+}
+
+/* カードへマウスを乗せたとき */
+.visit-registration-card:hover {
+  border-color: rgb(81 82 84 / 20%);
+
+  box-shadow:
+    0 18px 38px rgb(81 82 84 / 18%);
+
+  transform: translateY(-3px);
+}
+
+/* ホバー中は矢印を少し右へ動かす */
+.visit-registration-card:hover
+.visit-registration-card-arrow {
+  transform:
+    translateX(4px)
+    translateY(-54%);
+}
+
+/* カードをクリックしている間 */
+.visit-registration-card:active {
+  box-shadow:
+    0 10px 22px rgb(81 82 84 / 12%);
+
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時の選択位置 */
+.visit-registration-card:focus-visible {
+  outline: 4px solid rgb(241 154 82 / 34%);
+  outline-offset: 4px;
+}
+
+/* 画面下部のブランド風装飾 */
+.visit-registration-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  width: min(420px, 74%);
+  margin: 52px auto 0;
+}
+
+/* 装飾の左右に置く線 */
+.visit-registration-decoration-line {
+  flex: 1;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgb(125 150 128 / 46%),
+      transparent
+    );
+}
+
+/* 中央の小さなブランドマーク */
+.visit-registration-decoration-mark {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 58px;
+  height: 58px;
+
+  border: 1px solid rgb(125 150 128 / 34%);
+  border-radius: 50%;
+
+  color: transparent;
+  font-size: 0;
+
+  flex-shrink: 0;
+}
+
+/* ブランドマークの大きな円 */
+.visit-registration-decoration-mark::before {
+  content: "";
+
+  width: 24px;
+  height: 24px;
+
+  border: 6px solid #aeb6a5;
+  border-radius: 50%;
+}
+
+/* ブランドマーク右下のオレンジ色の丸 */
+.visit-registration-decoration-mark::after {
+  content: "";
+
+  position: absolute;
+  right: 9px;
+  bottom: 10px;
+
+  width: 9px;
+  height: 9px;
+
+  background-color: #f5b187;
+  border: 2px solid #f1e8dc;
+  border-radius: 50%;
+}
+
+
+/* ==================================================
+   12. 常連顧客更新画面
+   顧客検索・顧客選択・来店情報の追加
+================================================== */
+
+/* 常連顧客更新画面全体 */
+#regular-customer-view {
+  padding-top: 12px;
+}
+
+/* 常連顧客画面の英字ラベル */
+#regular-customer-view .page-heading-label {
+  color: #7d9680;
+}
+
+/* 常連顧客画面の必須ラベル */
+#regular-customer-view .required-label {
+  background-color: rgb(125 150 128 / 18%);
+  color: #6d856f;
+}
+
+/* 顧客検索カード */
+.regular-customer-search-card {
+  width: 100%;
+  max-width: 760px;
+  margin: 28px auto 0;
+}
+
+/* 検索入力欄と虫眼鏡を重ねる領域 */
+.regular-customer-search-field {
+  position: relative;
+}
+
+/* 虫眼鏡用の余白を右側に作る */
+#regular-customer-search {
+  padding-right: 54px;
+}
+
+/* 検索欄の入力内容を消す×ボタン */
+#regular-customer-search::-webkit-search-cancel-button {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+
+  background-color: #f5b187;
+
+  -webkit-mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+
+  mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+
+  cursor: pointer;
+}
+
+/* 検索入力欄の虫眼鏡 */
+.regular-customer-search-icon {
+  position: absolute;
+  top: 50%;
+  right: 17px;
+
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+
+  color: #7d9680;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+}
+
+/* 虫眼鏡アイコン */
+.regular-customer-search-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* 検索結果全体 */
+.regular-customer-search-results {
+  margin-top: 12px;
+  padding-top: 20px;
+
+  border-top: 1px solid rgb(129 134 133 / 22%);
+}
+
+/* hidden中は検索結果を表示しない */
+.regular-customer-search-results[hidden] {
+  display: none;
+}
+
+/* 検索結果の見出し */
+.regular-customer-results-title {
+  margin: 0 0 12px;
+
+  color: #515254;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* 検索結果をまとめる一覧 */
+.regular-customer-result-list {
+  display: flex;
+  flex-direction: column;
+
+  background-color: rgb(255 255 255 / 44%);
+  border: 1px solid rgb(81 82 84 / 10%);
+  border-radius: 16px;
+
+  overflow: hidden;
+}
+
+/* 検索結果1件分 */
+.regular-customer-result-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+
+  padding: 18px;
+
+  color: #515254;
+}
+
+/* 検索条件に一致しない顧客を隠す */
+.regular-customer-result-item[hidden] {
+  display: none;
+}
+
+/* 各顧客の間に区切り線を入れる */
+.regular-customer-result-item + .regular-customer-result-item {
+  border-top: 1px solid rgb(129 134 133 / 22%);
+}
+
+/* 顧客アイコンと顧客情報 */
+.regular-customer-result-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  min-width: 0;
+}
+
+/* 顧客写真未登録時の丸い仮アイコン */
+.regular-customer-result-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+
+  background-color: rgb(125 150 128 / 15%);
+  border: 1px solid rgb(125 150 128 / 22%);
+  border-radius: 50%;
+
+  color: #7d9680;
+  font-size: 16px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+/* 顧客名・ID・特徴・最終来店日 */
+.regular-customer-result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+/* 顧客名と顧客ID */
+.regular-customer-result-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+/* 顧客名 */
+.regular-customer-result-heading strong {
+  color: #515254;
+  font-size: 16px;
+}
+
+/* 顧客ID */
+.regular-customer-result-heading span {
+  color: #818685;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 特徴と最終来店日 */
+.regular-customer-result-info p {
+  margin: 0;
+
+  color: #818685;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* 顧客を選択するボタン */
+.regular-customer-select-button {
+  min-height: 42px;
+  padding: 10px 15px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 11px;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 選択ボタンへマウスを乗せたとき */
+.regular-customer-select-button:hover {
+  background-color: #7d9680;
+  color: #ffffff;
+
+  transform: translateY(-1px);
+}
+
+/* 選択ボタンのキーボード操作 */
+.regular-customer-select-button:focus-visible {
+  outline: 3px solid rgb(125 150 128 / 24%);
+  outline-offset: 3px;
+}
+
+/* 該当する顧客がいない場合 */
+.regular-customer-no-results {
+  margin: 0;
+  padding: 24px 16px;
+
+  background-color: rgb(255 255 255 / 45%);
+  border-radius: 14px;
+
+  color: #818685;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* hidden中は該当なし表示を隠す */
+.regular-customer-no-results[hidden] {
+  display: none;
+}
+
+
+/* --------------------------------------------------
+   選択中のお客様
+-------------------------------------------------- */
+
+/* 選択した顧客のプロフィールカード */
+.regular-selected-customer {
+  width: 100%;
+  max-width: 760px;
+  margin: 18px auto 0;
+  padding: 24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgb(255 255 255 / 42%),
+      transparent 68%
+    ),
+    rgb(125 150 128 / 18%);
+
+  border: 1px solid rgb(125 150 128 / 28%);
+  border-radius: 20px;
+
+  box-shadow: 0 8px 24px rgb(81 82 84 / 8%);
+}
+
+/* hidden中は顧客プロフィールを表示しない */
+.regular-selected-customer[hidden] {
+  display: none;
+}
+
+/* 見出しと変更ボタン */
+.regular-selected-customer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* 選択中のお客様の見出し */
+.regular-selected-customer-header h3 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 17px;
+}
+
+/* 顧客を変更するボタン */
+.regular-customer-change-button {
+  padding: 7px 13px;
+
+  background-color: rgb(255 255 255 / 46%);
+  border: 1px solid rgb(125 150 128 / 62%);
+  border-radius: 9px;
+
+  color: #6d856f;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 変更ボタンへマウスを乗せたとき */
+.regular-customer-change-button:hover {
+  background-color: #7d9680;
+  color: #ffffff;
+}
+
+/* 選択した顧客の基本情報 */
+.regular-selected-customer-profile {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  margin-top: 20px;
+}
+
+/* 選択中顧客の丸いアイコン */
+.regular-selected-customer-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 74px;
+  height: 74px;
+
+  background-color: rgb(255 255 255 / 68%);
+  border: 1px solid rgb(125 150 128 / 24%);
+  border-radius: 50%;
+
+  color: #7d9680;
+  font-size: 22px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+/* 顧客名と集計情報 */
+.regular-selected-customer-main {
+  min-width: 0;
+  flex: 1;
+}
+
+/* 顧客名と顧客ID */
+.regular-selected-customer-name-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+/* 選択中の顧客名 */
+.regular-selected-customer-name-row strong {
+  color: #515254;
+  font-size: 22px;
+}
+
+/* 選択中の顧客ID */
+.regular-selected-customer-name-row span {
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 最終来店・来店回数・売上を並べる */
+.regular-selected-customer-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  margin: 18px 0 0;
+}
+
+/* 集計情報1件分 */
+.regular-selected-customer-stats > div {
+  min-width: 0;
+  padding: 0 14px;
+}
+
+/* 最初の項目だけ左余白をなくす */
+.regular-selected-customer-stats > div:first-child {
+  padding-left: 0;
+}
+
+/* 集計項目の間に区切り線 */
+.regular-selected-customer-stats > div + div {
+  border-left: 1px solid rgb(129 134 133 / 24%);
+}
+
+/* 集計項目名 */
+.regular-selected-customer-stats dt {
+  color: #818685;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* 集計結果 */
+.regular-selected-customer-stats dd {
+  margin: 5px 0 0;
+
+  color: #515254;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* 特徴と最近のメモ */
+.regular-selected-customer-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+
+  margin-top: 22px;
+  padding-top: 20px;
+
+  border-top: 1px solid rgb(129 134 133 / 22%);
+}
+
+/* 特徴・最近のメモの見出し */
+.regular-selected-detail h4 {
+  margin: 0 0 10px;
+
+  color: #515254;
+  font-size: 13px;
+}
+
+/* 最近のメモ */
+.regular-selected-detail p {
+  margin: 0;
+
+  color: #515254;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 特徴タグを横並びにする */
+.regular-selected-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+/* JavaScriptで追加する特徴タグ */
+.regular-selected-features > span {
+  padding: 6px 11px;
+
+  background-color: rgb(255 255 255 / 46%);
+  border: 1px solid rgb(125 150 128 / 30%);
+  border-radius: 999px;
+
+  color: #6d856f;
+  font-size: 11px;
+  line-height: 1;
+}
+
+
+/* --------------------------------------------------
+   誕生日・今回の来店情報
+-------------------------------------------------- */
+
+/* 顧客選択後のフォーム */
+.regular-customer-form {
+  margin-top: 16px;
+}
+
+/* hidden中はフォームを表示しない */
+.regular-customer-form[hidden] {
+  display: none;
+}
+
+/* 誕生日を入力する・不明の選択肢 */
+.birthday-status-options {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 26px;
+}
+
+/* ラジオボタンと文字 */
+.birthday-status-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #515254;
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+/* ラジオボタンのアクセント色 */
+.birthday-status-option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+
+  accent-color: #7d9680;
+
+  cursor: pointer;
+}
+
+/* 誕生日が登録済みの場合は入力カードを隠す */
+.regular-birthday-card[hidden] {
+  display: none;
+}
+
+/* 今回の来店情報カード */
+.regular-visit-card > .form-field {
+  gap: 0;
+}
+
+/* 今回来店情報の大見出し */
+.regular-visit-card > .form-field > .form-label-row {
+  margin-bottom: 6px;
+}
+
+/* 来店情報1項目分 */
+.regular-visit-field {
+  padding: 20px 0;
+}
+
+/* 項目同士の区切り線 */
+.regular-visit-field + .regular-visit-field {
+  border-top: 1px solid rgb(129 134 133 / 20%);
+}
+
+/* ラベルと入力欄の間隔 */
+.regular-visit-field > .form-label-row {
+  margin-bottom: 10px;
+}
+
+/* 常連顧客の更新内容確認ボタン */
+.regular-customer-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  min-width: 250px;
+  min-height: 52px;
+  padding: 12px 30px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 999px;
+
+  box-shadow:
+    0 10px 24px rgb(125 150 128 / 24%);
+
+  color: #ffffff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 更新内容確認ボタンへマウスを乗せたとき */
+.regular-customer-submit-button:hover {
+  background-color: #6d856f;
+  border-color: #6d856f;
+
+  box-shadow:
+    0 14px 30px rgb(125 150 128 / 32%);
+
+  transform: translateY(-2px);
+}
+
+/* ボタンを押している間 */
+.regular-customer-submit-button:active {
+  box-shadow:
+    0 6px 16px rgb(125 150 128 / 22%);
+
+  transform: translateY(0);
+}
+
+/* キーボード操作時 */
+.regular-customer-submit-button:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 28%);
+  outline-offset: 4px;
+}
+
+/* --------------------------------------------------
+   常連顧客の更新確認画面
+-------------------------------------------------- */
+
+/* 画面全体を覆う背景 */
+.regular-customer-confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 52%);
+  backdrop-filter: blur(5px);
+}
+
+/* hidden属性が付いている間は表示しない */
+.regular-customer-confirm-dialog[hidden] {
+  display: none;
+}
+
+/* 確認内容を表示するカード */
+.regular-customer-confirm-content {
+  width: min(100%, 560px);
+  max-height: calc(100dvh - 48px);
+  padding: 32px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(125 150 128 / 22%);
+  border-radius: 24px;
+
+  box-shadow:
+    0 24px 70px rgb(81 82 84 / 28%);
+
+  overflow-y: auto;
+}
+
+/* 確認画面上部の英字 */
+.regular-customer-confirm-label {
+  margin: 0 0 8px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 確認画面のタイトル */
+.regular-customer-confirm-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(22px, 5vw, 30px);
+  line-height: 1.4;
+}
+
+/* タイトル下の説明 */
+.regular-customer-confirm-message {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 更新内容を表示する領域 */
+.regular-customer-confirm-summary {
+  margin-top: 24px;
+}
+
+/* 確認画面下部のボタン */
+.regular-customer-confirm-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+
+  margin-top: 28px;
+}
+
+/* 確認画面の共通ボタン */
+.regular-customer-confirm-back,
+.regular-customer-confirm-update {
+  min-height: 52px;
+  padding: 12px 18px;
+
+  border-radius: 14px;
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 戻って修正ボタン */
+.regular-customer-confirm-back {
+  background-color: transparent;
+  border: 1px solid #7d9680;
+
+  color: #607862;
+}
+
+/* 更新するボタン */
+.regular-customer-confirm-update {
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 24%);
+
+  color: #ffffff;
+}
+
+/* ボタンへマウスを乗せたとき */
+.regular-customer-confirm-back:hover,
+.regular-customer-confirm-update:hover {
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時 */
+.regular-customer-confirm-back:focus-visible,
+.regular-customer-confirm-update:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 28%);
+  outline-offset: 3px;
+}
+
+/* 更新処理中はボタンを操作できない見た目にする */
+.regular-customer-confirm-update:disabled {
+  background-color: #c9bdaf;
+  border-color: #c9bdaf;
+  box-shadow: none;
+
+  cursor: wait;
+  transform: none;
+}
+
+/* 常連顧客の更新完了表示 */
+.regular-customer-update-success {
+  display: grid;
+  justify-items: center;
+
+  padding: 20px 0 8px;
+
+  text-align: center;
+}
+
+/* hidden属性がある間は更新完了表示を隠す */
+.regular-customer-update-success[hidden] {
+  display: none;
+}
+
+/* 更新完了のチェックアイコン */
+.regular-customer-success-icon {
+  display: grid;
+  place-items: center;
+
+  width: 74px;
+  height: 74px;
+
+  background-color: rgb(125 150 128 / 16%);
+  border: 2px solid #7d9680;
+  border-radius: 50%;
+
+  color: #7d9680;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+/* 更新完了の英字ラベル */
+.regular-customer-success-label {
+  margin: 20px 0 6px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 更新完了のタイトル */
+.regular-customer-success-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(24px, 5vw, 30px);
+}
+
+/* 更新完了の説明 */
+.regular-customer-success-message {
+  margin: 12px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 検索画面へ戻るボタン */
+.regular-customer-success-back {
+  min-width: 210px;
+  min-height: 52px;
+  margin-top: 28px;
+  padding: 12px 20px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.regular-customer-success-back:hover {
+  background-color: #6d856f;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 24%);
+
+  transform: translateY(-1px);
+}
+
+.regular-customer-success-back:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 28%);
+  outline-offset: 3px;
+}
+
+
+/* ==================================================
+   13. レスポンシブ設定
    画面幅に応じてレイアウトを切り替える
 ================================================== */
 
@@ -3673,6 +4854,182 @@ body.confirm-dialog-open {
   .menu-item-description {
     font-size: 12px;
     line-height: 1.5;
+  }
+
+    /* 来店登録画面のスマホ表示 */
+  #visit-registration-view {
+    padding: 28px 0 20px;
+  }
+
+  /* タイトルをスマホ向けに調整する */
+  .visit-registration-heading h2 {
+    font-size: 34px;
+  }
+
+  /* タイトル下の点線 */
+  .visit-registration-heading-line {
+    width: 78%;
+    margin-top: 14px;
+    margin-bottom: 18px;
+  }
+
+  /* 案内文 */
+  .visit-registration-description {
+    font-size: 15px;
+  }
+
+  /* 2枚のカード間隔 */
+  .visit-registration-options {
+    gap: 16px;
+
+    margin-top: 30px;
+  }
+
+  /* 選択カードをスマホ幅へ合わせる */
+  .visit-registration-card {
+    grid-template-columns:
+      66px
+      1px
+      minmax(0, 1fr);
+    gap: 16px;
+
+    min-height: 150px;
+    padding:
+      22px
+      48px
+      22px
+      18px;
+
+    border-radius: 24px;
+  }
+
+  /* スマホではアイコンを小さくする */
+  .visit-registration-card-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .visit-registration-card-icon svg {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* スマホでは点線を短くする */
+  .visit-registration-card-divider {
+    height: 70px;
+  }
+
+  /* カード内の文字間隔 */
+  .visit-registration-card-content {
+    gap: 8px;
+  }
+
+  /* カードタイトル */
+  .visit-registration-card-title {
+    font-size: 23px;
+  }
+
+  /* カード説明文 */
+  .visit-registration-card-description {
+    font-size: 12px;
+  }
+
+  /* カード右側の矢印 */
+  .visit-registration-card-arrow {
+    right: 17px;
+
+    font-size: 34px;
+  }
+
+  /* 画面下部の装飾 */
+  .visit-registration-decoration {
+    width: 72%;
+    margin-top: 36px;
+  }
+
+  .visit-registration-decoration-mark {
+    width: 50px;
+    height: 50px;
+  }
+
+  .visit-registration-decoration-mark::before {
+    width: 20px;
+    height: 20px;
+
+    border-width: 5px;
+  }
+
+    /* 常連顧客更新画面のスマホ表示 */
+  #regular-customer-view {
+    padding-top: 6px;
+  }
+
+  /* 検索結果を縦並びにする */
+  .regular-customer-result-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+
+    padding: 16px;
+  }
+
+  /* 顧客選択ボタンを横幅いっぱいにする */
+  .regular-customer-select-button {
+    width: 100%;
+  }
+
+  /* 選択中顧客カード */
+  .regular-selected-customer {
+    padding: 20px;
+  }
+
+  /* 顧客プロフィールを上から並べる */
+  .regular-selected-customer-profile {
+    align-items: flex-start;
+  }
+
+  /* 顧客アイコン */
+  .regular-selected-customer-avatar {
+    width: 60px;
+    height: 60px;
+
+    font-size: 18px;
+  }
+
+  /* 顧客名 */
+  .regular-selected-customer-name-row strong {
+    font-size: 19px;
+  }
+
+  /* 集計情報を2列にする */
+  .regular-selected-customer-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 0;
+  }
+
+  /* PC用の左右余白をスマホで調整する */
+  .regular-selected-customer-stats > div {
+    padding: 0 12px;
+  }
+
+  /* 3つ目も左端になるため左余白をなくす */
+  .regular-selected-customer-stats > div:nth-child(3) {
+    padding-left: 0;
+  }
+
+  /* PC用の縦線を調整する */
+  .regular-selected-customer-stats > div:nth-child(3) {
+    border-left: none;
+  }
+
+  /* 特徴とメモを縦並びにする */
+  .regular-selected-customer-details {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  /* 誕生日の選択肢 */
+  .birthday-status-options {
+    gap: 18px;
   }
 }
 

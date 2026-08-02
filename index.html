@@ -203,7 +203,11 @@
                                             </span>
                                         </button>
 
-                                        <button class="menu-item" type="button">
+                                        <button
+                                            class="menu-item"
+                                            type="button"
+                                            data-view="regular-customer"
+                                        >
                                             <span class="menu-item-text">
                                                 <span class="menu-item-title">
                                                     常連顧客更新
@@ -312,7 +316,11 @@
                     <div class="action-grid">
 
                         <!-- 新しい顧客を登録するメニュー -->
-                        <button class="action-card action-card--new" type="button">
+                        <button
+                            class="action-card action-card--new"
+                            type="button"
+                            data-view="new-customer"
+                        >
 
                             <!-- アイコンと機能名を横並びにする -->
                             <span class="action-card-header">
@@ -344,7 +352,11 @@
                         </button>
 
                         <!-- 常連顧客の情報を更新するメニュー -->
-                        <button class="action-card action-card--regular" type="button">
+                        <button
+                            class="action-card action-card--regular"
+                            type="button"
+                            data-view="regular-customer"
+                        >
 
                             <!-- アイコンと機能名を横並びにする -->
                             <span class="action-card-header">
@@ -943,6 +955,147 @@
                     </section>
                 </div>
             </div>
+
+            <!-- 来店登録の種類を選択する画面 -->
+            <section
+                class="app-view"
+                id="visit-registration-view"
+                aria-labelledby="visit-registration-title"
+            >
+                <!-- ページ上部の案内 -->
+                <div class="visit-registration-heading">
+                    <p class="page-heading-label">
+                        VISIT REGISTRATION
+                    </p>
+
+                    <h2 id="visit-registration-title">
+                        来店を登録
+                    </h2>
+
+                    <span
+                        class="visit-registration-heading-line"
+                        aria-hidden="true"
+                    ></span>
+
+                    <p class="visit-registration-description">
+                        お客様の種類を選んでください
+                    </p>
+                </div>
+
+                <!-- 新規顧客・常連顧客の選択カード -->
+                <div class="visit-registration-options">
+                    <!-- 初めて来店するお客様 -->
+                    <button
+                        class="visit-registration-card visit-registration-card--new"
+                        type="button"
+                        data-view="new-customer"
+                    >
+                        <span
+                            class="visit-registration-card-icon"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M3 21v-2a6 6 0 0 1 6-6h2"></path>
+                                <path d="M19 14v6"></path>
+                                <path d="M16 17h6"></path>
+                            </svg>
+                        </span>
+
+                        <span class="visit-registration-card-divider"></span>
+
+                        <span class="visit-registration-card-content">
+                            <span class="visit-registration-card-title">
+                                新規顧客
+                            </span>
+
+                            <span class="visit-registration-card-description">
+                                初めて来店するお客様
+                            </span>
+                        </span>
+
+                        <span
+                            class="visit-registration-card-arrow"
+                            aria-hidden="true"
+                        >
+                            ›
+                        </span>
+                    </button>
+
+                    <!-- 登録済みのお客様 -->
+                    <button
+                        class="visit-registration-card visit-registration-card--regular"
+                        type="button"
+                        data-view="regular-customer"
+                    >
+                        <span
+                            class="visit-registration-card-icon"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <!-- 人物の頭 -->
+                                <circle cx="8" cy="7" r="4"></circle>
+
+                                <!-- 人物の肩から身体の部分 -->
+                                <path d="M2 21v-2a6 6 0 0 1 6-6h3"></path>
+
+                                <!-- 顧客情報の編集を表す鉛筆 -->
+                                <path d="M14 20l1-4 5-5 3 3-5 5-4 1z"></path>
+
+                                <!-- 鉛筆の先端側を表す線 -->
+                                <path d="M18 12l3 3"></path>
+                            </svg>
+                        </span>
+
+                        <span class="visit-registration-card-divider"></span>
+
+                        <span class="visit-registration-card-content">
+                            <span class="visit-registration-card-title">
+                                常連顧客
+                            </span>
+
+                            <span class="visit-registration-card-description">
+                                登録済みのお客様を検索
+                            </span>
+                        </span>
+
+                        <span
+                            class="visit-registration-card-arrow"
+                            aria-hidden="true"
+                        >
+                            ›
+                        </span>
+                    </button>
+                </div>
+
+                <!-- 画面下部の装飾 -->
+                <div
+                    class="visit-registration-decoration"
+                    aria-hidden="true"
+                >
+                    <span class="visit-registration-decoration-line"></span>
+
+                    <span class="visit-registration-decoration-mark">
+                        ◯
+                    </span>
+
+                    <span class="visit-registration-decoration-line"></span>
+                </div>
+            </section>
 
             <!-- 新規顧客登録画面 -->
             <section
@@ -1578,7 +1731,740 @@
                 </form>
             </section>
 
-                        <!-- 新規顧客の登録内容を確認する画面 -->
+            <!-- 常連顧客の来店情報を更新する画面 -->
+            <section
+                class="app-view"
+                id="regular-customer-view"
+                aria-labelledby="regular-customer-title"
+            >
+                <!-- ページ上部のタイトル -->
+                <div class="page-header">
+                    <div class="page-heading">
+                        <p class="page-heading-label">
+                            REGULAR CUSTOMER
+                        </p>
+
+                        <h2 id="regular-customer-title">
+                            常連顧客
+                        </h2>
+
+                        <p>
+                            登録済みのお客様を検索して、来店情報を追加します。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 登録済みの顧客を検索するカード -->
+                <section
+                    class="form-card regular-customer-search-card"
+                    aria-labelledby="regular-customer-search-title"
+                >
+                    <div class="form-field">
+                        <div class="form-label-row">
+                            <h3
+                                class="form-label"
+                                id="regular-customer-search-title"
+                            >
+                                顧客検索
+                            </h3>
+
+                            <span class="required-label">
+                                [必須]
+                            </span>
+                        </div>
+
+                        <div class="regular-customer-search-field">
+                            <input
+                                class="form-input"
+                                id="regular-customer-search"
+                                type="search"
+                                placeholder="顧客名・顧客ID・特徴で検索"
+                                autocomplete="off"
+                                aria-describedby="regular-customer-search-help"
+                            >
+
+                            <span
+                                class="regular-customer-search-icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <circle
+                                        cx="10.5"
+                                        cy="10.5"
+                                        r="6.5"
+                                    ></circle>
+
+                                    <path d="m16 16 5 5"></path>
+                                </svg>
+                            </span>
+                        </div>
+
+                        <p
+                            class="form-help-text"
+                            id="regular-customer-search-help"
+                        >
+                            入力すると、該当するお客様が表示されます。
+                        </p>
+
+                        <p
+                            class="form-error-message"
+                            id="regular-customer-selection-error"
+                            role="alert"
+                            hidden
+                        >
+                            更新するお客様を選択してください。
+                        </p>
+
+                        <!-- 検索文字を入力したときだけ表示する検索結果 -->
+                        <div
+                            class="regular-customer-search-results"
+                            id="regular-customer-search-results"
+                            aria-live="polite"
+                            hidden
+                        >
+                            <h3 class="regular-customer-results-title">
+                                検索結果
+                            </h3>
+
+                            <div class="regular-customer-result-list">
+                                <!-- 画面確認用の仮顧客データ1 -->
+                                <article
+                                    class="regular-customer-result-item"
+                                    data-search-text="浅田 けん MU00001 短髪 髭 筋肉質 お酒好き"
+                                    data-customer-name="浅田 けん"
+                                    data-customer-id="MU00001"
+                                    data-customer-initial="浅"
+                                    data-last-visit="2026/07/21"
+                                    data-visit-count="3"
+                                    data-total-sales="42000"
+                                    data-average-spend="14000"
+                                    data-features="短髪,髭,筋肉質,お酒好き"
+                                    data-recent-memo="シャンパンを開けてくれた"
+                                    data-birthday-status="known"
+                                    data-birth-year="1985"
+                                    data-birth-month="4"
+                                    data-birth-day="20"
+                                >
+                                    <div class="regular-customer-result-profile">
+                                        <span
+                                            class="regular-customer-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            浅
+                                        </span>
+
+                                        <div class="regular-customer-result-info">
+                                            <div class="regular-customer-result-heading">
+                                                <strong>
+                                                    浅田 けん
+                                                </strong>
+
+                                                <span>
+                                                    MU00001
+                                                </span>
+                                            </div>
+
+                                            <p>
+                                                短髪・髭・筋肉質・お酒好き
+                                            </p>
+
+                                            <p>
+                                                最終来店：2026/07/21
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        class="regular-customer-select-button"
+                                        type="button"
+                                    >
+                                        この顧客を選択
+                                    </button>
+                                </article>
+
+                                <!-- 画面確認用の仮顧客データ2 -->
+                                <article
+                                    class="regular-customer-result-item"
+                                    data-search-text="浅田 健一 MU00002 短髪 体育会系 社長"
+                                    data-customer-name="浅田 健一"
+                                    data-customer-id="MU00002"
+                                    data-customer-initial="浅"
+                                    data-last-visit="2026/07/18"
+                                    data-visit-count="6"
+                                    data-total-sales="78000"
+                                    data-average-spend="13000"
+                                    data-features="短髪,体育会系,社長"
+                                    data-recent-memo="次回は友人と来店予定"
+                                    data-birthday-status="unknown"
+                                    data-birth-year=""
+                                    data-birth-month=""
+                                    data-birth-day=""
+                                >
+                                    <div class="regular-customer-result-profile">
+                                        <span
+                                            class="regular-customer-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            浅
+                                        </span>
+
+                                        <div class="regular-customer-result-info">
+                                            <div class="regular-customer-result-heading">
+                                                <strong>
+                                                    浅田 健一
+                                                </strong>
+
+                                                <span>
+                                                    MU00002
+                                                </span>
+                                            </div>
+
+                                            <p>
+                                                短髪・体育会系・社長
+                                            </p>
+
+                                            <p>
+                                                最終来店：2026/07/18
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        class="regular-customer-select-button"
+                                        type="button"
+                                    >
+                                        この顧客を選択
+                                    </button>
+                                </article>
+
+                                <!-- 画面確認用の仮顧客データ3 -->
+                                <article
+                                    class="regular-customer-result-item"
+                                    data-search-text="あさだけんた MU00003 細身 短髪 お酒好き"
+                                    data-customer-name="あさだけんた"
+                                    data-customer-id="MU00003"
+                                    data-customer-initial="あ"
+                                    data-last-visit="2026/07/10"
+                                    data-visit-count="2"
+                                    data-total-sales="19000"
+                                    data-average-spend="9500"
+                                    data-features="細身,短髪,お酒好き"
+                                    data-recent-memo="赤ワインが好き"
+                                    data-birthday-status="known"
+                                    data-birth-year="1992"
+                                    data-birth-month="11"
+                                    data-birth-day="8"
+                                >
+                                    <div class="regular-customer-result-profile">
+                                        <span
+                                            class="regular-customer-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            あ
+                                        </span>
+
+                                        <div class="regular-customer-result-info">
+                                            <div class="regular-customer-result-heading">
+                                                <strong>
+                                                    あさだけんた
+                                                </strong>
+
+                                                <span>
+                                                    MU00003
+                                                </span>
+                                            </div>
+
+                                            <p>
+                                                細身・短髪・お酒好き
+                                            </p>
+
+                                            <p>
+                                                最終来店：2026/07/10
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        class="regular-customer-select-button"
+                                        type="button"
+                                    >
+                                        この顧客を選択
+                                    </button>
+                                </article>
+                            </div>
+
+                            <!-- 該当する顧客がいない場合の表示 -->
+                            <p
+                                class="regular-customer-no-results"
+                                hidden
+                            >
+                                該当するお客様が見つかりませんでした。
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 顧客を選択したあとに表示するプロフィールカード -->
+                <section
+                    class="regular-selected-customer"
+                    id="regular-selected-customer"
+                    aria-labelledby="regular-selected-customer-title"
+                    aria-live="polite"
+                    hidden
+                >
+                    <div class="regular-selected-customer-header">
+                        <h3 id="regular-selected-customer-title">
+                            選択中のお客様
+                        </h3>
+
+                        <button
+                            class="regular-customer-change-button"
+                            type="button"
+                        >
+                            変更
+                        </button>
+                    </div>
+
+                    <div class="regular-selected-customer-profile">
+                        <span
+                            class="regular-selected-customer-avatar"
+                            id="regular-selected-avatar"
+                            aria-hidden="true"
+                        >
+                            浅
+                        </span>
+
+                        <div class="regular-selected-customer-main">
+                            <div class="regular-selected-customer-name-row">
+                                <strong id="regular-selected-name">
+                                    浅田 けん
+                                </strong>
+
+                                <span id="regular-selected-id">
+                                    MU00001
+                                </span>
+                            </div>
+
+                            <dl class="regular-selected-customer-stats">
+                                <div>
+                                    <dt>最終来店</dt>
+                                    <dd id="regular-selected-last-visit">
+                                        2026/07/21
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>来店回数</dt>
+                                    <dd>
+                                        <span id="regular-selected-visit-count">
+                                            3
+                                        </span>
+                                        回
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>累計売上</dt>
+                                    <dd id="regular-selected-total-sales">
+                                        42,000円
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>平均単価</dt>
+                                    <dd id="regular-selected-average-spend">
+                                        14,000円
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="regular-selected-customer-details">
+                        <div class="regular-selected-detail">
+                            <h4>特徴</h4>
+
+                            <div
+                                class="regular-selected-features"
+                                id="regular-selected-features"
+                            ></div>
+                        </div>
+
+                        <div class="regular-selected-detail">
+                            <h4>最近のメモ</h4>
+
+                            <p id="regular-selected-memo">
+                                シャンパンを開けてくれた
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 顧客選択後に表示する来店情報更新フォーム -->
+                <form
+                    class="customer-form regular-customer-form"
+                    id="regular-customer-form"
+                    novalidate
+                >
+                    <!-- 選択した顧客IDを保持する -->
+                    <input
+                        id="regular-selected-customer-id"
+                        name="customerId"
+                        type="hidden"
+                    >
+
+                    <!-- 登録済みの誕生日を確認・更新するカード -->
+                    <section
+                        class="form-card regular-birthday-card"
+                        hidden
+                    >
+                        <div class="form-field">
+                            <div class="form-label-row">
+                                <p class="form-label">
+                                    誕生日
+                                </p>
+
+                                <span class="optional-label">
+                                    [必須]
+                                </span>
+                            </div>
+
+                            <div class="birthday-status-options">
+                                <label class="birthday-status-option">
+                                    <input
+                                        id="regular-birthday-known"
+                                        name="regularBirthdayStatus"
+                                        type="radio"
+                                        value="known"
+                                        checked
+                                        required
+                                    >
+
+                                    <span>
+                                        誕生日を入力する
+                                    </span>
+                                </label>
+
+                                <label class="birthday-status-option">
+                                    <input
+                                        id="regular-birthday-unknown"
+                                        name="regularBirthdayStatus"
+                                        type="radio"
+                                        value="unknown"
+                                    >
+
+                                    <span>
+                                        不明
+                                    </span>
+                                </label>
+                            </div>
+
+                            <p
+                                class="form-error-message"
+                                id="regular-birthday-status-error"
+                                role="alert"
+                                hidden
+                            >
+                               生年月日の年・月・日をすべて選択してください。
+                            </p>
+
+                            <div class="birthday-selects">
+                                <div class="birthday-select-field">
+                                    <select
+                                        class="form-select"
+                                        id="regular-birth-year"
+                                        name="birthYear"
+                                        aria-label="誕生年"
+                                    >
+                                        <option value="">
+                                            年
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="birthday-select-field">
+                                    <select
+                                        class="form-select"
+                                        id="regular-birth-month"
+                                        name="birthMonth"
+                                        aria-label="誕生月"
+                                    >
+                                        <option value="">
+                                            月
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="birthday-select-field">
+                                    <select
+                                        class="form-select"
+                                        id="regular-birth-day"
+                                        name="birthDay"
+                                        aria-label="誕生日"
+                                    >
+                                        <option value="">
+                                            日
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <p class="form-help-text">
+                                登録済みの場合は自動入力されます。不明の場合は、次回分かったときに追加できます。
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- 今回の来店情報を入力するカード -->
+                    <section class="form-card regular-visit-card">
+                        <div class="form-field">
+                            <div class="form-label-row">
+                                <h3 class="form-label">
+                                    今回の来店情報
+                                </h3>
+                            </div>
+
+                            <!-- 今回の来店日 -->
+                            <div class="regular-visit-field">
+                                <div class="form-label-row">
+                                    <label
+                                        class="form-label"
+                                        for="regular-visit-date"
+                                    >
+                                        来店日
+                                    </label>
+
+                                    <span class="required-label">
+                                        [必須]
+                                    </span>
+                                </div>
+
+                                <input
+                                    class="form-input"
+                                    id="regular-visit-date"
+                                    name="visitDate"
+                                    type="date"
+                                    required
+                                >
+
+                                <p
+                                    class="form-error-message"
+                                    role="alert"
+                                    hidden
+                                >
+                                    来店日を入力してください。
+                                </p>
+                            </div>
+
+                            <!-- 今回の会計金額 -->
+                            <div class="regular-visit-field">
+                                <div class="form-label-row">
+                                    <label
+                                        class="form-label"
+                                        for="regular-payment-amount"
+                                    >
+                                        会計金額
+                                    </label>
+
+                                    <span class="required-label">
+                                        [必須]
+                                    </span>
+                                </div>
+
+                                <div class="payment-amount-field">
+                                    <input
+                                        class="form-input payment-amount-input"
+                                        id="regular-payment-amount"
+                                        name="paymentAmount"
+                                        type="text"
+                                        inputmode="numeric"
+                                        placeholder="0"
+                                        autocomplete="off"
+                                        required
+                                    >
+
+                                    <span
+                                        class="payment-amount-unit"
+                                        aria-hidden="true"
+                                    >
+                                        ¥
+                                    </span>
+                                </div>
+
+                                <p
+                                    class="form-error-message"
+                                    role="alert"
+                                    hidden
+                                >
+                                    会計金額を入力してください。
+                                </p>
+                            </div>
+
+                            <!-- 今回の担当スタッフ -->
+                            <div class="regular-visit-field">
+                                <div class="form-label-row">
+                                    <label
+                                        class="form-label"
+                                        for="regular-staff-member"
+                                    >
+                                        担当スタッフ
+                                    </label>
+
+                                    <span class="required-label">
+                                        [必須]
+                                    </span>
+                                </div>
+
+                                <input
+                                    class="form-input"
+                                    id="regular-staff-member"
+                                    name="staffMember"
+                                    type="text"
+                                    list="staff-member-options"
+                                    placeholder="担当スタッフ名を入力してください"
+                                    autocomplete="off"
+                                    required
+                                >
+
+                                <p
+                                    class="form-error-message"
+                                    role="alert"
+                                    hidden
+                                >
+                                    担当スタッフを入力してください。
+                                </p>
+                            </div>
+
+                            <!-- 今回の接客内容を記録するメモ -->
+                            <div class="regular-visit-field">
+                                <div class="form-label-row">
+                                    <label
+                                        class="form-label"
+                                        for="regular-customer-memo"
+                                    >
+                                        常連顧客メモ
+                                    </label>
+                                </div>
+
+                                <textarea
+                                    class="form-textarea"
+                                    id="regular-customer-memo"
+                                    name="regularCustomerMemo"
+                                    rows="3"
+                                    maxlength="500"
+                                    placeholder="今回の会話や接客内容、次回来店時に確認したいことなどを入力してください。"
+                                ></textarea>
+
+                                <p class="form-help-text">
+                                    500文字以内で入力してください。
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 入力内容の確認へ進む操作エリア -->
+                    <div class="form-submit-area">
+                        <button
+                            class="regular-customer-submit-button"
+                            id="regular-customer-submit-button"
+                            type="submit"
+                        >
+                            更新内容を確認する
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 常連顧客の更新内容を確認する画面 -->
+            <div
+                class="regular-customer-confirm-dialog"
+                id="regular-customer-confirm-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="regular-customer-confirm-title"
+                hidden
+            >
+                <div class="regular-customer-confirm-content">
+                    <div class="regular-customer-confirm-main">
+                        <p class="regular-customer-confirm-label">
+                            CONFIRM
+                        </p>
+
+                        <h2
+                            class="regular-customer-confirm-title"
+                            id="regular-customer-confirm-title"
+                        >
+                            この内容で更新しますか？
+                        </h2>
+
+                        <p class="regular-customer-confirm-message">
+                            選択したお客様と、今回の来店情報をご確認ください。
+                        </p>
+
+                        <div
+                            class="regular-customer-confirm-summary"
+                            id="regular-customer-confirm-summary"
+                        ></div>
+
+                        <div class="regular-customer-confirm-actions">
+                            <button
+                                class="regular-customer-confirm-back"
+                                type="button"
+                            >
+                                戻って修正
+                            </button>
+
+                            <button
+                                class="regular-customer-confirm-update"
+                                type="button"
+                            >
+                                更新する
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 常連顧客の更新完了表示 -->
+                    <div
+                        class="regular-customer-update-success"
+                        hidden
+                    >
+                        <span
+                            class="regular-customer-success-icon"
+                            aria-hidden="true"
+                        >
+                            ✓
+                        </span>
+
+                        <p class="regular-customer-success-label">
+                            UPDATED
+                        </p>
+
+                        <h2 class="regular-customer-success-title">
+                            更新が完了しました
+                        </h2>
+
+                        <p class="regular-customer-success-message">
+                            今回の来店情報を受け付けました。
+                        </p>
+
+                        <button
+                            class="regular-customer-success-back"
+                            type="button"
+                        >
+                            検索画面へ戻る
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新規顧客の登録内容を確認する画面 -->
             <div
                 class="new-customer-confirm-dialog"
                 id="new-customer-confirm-dialog"
@@ -1792,7 +2678,11 @@
                 </button>
 
                 <!-- お客様の来店情報を登録する画面 -->
-                <button class="bottom-nav-item" type="button">
+                <button
+                    class="bottom-nav-item"
+                    type="button"
+                    data-view="visit-registration"
+                >
                     <!-- カレンダーとプラスを組み合わせた来店登録アイコン -->
                     <span class="bottom-nav-icon" aria-hidden="true">
                         <svg
