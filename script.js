@@ -45,6 +45,12 @@ const homeTodoActionButtons =
     "[data-home-todo-action]"
   );
 
+// ホーム画面のお客様一覧ボタンを取得する
+const homeCustomerListButtons =
+  document.querySelectorAll(
+    "[data-home-customer-list-action]"
+  );
+
 // やることカードの人数表示先を取得する
 const homeTodoPhotoCount =
   document.querySelector(
@@ -6823,6 +6829,65 @@ homeTodoActionButtons.forEach(
         syncCustomerQuickFilterButtons();
         syncCustomerSearchConditionRows();
         updateCustomerSearchResults();
+
+        // 顧客検索画面へ移動する
+        showView(
+          "customer-search",
+          "auto"
+        );
+      }
+    );
+  }
+);
+
+// ホーム画面のお客様一覧から顧客検索を開く
+homeCustomerListButtons.forEach(
+  (listButton) => {
+    listButton.addEventListener(
+      "click",
+      () => {
+        const listAction =
+          listButton.dataset
+            .homeCustomerListAction;
+
+        // ボタンに対応する並び順
+        const sortSettings = {
+          "recently-added":
+            "registration-date",
+
+          "recently-viewed":
+            "recently-viewed",
+        };
+
+        const sortValue =
+          sortSettings[listAction];
+
+        if (!sortValue) {
+          return;
+        }
+
+        // 以前の検索条件を初期化する
+        customerSearchInput.value = "";
+
+        draftCustomerSearchConditions =
+          createDefaultCustomerSearchConditions();
+
+        activeCustomerSearchConditions =
+          createDefaultCustomerSearchConditions();
+
+        activeCustomerQuickFilter =
+          "all";
+
+        activeCustomerBirthdayFilterMonth =
+          null;
+
+        syncCustomerQuickFilterButtons();
+        syncCustomerSearchConditionRows();
+
+        // ボタンに対応する順番で並べる
+        setCustomerSearchSort(
+          sortValue
+        );
 
         // 顧客検索画面へ移動する
         showView(
