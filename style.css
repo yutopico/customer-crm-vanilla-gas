@@ -31,6 +31,11 @@ body {
   }
 }
 
+/* スマホ用検索パネルの表示中は背後を固定する */
+body.customer-search-panel-open {
+  overflow: hidden;
+}
+
 
 /* ==================================================
    02. 共通レイアウト
@@ -4714,7 +4719,1281 @@ body.confirm-dialog-open {
 
 
 /* ==================================================
-   13. レスポンシブ設定
+   13. 顧客検索画面
+   顧客一覧・絞り込み・並び替え
+================================================== */
+
+/* 顧客検索画面全体 */
+#customer-search-view {
+  position: relative;
+
+  padding: 40px 0 120px;
+}
+
+/* タイトルと説明文を中央へ配置する */
+.customer-search-heading {
+  align-items: center;
+
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+
+  text-align: center;
+}
+
+/* 顧客検索画面の英字ラベル */
+#customer-search-view .page-heading-label {
+  margin: 0 0 8px;
+
+  color: #7d9680;
+}
+
+/* 顧客検索画面のタイトル */
+.customer-search-heading h2 {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.08em;
+}
+
+/* 顧客検索画面の説明文 */
+.customer-search-heading > p:last-child {
+  margin: 16px 0 0;
+
+  color: #818685;
+  font-size: 15px;
+  line-height: 1.8;
+  letter-spacing: 0.04em;
+}
+
+/* 検索バーを配置する領域 */
+.customer-search-toolbar {
+  display: grid;
+  gap: 14px;
+
+  width: 100%;
+  margin-top: 38px;
+}
+
+/* 虫眼鏡・検索欄・削除ボタンをまとめる */
+.customer-search-input-field {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+
+  min-height: 68px;
+  padding: 0 22px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 30px rgb(81 82 84 / 8%);
+}
+
+/* 検索欄左側の虫眼鏡 */
+.customer-search-input-icon {
+  display: grid;
+  place-items: center;
+
+  width: 28px;
+  height: 28px;
+
+  color: #7d9680;
+}
+
+/* 虫眼鏡SVG */
+.customer-search-input-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 顧客検索入力欄 */
+.customer-search-input {
+  width: 100%;
+  min-width: 0;
+  padding: 18px 0;
+
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  color: #515254;
+  font: inherit;
+  font-size: 16px;
+}
+
+/* 検索欄のプレースホルダー */
+.customer-search-input::placeholder {
+  color: #a5aaa8;
+}
+
+/* ブラウザ標準の検索削除ボタンを隠す */
+.customer-search-input::-webkit-search-cancel-button {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* 独自の検索文字削除ボタン */
+.customer-search-clear-button {
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  background-color: rgb(245 177 135 / 24%);
+  border: none;
+  border-radius: 50%;
+
+  color: #d98557;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+/* hidden属性が付いている間は削除ボタンを隠す */
+.customer-search-clear-button[hidden] {
+  display: none;
+}
+
+/* スマホ用の検索操作はPCでは隠す */
+.customer-search-mobile-actions {
+  display: none;
+}
+
+/* 検索画面の左右レイアウト */
+.customer-search-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 26px;
+
+  margin-top: 32px;
+}
+
+/* 左側メイン領域 */
+.customer-search-main {
+  min-width: 0;
+}
+
+/* クイックフィルター・最近検索の共通領域 */
+.customer-search-section {
+  padding: 24px;
+
+  background-color: rgb(253 250 246 / 66%);
+  border: 1px solid rgb(129 134 133 / 14%);
+  border-radius: 22px;
+}
+
+/* 最近検索との間隔 */
+.customer-recent-search-section {
+  margin-top: 18px;
+}
+
+/* セクションのタイトルとアイコン */
+.customer-search-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* セクションタイトル */
+.customer-search-section-heading h3 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* セクションタイトルのアイコン */
+.customer-search-section-icon {
+  display: grid;
+  place-items: center;
+
+  width: 22px;
+  height: 22px;
+
+  color: #7d9680;
+}
+
+/* セクションタイトルのSVG */
+.customer-search-section-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* セクション見出しと右側操作を横並びにする */
+.customer-search-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* クイックフィルター一覧 */
+.customer-quick-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+/* クイックフィルターボタン */
+.customer-quick-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+  padding: 9px 18px;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 22%);
+  border-radius: 999px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* クイックフィルターのアイコン */
+.customer-quick-filter-icon {
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 18px;
+  height: 18px;
+}
+
+/* クイックフィルターのSVG */
+.customer-quick-filter-icon svg {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+/* 選択中のクイックフィルター */
+.customer-quick-filter--active {
+  background-color: #7d9680;
+  border-color: #7d9680;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 20%);
+
+  color: #ffffff;
+}
+
+/* クイックフィルターへマウスを乗せたとき */
+.customer-quick-filter:hover {
+  transform: translateY(-1px);
+}
+
+/* 最近検索をすべて消すボタン */
+.customer-recent-search-clear {
+  padding: 6px 0;
+
+  background-color: transparent;
+  border: none;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 最近検索一覧 */
+.customer-recent-search-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin: 18px 0 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+/* 最近検索1件分 */
+.customer-recent-search-item {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 38px;
+  padding: 0 8px 0 14px;
+
+  background-color: #f1e8dc;
+  border-radius: 999px;
+}
+
+/* 最近検索文字 */
+.customer-recent-search-button {
+  padding: 8px 4px;
+
+  background-color: transparent;
+  border: none;
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+/* 最近検索を個別に消すボタン */
+.customer-recent-search-remove {
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+  padding: 0;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+
+  color: #818685;
+  font: inherit;
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+/* 検索結果全体 */
+.customer-search-results-section {
+  margin-top: 30px;
+}
+
+/* 検索結果見出し */
+.customer-search-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 0 4px 14px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 16%);
+}
+
+/* 検索結果タイトル */
+.customer-search-results-header h3 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 18px;
+}
+
+/* 検索結果件数 */
+.customer-search-result-count {
+  margin: 6px 0 0;
+
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 表示方法切り替え */
+.customer-search-view-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 表示方法切り替えボタン */
+.customer-search-view-button {
+  display: grid;
+  place-items: center;
+
+  width: 38px;
+  height: 38px;
+  padding: 9px;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 10px;
+
+  color: #9a9f9d;
+
+  cursor: pointer;
+}
+
+/* 選択中の表示方法 */
+.customer-search-view-button--active {
+  background-color: rgb(125 150 128 / 14%);
+
+  color: #7d9680;
+}
+
+/* 表示方法ボタン内のSVG */
+.customer-search-view-button svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 検索結果一覧 */
+.customer-search-result-list {
+  display: grid;
+  gap: 14px;
+
+  margin-top: 18px;
+}
+
+/* 検索結果カード */
+.customer-search-result-card {
+  min-width: 0;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 20px;
+
+  box-shadow:
+    0 8px 24px rgb(81 82 84 / 7%);
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 条件に一致しない顧客は隠す */
+.customer-search-result-card[hidden] {
+  display: none;
+}
+
+/* カードへマウスを乗せたとき */
+.customer-search-result-card:hover {
+  border-color: rgb(125 150 128 / 42%);
+
+  box-shadow:
+    0 14px 32px rgb(81 82 84 / 11%);
+
+  transform: translateY(-2px);
+}
+
+/* 顧客詳細へ進むカード全体のボタン */
+.customer-search-result-open {
+  display: grid;
+  grid-template-columns:
+    76px
+    minmax(190px, 1fr)
+    minmax(330px, 1.25fr)
+    22px;
+  align-items: center;
+  gap: 18px;
+
+  width: 100%;
+  padding: 18px;
+
+  background-color: transparent;
+  border: none;
+
+  color: inherit;
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+/* 顧客写真の代わりに表示する頭文字 */
+.customer-search-result-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 76px;
+  height: 76px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f1e8dc,
+      #d8dfd3
+    );
+  border: 1px solid rgb(125 150 128 / 16%);
+  border-radius: 18px;
+
+  color: #6d856f;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* 顧客名・ID・特徴 */
+.customer-search-result-profile {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+/* 顧客名と会員ランク */
+.customer-search-result-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+/* 顧客名 */
+.customer-search-result-name-row strong {
+  color: #515254;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+/* 会員ランク */
+.customer-rank {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 25px;
+  padding: 4px 9px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* 常連ラベル */
+.customer-rank--regular {
+  background-color: rgb(125 150 128 / 17%);
+
+  color: #6d856f;
+}
+
+/* 新規ラベル */
+.customer-rank--new {
+  background-color: rgb(245 177 135 / 22%);
+
+  color: #d5794c;
+}
+
+/* 顧客ID */
+.customer-search-result-id {
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 特徴 */
+.customer-search-result-features {
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 10px;
+
+  background-color: rgb(125 150 128 / 10%);
+  border-radius: 999px;
+
+  color: #606563;
+  font-size: 12px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 最終来店・来店回数・累計売上 */
+.customer-search-result-statistics {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  min-width: 0;
+}
+
+/* 各数値項目 */
+.customer-search-result-stat {
+  display: grid;
+  gap: 5px;
+
+  min-width: 0;
+  padding: 4px 16px;
+
+  border-left:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* 数値項目の見出し */
+.customer-search-result-stat small {
+  color: #818685;
+  font-size: 11px;
+}
+
+/* 数値 */
+.customer-search-result-stat strong {
+  color: #515254;
+  font-size: 15px;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+/* 詳細へ進む矢印 */
+.customer-search-result-arrow {
+  color: #7d9680;
+  font-size: 32px;
+  font-weight: 300;
+}
+
+/* 顧客が見つからない場合 */
+.customer-search-empty-state {
+  display: grid;
+  justify-items: center;
+
+  margin-top: 18px;
+  padding: 48px 24px;
+
+  background-color: rgb(253 250 246 / 72%);
+  border: 1px dashed rgb(129 134 133 / 30%);
+  border-radius: 22px;
+
+  text-align: center;
+}
+
+/* hidden属性がある間は空表示を隠す */
+.customer-search-empty-state[hidden] {
+  display: none;
+}
+
+/* 顧客が見つからない場合の虫眼鏡アイコン */
+.customer-search-empty-icon {
+  display: grid;
+  place-items: center;
+
+  width: 58px;
+  height: 58px;
+
+  background-color: rgb(245 177 135 / 20%);
+  border: 1px solid rgb(245 177 135 / 36%);
+  border-radius: 50%;
+
+  color: #d98557;
+}
+
+/* 虫眼鏡アイコンのSVG */
+.customer-search-empty-icon svg {
+  display: block;
+
+  width: 29px;
+  height: 29px;
+}
+
+/* 空表示のタイトル */
+.customer-search-empty-state h3 {
+  margin: 16px 0 0;
+
+  color: #515254;
+  font-size: 18px;
+}
+
+/* 空表示の説明 */
+.customer-search-empty-state p {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 条件をリセットするボタン */
+.customer-search-reset-button {
+  min-height: 44px;
+  margin-top: 22px;
+  padding: 10px 20px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 999px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 読み込み中 */
+.customer-search-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin-top: 22px;
+
+  color: #818685;
+  font-size: 13px;
+}
+
+/* hidden属性が付いている間は隠す */
+.customer-search-loading[hidden] {
+  display: none;
+}
+
+/* 読み込み中の円 */
+.customer-search-loading-spinner {
+  width: 22px;
+  height: 22px;
+
+  border: 3px solid rgb(125 150 128 / 18%);
+  border-top-color: #7d9680;
+  border-radius: 50%;
+
+  animation:
+    customer-search-loading-spin 0.8s linear infinite;
+}
+
+/* 読み込み中アニメーション */
+@keyframes customer-search-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* さらに読み込むボタン */
+.customer-search-load-more {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+
+  background-color: transparent;
+  border: 1px solid rgb(125 150 128 / 40%);
+  border-radius: 14px;
+
+  color: #6d856f;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* PC右側のサイドバー */
+.customer-search-sidebar {
+  position: sticky;
+  top: 24px;
+
+  display: grid;
+  gap: 18px;
+}
+
+/* 並び替え・条件カード */
+.customer-search-side-card {
+  padding: 22px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 22px;
+
+  box-shadow:
+    0 10px 28px rgb(81 82 84 / 8%);
+}
+
+/* サイドカードタイトル */
+.customer-search-side-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* サイドカードタイトル文字 */
+.customer-search-side-title h3 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 16px;
+}
+
+/* 検索条件カードのヘッダー */
+.customer-search-side-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+/* 条件リセットボタン */
+.customer-search-condition-reset {
+  padding: 5px 0;
+
+  background-color: transparent;
+  border: none;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 並び替え一覧 */
+.customer-search-sort-options {
+  display: grid;
+  gap: 4px;
+
+  margin: 18px 0 0;
+  padding: 0;
+
+  border: none;
+}
+
+/* 並び替え1件 */
+.customer-search-sort-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 42px;
+  padding: 8px 6px;
+
+  color: #515254;
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+/* 並び替えラジオボタン */
+.customer-search-sort-option input {
+  width: 18px;
+  height: 18px;
+
+  accent-color: #7d9680;
+}
+
+/* 検索条件一覧 */
+.customer-search-condition-list {
+  display: grid;
+
+  margin-top: 18px;
+
+  border-top:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* 検索条件1件 */
+.customer-search-condition-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  min-height: 50px;
+  padding: 12px 2px;
+
+  background-color: transparent;
+  border: none;
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+/* 検索条件のアイコンと項目名 */
+.customer-search-condition-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 0;
+}
+
+/* 検索条件のアイコン */
+.customer-search-condition-row-icon {
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 20px;
+  height: 20px;
+
+  color: #7d9680;
+}
+
+/* 検索条件のSVG */
+.customer-search-condition-row-icon svg {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+/* 現在の検索条件 */
+.customer-search-condition-value {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* この条件で検索ボタン */
+.customer-search-condition-submit {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 22px;
+  padding: 12px 18px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 22%);
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 一番上へ戻る縦型ボタン */
+.customer-search-scroll-top {
+  position: fixed;
+  right: 20px;
+  bottom: 108px;
+  z-index: 100;
+
+  width: 52px;
+  height: 108px;
+  padding: 0;
+
+  background-color: transparent;
+  border: none;
+
+  color: #d98f68;
+  font: inherit;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+  
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translateY(8px);
+}
+
+/* スクロール後にTOPボタンを表示する */
+.customer-search-scroll-top--visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  transform: translateY(0);
+}
+
+/* 縦向きに配置するTOPの文字 */
+.customer-search-scroll-top-text {
+  position: absolute;
+  top: 50px;
+  left: -7px;
+
+  display: block;
+
+  width: 46px;
+
+  color: currentColor;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  white-space: nowrap;
+
+  transform: rotate(90deg);
+}
+
+/* 縦線と矢印 */
+.customer-search-scroll-top-arrow {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  display: block;
+
+  width: 30px;
+  height: 108px;
+
+  overflow: visible;
+}
+
+/* マウスを乗せたとき */
+.customer-search-scroll-top:hover {
+  color: #c97952;
+
+  transform: translateY(-3px);
+}
+
+/* キーボード操作時の選択表示 */
+.customer-search-scroll-top:focus-visible {
+  outline: 2px solid #7d9680;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* スマホ用パネル全体 */
+.customer-search-mobile-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 2200;
+
+  display: grid;
+  align-items: end;
+
+  padding: 18px;
+
+  background-color: rgb(81 82 84 / 48%);
+  backdrop-filter: blur(5px);
+}
+
+/* hidden属性が付いている間はパネルを隠す */
+.customer-search-mobile-panel[hidden] {
+  display: none;
+}
+
+/* スマホ用パネルのカード */
+.customer-search-mobile-panel-content {
+  width: 100%;
+  max-height: calc(100dvh - 36px);
+  padding: 24px;
+
+  background-color: #fdfaf6;
+  border-radius: 24px;
+
+  box-shadow:
+    0 22px 60px rgb(81 82 84 / 28%);
+
+  overflow-y: auto;
+}
+
+/* スマホ用パネルのヘッダー */
+.customer-search-mobile-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* スマホ用パネルタイトル */
+.customer-search-mobile-panel-header h2 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 22px;
+}
+
+/* パネルを閉じるボタン */
+.customer-search-mobile-panel-close {
+  display: grid;
+  place-items: center;
+
+  width: 38px;
+  height: 38px;
+  padding: 0;
+
+  background-color: rgb(125 150 128 / 12%);
+  border: none;
+  border-radius: 50%;
+
+  color: #607862;
+  font: inherit;
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+/* スマホ用パネルの決定ボタン */
+.customer-search-mobile-panel-submit {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 22px;
+  padding: 12px 18px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* スマホ用詳細条件パネルの下部ボタン */
+.customer-search-mobile-panel-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+/* スマホ用条件リセット */
+.customer-search-mobile-condition-reset {
+  min-height: 50px;
+  padding: 12px 16px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #607862;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 横並び時は決定ボタンの余白を消す */
+.customer-search-mobile-panel-actions
+.customer-search-mobile-panel-submit {
+  margin-top: 0;
+}
+
+/* 詳細条件の選択肢パネル */
+.customer-search-condition-choice-panel {
+  z-index: 2300;
+
+  align-items: center;
+  justify-items: center;
+}
+
+/* 詳細条件の選択肢カード */
+.customer-search-condition-choice-content {
+  width: min(420px, 100%);
+}
+
+/* 詳細条件の選択肢一覧 */
+.customer-search-condition-choice-options {
+  display: grid;
+  gap: 8px;
+
+  margin-top: 18px;
+}
+
+/* 詳細条件の選択肢ボタン */
+.customer-search-condition-choice-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 14px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* 選択中の詳細条件 */
+.customer-search-condition-choice-button--active {
+  background-color: rgb(125 150 128 / 12%);
+  border-color: #7d9680;
+
+  color: #607862;
+  font-weight: 700;
+}
+
+/* 選択中を表す丸 */
+.customer-search-condition-choice-check {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+
+  width: 20px;
+  height: 20px;
+
+  border: 1px solid rgb(125 150 128 / 45%);
+  border-radius: 50%;
+
+  color: transparent;
+  font-size: 12px;
+}
+
+/* 選択中の丸へチェックを表示する */
+.customer-search-condition-choice-button--active
+.customer-search-condition-choice-check {
+  background-color: #7d9680;
+  border-color: #7d9680;
+
+  color: #ffffff;
+}
+
+/* 条件が選択されている行 */
+.customer-search-condition-row--selected
+.customer-search-condition-value {
+  color: #607862;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .customer-search-condition-choice-panel {
+    align-items: end;
+  }
+
+  .customer-search-condition-choice-content {
+    width: 100%;
+  }
+}
+
+
+/* ==================================================
+   14. レスポンシブ設定
    画面幅に応じてレイアウトを切り替える
 ================================================== */
 
@@ -5037,6 +6316,274 @@ body.confirm-dialog-open {
   .ai-summary-card {
     padding: 20px;
   }
+
+  /* --------------------------------------------------
+     顧客検索画面のスマホ表示
+  -------------------------------------------------- */
+  /* 顧客検索画面全体 */
+  #customer-search-view {
+    padding-top: 28px;
+    padding-bottom: 112px;
+  }
+
+  /* タイトル */
+  .customer-search-heading h2 {
+    font-size: 34px;
+  }
+
+  /* 説明文 */
+  .customer-search-heading > p:last-child {
+    font-size: 14px;
+  }
+
+  /* 検索欄 */
+  .customer-search-toolbar {
+    margin-top: 28px;
+  }
+
+  .customer-search-input-field {
+    min-height: 58px;
+    padding: 0 16px;
+
+    border-radius: 16px;
+  }
+
+  .customer-search-input-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .customer-search-input {
+    padding: 14px 0;
+
+    font-size: 15px;
+  }
+
+  /* スマホ用操作ボタンを表示する */
+  .customer-search-mobile-actions {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* 並び替え・詳細条件ボタン */
+  .customer-search-mobile-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 46px;
+    padding: 10px 14px;
+
+    background-color: #fdfaf6;
+    border: 1px solid rgb(129 134 133 / 20%);
+    border-radius: 14px;
+
+    color: #515254;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+  }
+
+  /* 詳細条件アイコン */
+  .customer-search-filter-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .customer-search-filter-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 1カラムへ変更する */
+  .customer-search-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+
+    margin-top: 22px;
+  }
+
+  /* PC右側の設定欄を隠す */
+  .customer-search-sidebar {
+    display: none;
+  }
+
+  /* フィルター・最近検索 */
+  .customer-search-section {
+    padding: 20px 16px;
+
+    border-radius: 18px;
+  }
+
+  .customer-quick-filter-list {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+
+    margin-right: 0;
+    padding-right: 0;
+
+    overflow: visible;
+  }
+
+  .customer-quick-filter {
+    flex: 0 0 auto;
+
+    min-height: 40px;
+    padding: 8px 15px;
+
+    font-size: 13px;
+  }
+
+  /* 最近検索を横スクロールにする */
+  .customer-recent-search-list {
+    flex-wrap: nowrap;
+
+    margin-right: -16px;
+    padding-right: 16px;
+
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .customer-recent-search-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .customer-recent-search-item {
+    flex: 0 0 auto;
+  }
+
+  /* 検索結果 */
+  .customer-search-results-section {
+    margin-top: 24px;
+  }
+
+  .customer-search-results-header {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  /* 顧客カード */
+  .customer-search-result-open {
+    grid-template-columns:
+      62px minmax(0, 1fr) 18px;
+    gap: 12px;
+
+    padding: 16px;
+  }
+
+  /* 顧客の頭文字 */
+  .customer-search-result-avatar {
+    width: 62px;
+    height: 62px;
+
+    border-radius: 16px;
+
+    font-size: 22px;
+  }
+
+  /* 顧客名 */
+  .customer-search-result-name-row strong {
+    font-size: 17px;
+  }
+
+  /* 特徴 */
+  .customer-search-result-features {
+    font-size: 11px;
+  }
+
+  /* 統計情報をカード下段へ移動する */
+  .customer-search-result-statistics {
+    grid-column: 1 / -1;
+
+    margin-top: 4px;
+    padding-top: 14px;
+
+    border-top:
+      1px solid rgb(129 134 133 / 14%);
+  }
+
+  /* 最初の統計にも左線を付けない */
+  .customer-search-result-stat:first-child {
+    border-left: none;
+  }
+
+  .customer-search-result-stat {
+    padding: 0 10px;
+  }
+
+  .customer-search-result-stat small {
+    font-size: 10px;
+  }
+
+  .customer-search-result-stat strong {
+    font-size: 13px;
+  }
+
+  /* 矢印 */
+  .customer-search-result-arrow {
+    grid-column: 3;
+    grid-row: 1;
+
+    font-size: 27px;
+  }
+
+  /* 表示切り替えはスマホでは隠す */
+  .customer-search-view-switcher {
+    display: none;
+  }
+
+  /* スマホ用の一番上へ戻る縦型ボタン */
+  .customer-search-scroll-top {
+    right: 7px;
+    bottom: 94px;
+
+    width: 42px;
+    height: 88px;
+  }
+
+  /* スマホ用のTOP文字 */
+  .customer-search-scroll-top-text {
+    top: 40px;
+    left: -7px;
+
+    width: 38px;
+
+    font-size: 12px;
+    letter-spacing: 0.14em;
+  }
+
+  /* スマホ用の縦線と矢印 */
+  .customer-search-scroll-top-arrow {
+    width: 25px;
+    height: 88px;
+  }
+
+  /* スマホ用パネル */
+  .customer-search-mobile-panel {
+    padding: 10px;
+  }
+
+  .customer-search-mobile-panel-content {
+    max-height: calc(100dvh - 20px);
+    padding: 22px 18px;
+
+    border-radius: 22px;
+  }
+
+  /* 詳細条件パネル内の項目 */
+  .customer-search-mobile-panel
+  .customer-search-condition-row {
+    min-height: 54px;
+
+    font-size: 14px;
+  }
 }
 
 /* 横幅が768px以上のタブレット向け設定 */
@@ -5045,6 +6592,243 @@ body.confirm-dialog-open {
     /* タブレット以上では左右の余白を少し広くする */
     padding: 24px;
   }
+
+    /* カード表示はタブレットで横2列にする */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  ) {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  /* カード表示の各カードを縦型に整える */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-card {
+    height: 100%;
+  }
+
+  /* カード表示の顧客情報 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-open {
+    position: relative;
+
+    grid-template-columns:
+      56px minmax(0, 1fr);
+    grid-template-areas:
+      "avatar profile"
+      "statistics statistics";
+    align-items: center;
+    gap: 14px;
+
+    height: 100%;
+    padding: 18px;
+  }
+
+  /* カード表示の顧客画像 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-avatar {
+    grid-area: avatar;
+
+    width: 56px;
+    height: 56px;
+
+    border-radius: 15px;
+
+    font-size: 20px;
+  }
+
+  /* カード表示の顧客プロフィール */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-profile {
+    grid-area: profile;
+  }
+
+  /* カード表示の顧客名 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-name-row strong {
+    font-size: 17px;
+  }
+
+  /* カード表示の特徴 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-features {
+    max-width: 100%;
+
+    font-size: 11px;
+  }
+
+  /* カード表示の統計情報 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-statistics {
+    grid-area: statistics;
+
+    margin-top: 4px;
+    padding-top: 14px;
+
+    border-top:
+      1px solid rgb(129 134 133 / 14%);
+  }
+
+  /* カード表示の統計項目 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-stat {
+    padding: 0 8px;
+  }
+
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-stat:first-child {
+    padding-left: 0;
+
+    border-left: none;
+  }
+
+  /* 日付や金額を途中で改行させない */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-stat strong {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+
+  /* カード表示の矢印 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-arrow {
+    position: absolute;
+    top: 18px;
+    right: 14px;
+
+    font-size: 24px;
+  }
+
+  /* 一覧表示は横1列にする */
+  .customer-search-result-list--list {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* 一覧表示ではカードをすっきりさせる */
+  .customer-search-result-list--list
+  .customer-search-result-card {
+    border-radius: 14px;
+
+    box-shadow: none;
+  }
+
+  /* 一覧表示ではカードを浮かせすぎない */
+  .customer-search-result-list--list
+  .customer-search-result-card:hover {
+    transform: none;
+  }
+
+  /* 一覧表示の顧客情報 */
+  .customer-search-result-list--list
+  .customer-search-result-open {
+    grid-template-columns:
+      48px
+      minmax(180px, 1fr)
+      minmax(300px, 1.2fr)
+      18px;
+    gap: 14px;
+
+    padding: 10px 14px;
+  }
+
+  /* 一覧表示の顧客画像 */
+  .customer-search-result-list--list
+  .customer-search-result-avatar {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+
+    font-size: 18px;
+  }
+
+  /* 一覧表示のプロフィール */
+  .customer-search-result-list--list
+  .customer-search-result-profile {
+    gap: 3px;
+  }
+
+  /* 一覧表示の顧客名 */
+  .customer-search-result-list--list
+  .customer-search-result-name-row strong {
+    font-size: 16px;
+  }
+
+  /* 一覧表示の顧客ランク */
+  .customer-search-result-list--list
+  .customer-rank {
+    min-height: 22px;
+    padding: 3px 8px;
+
+    font-size: 10px;
+  }
+
+  /* 一覧表示の顧客番号 */
+  .customer-search-result-list--list
+  .customer-search-result-id {
+    font-size: 12px;
+  }
+
+  /* 一覧表示の特徴 */
+  .customer-search-result-list--list
+  .customer-search-result-features {
+    padding: 4px 8px;
+
+    font-size: 11px;
+  }
+
+  /* 一覧表示の数値欄 */
+  .customer-search-result-list--list
+  .customer-search-result-stat {
+    gap: 3px;
+
+    padding: 2px 12px;
+  }
+
+  .customer-search-result-list--list
+  .customer-search-result-stat small {
+    font-size: 10px;
+  }
+
+  /* 一覧表示の日付や金額も途中で改行させない */
+  .customer-search-result-list--list
+  .customer-search-result-stat strong {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+
+  /* 一覧表示の矢印 */
+  .customer-search-result-list--list
+  .customer-search-result-arrow {
+    font-size: 26px;
+  }
 }
 
 /* 横幅が1024px以上のパソコン向け設定 */
@@ -5052,6 +6836,14 @@ body.confirm-dialog-open {
   .app-container {
     /* PCでは、さらにゆったりした余白にする */
     padding: 32px;
+  }
+
+    /* PCのカード表示は横3列にする */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  ) {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
   }
 
   .action-grid {

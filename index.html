@@ -389,7 +389,11 @@
                         </button>
 
                         <!-- 登録済みの顧客を探すメニュー -->
-                        <button class="action-card action-card--search" type="button">
+                        <button
+                            class="action-card action-card--search"
+                            type="button"
+                            data-view="customer-search"
+                        >
 
                             <!-- アイコンと機能名を横並びにする -->
                             <span class="action-card-header">
@@ -2374,6 +2378,2212 @@
                 </form>
             </section>
 
+            <!-- 登録済みのお客様を検索する画面 -->
+            <section
+                class="app-view"
+                id="customer-search-view"
+                aria-labelledby="customer-search-title"
+            >
+                <!-- ページ上部のタイトル -->
+                <div class="page-header customer-search-page-header">
+                    <div class="page-heading customer-search-heading">
+                        <p class="page-heading-label">
+                            CUSTOMER SEARCH
+                        </p>
+
+                        <h2 id="customer-search-title">
+                            顧客検索
+                        </h2>
+
+                        <p>
+                            お客様を検索して、登録情報や来店履歴を確認できます。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 検索バーとスマホ用操作ボタン -->
+                <section
+                    class="customer-search-toolbar"
+                    aria-label="顧客検索"
+                >
+                    <div class="customer-search-input-field">
+                        <label
+                            class="visually-hidden"
+                            for="customer-search-input"
+                        >
+                            顧客名・顧客ID・特徴・メモで検索
+                        </label>
+
+                        <span
+                            class="customer-search-input-icon"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle
+                                    cx="10.5"
+                                    cy="10.5"
+                                    r="6.5"
+                                ></circle>
+
+                                <path d="m16 16 5 5"></path>
+                            </svg>
+                        </span>
+
+                        <input
+                            id="customer-search-input"
+                            class="customer-search-input"
+                            type="search"
+                            placeholder="顧客名・顧客ID・特徴・メモで検索"
+                            autocomplete="off"
+                            aria-describedby="customer-search-description"
+                        >
+
+                        <button
+                            class="customer-search-clear-button"
+                            type="button"
+                            aria-label="検索文字を消去"
+                            hidden
+                        >
+                            ×
+                        </button>
+                    </div>
+
+                    <p
+                        class="visually-hidden"
+                        id="customer-search-description"
+                    >
+                        条件を指定していない場合は、登録済みの顧客をすべて表示します。
+                    </p>
+
+                    <!-- スマホだけに表示する検索操作 -->
+                    <div class="customer-search-mobile-actions">
+                        <button
+                            class="customer-search-mobile-action"
+                            id="customer-search-mobile-sort-button"
+                            type="button"
+                            aria-controls="customer-search-sort-panel"
+                            aria-expanded="false"
+                        >
+                            <span aria-hidden="true">
+                                ⇅
+                            </span>
+
+                            <span>
+                                並び替え
+                            </span>
+                        </button>
+
+                        <button
+                            class="customer-search-mobile-action"
+                            id="customer-search-mobile-condition-button"
+                            type="button"
+                            aria-controls="customer-search-condition-panel"
+                            aria-expanded="false"
+                        >
+                            <span
+                                class="customer-search-filter-icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M4 6h16"></path>
+                                    <path d="M7 12h10"></path>
+                                    <path d="M10 18h4"></path>
+                                </svg>
+                            </span>
+
+                            <span>
+                                詳細条件
+                            </span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 検索画面のメインレイアウト -->
+                <div class="customer-search-layout">
+                    <!-- 左側のメイン領域 -->
+                    <div class="customer-search-main">
+                        <!-- クイックフィルター -->
+                        <section
+                            class="customer-search-section customer-quick-filter-section"
+                            aria-labelledby="customer-quick-filter-title"
+                        >
+                            <div class="customer-search-section-heading">
+                                <span
+                                    class="customer-search-section-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="M4 5h16l-6 7v6l-4 2v-8z"></path>
+                                    </svg>
+                                </span>
+
+                                <h3 id="customer-quick-filter-title">
+                                    クイックフィルター
+                                </h3>
+                            </div>
+
+                            <div
+                                class="customer-quick-filter-list"
+                                role="group"
+                                aria-label="顧客の絞り込み"
+                            >
+                                <button
+                                    class="customer-quick-filter customer-quick-filter--active"
+                                    type="button"
+                                    data-quick-filter="all"
+                                    aria-pressed="true"
+                                >
+                                    全部
+                                </button>
+
+                                <button
+                                    class="customer-quick-filter"
+                                    type="button"
+                                    data-quick-filter="registered-this-month"
+                                    aria-pressed="false"
+                                >
+                                    今月登録
+                                </button>
+
+                                <button
+                                    class="customer-quick-filter"
+                                    type="button"
+                                    data-quick-filter="birthday"
+                                    aria-pressed="false"
+                                >
+                                    誕生日
+                                </button>
+
+                                <button
+                                    class="customer-quick-filter"
+                                    type="button"
+                                    data-quick-filter="no-photo"
+                                    aria-pressed="false"
+                                >
+                                    <span
+                                        class="customer-quick-filter-icon"
+                                        aria-hidden="true"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <!-- カメラ本体 -->
+                                            <path d="M4 7h4l1.5-2h5L16 7h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+
+                                            <!-- カメラのレンズ -->
+                                            <circle cx="12" cy="13" r="4"></circle>
+
+                                            <!-- 未登録を表す斜線 -->
+                                            <path d="M3 3l18 18"></path>
+                                        </svg>
+                                    </span>
+
+                                    <span>
+                                        写真なし
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-quick-filter"
+                                    type="button"
+                                    data-quick-filter="no-memo"
+                                    aria-pressed="false"
+                                >
+                                    <span
+                                        class="customer-quick-filter-icon"
+                                        aria-hidden="true"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <!-- 書類本体 -->
+                                            <path d="M6 3h9l3 3v15H6z"></path>
+
+                                            <!-- 右上の折り返し -->
+                                            <path d="M15 3v4h4"></path>
+
+                                            <!-- メモの線 -->
+                                            <path d="M9 12h6"></path>
+                                            <path d="M9 16h4"></path>
+
+                                            <!-- 未登録を表す斜線 -->
+                                            <path d="M3 3l18 18"></path>
+                                        </svg>
+                                    </span>
+
+                                    <span>
+                                        メモなし
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-quick-filter"
+                                    type="button"
+                                    data-quick-filter="no-features"
+                                    aria-pressed="false"
+                                >
+                                    <span
+                                        class="customer-quick-filter-icon"
+                                        aria-hidden="true"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <!-- タグ本体 -->
+                                            <path d="M3 12 12 3h7l2 2v7l-9 9z"></path>
+
+                                            <!-- タグの穴 -->
+                                            <circle cx="16.5" cy="7.5" r="1.5"></circle>
+
+                                            <!-- 未登録を表す斜線 -->
+                                            <path d="M3 3l18 18"></path>
+                                        </svg>
+                                    </span>
+
+                                    <span>
+                                        特徴なし
+                                    </span>
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- 最近検索した言葉 -->
+                        <section
+                            class="customer-search-section customer-recent-search-section"
+                            aria-labelledby="customer-recent-search-title"
+                        >
+                            <div class="customer-search-section-header">
+                                <div class="customer-search-section-heading">
+                                    <span
+                                        class="customer-search-section-icon"
+                                        aria-hidden="true"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <circle
+                                                cx="12"
+                                                cy="12"
+                                                r="8"
+                                            ></circle>
+
+                                            <path d="M12 7v5l3 2"></path>
+                                        </svg>
+                                    </span>
+
+                                    <h3 id="customer-recent-search-title">
+                                        最近検索
+                                    </h3>
+                                </div>
+
+                                <button
+                                    class="customer-recent-search-clear"
+                                    type="button"
+                                >
+                                    すべてクリア
+                                </button>
+                            </div>
+
+                            <ul class="customer-recent-search-list">
+                                <li class="customer-recent-search-item">
+                                    <button
+                                        class="customer-recent-search-button"
+                                        type="button"
+                                        data-search-value="浅田けん"
+                                    >
+                                        浅田けん
+                                    </button>
+
+                                    <button
+                                        class="customer-recent-search-remove"
+                                        type="button"
+                                        aria-label="浅田けんを検索履歴から削除"
+                                    >
+                                        ×
+                                    </button>
+                                </li>
+
+                                <li class="customer-recent-search-item">
+                                    <button
+                                        class="customer-recent-search-button"
+                                        type="button"
+                                        data-search-value="田中翔"
+                                    >
+                                        田中翔
+                                    </button>
+
+                                    <button
+                                        class="customer-recent-search-remove"
+                                        type="button"
+                                        aria-label="田中翔を検索履歴から削除"
+                                    >
+                                        ×
+                                    </button>
+                                </li>
+
+                                <li class="customer-recent-search-item">
+                                    <button
+                                        class="customer-recent-search-button"
+                                        type="button"
+                                        data-search-value="Ren"
+                                    >
+                                        Ren
+                                    </button>
+
+                                    <button
+                                        class="customer-recent-search-remove"
+                                        type="button"
+                                        aria-label="Renを検索履歴から削除"
+                                    >
+                                        ×
+                                    </button>
+                                </li>
+
+                                <li class="customer-recent-search-item">
+                                    <button
+                                        class="customer-recent-search-button"
+                                        type="button"
+                                        data-search-value="筋肉質"
+                                    >
+                                        筋肉質
+                                    </button>
+
+                                    <button
+                                        class="customer-recent-search-remove"
+                                        type="button"
+                                        aria-label="筋肉質を検索履歴から削除"
+                                    >
+                                        ×
+                                    </button>
+                                </li>
+                            </ul>
+                        </section>
+
+                        <!-- 検索結果 -->
+                        <section
+                            class="customer-search-results-section"
+                            aria-labelledby="customer-search-results-title"
+                        >
+                            <div class="customer-search-results-header">
+                                <div>
+                                    <h3 id="customer-search-results-title">
+                                        検索結果
+                                    </h3>
+
+                                    <p
+                                        class="customer-search-result-count"
+                                        id="customer-search-result-count"
+                                        aria-live="polite"
+                                    >
+                                        6名
+                                    </p>
+                                </div>
+
+                                <div
+                                    class="customer-search-view-switcher"
+                                    role="group"
+                                    aria-label="検索結果の表示方法"
+                                >
+                                    <button
+                                        class="customer-search-view-button customer-search-view-button--active"
+                                        type="button"
+                                        data-result-view="list"
+                                        aria-label="リスト表示"
+                                        aria-pressed="true"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            aria-hidden="true"
+                                        >
+                                            <path d="M8 6h13"></path>
+                                            <path d="M8 12h13"></path>
+                                            <path d="M8 18h13"></path>
+
+                                            <circle
+                                                cx="3"
+                                                cy="6"
+                                                r="1"
+                                                fill="currentColor"
+                                            ></circle>
+
+                                            <circle
+                                                cx="3"
+                                                cy="12"
+                                                r="1"
+                                                fill="currentColor"
+                                            ></circle>
+
+                                            <circle
+                                                cx="3"
+                                                cy="18"
+                                                r="1"
+                                                fill="currentColor"
+                                            ></circle>
+                                        </svg>
+                                    </button>
+
+                                    <button
+                                        class="customer-search-view-button"
+                                        type="button"
+                                        data-result-view="grid"
+                                        aria-label="グリッド表示"
+                                        aria-pressed="false"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                            aria-hidden="true"
+                                        >
+                                            <rect
+                                                x="3"
+                                                y="3"
+                                                width="7"
+                                                height="7"
+                                                rx="1"
+                                            ></rect>
+
+                                            <rect
+                                                x="14"
+                                                y="3"
+                                                width="7"
+                                                height="7"
+                                                rx="1"
+                                            ></rect>
+
+                                            <rect
+                                                x="3"
+                                                y="14"
+                                                width="7"
+                                                height="7"
+                                                rx="1"
+                                            ></rect>
+
+                                            <rect
+                                                x="14"
+                                                y="14"
+                                                width="7"
+                                                height="7"
+                                                rx="1"
+                                            ></rect>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 条件に一致する顧客一覧 -->
+                            <div
+                                class="customer-search-result-list customer-search-result-list--list"
+                                id="customer-search-result-list"
+                            >
+                                <!-- 仮顧客データ1 -->
+                                <article
+                                    class="customer-search-result-card"
+                                    data-customer-name="浅田 けん"
+                                    data-customer-id="MU00001"
+                                    data-search-text="浅田 けん MU00001 短髪 髭 筋肉質 シャンパン好き よっしー"
+                                    data-registration-date="2025-03-05"
+                                    data-last-visit="2026-07-30"
+                                    data-visit-count="24"
+                                    data-total-sales="285000"
+                                    data-birthday-status="known"
+                                    data-birth-month="4"
+                                    data-has-photo="true"
+                                    data-has-memo="true"
+                                    data-has-features="true"
+                                    data-staff-member="よっしー"
+                                >
+                                    <button
+                                        class="customer-search-result-open"
+                                        type="button"
+                                        aria-label="浅田けんさんの顧客詳細を開く"
+                                        data-customer-id="MU00001"
+                                    >
+                                        <span
+                                            class="customer-search-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            浅
+                                        </span>
+
+                                        <span class="customer-search-result-profile">
+                                            <span class="customer-search-result-name-row">
+                                                <strong>
+                                                    浅田 けん
+                                                </strong>
+
+                                                <span class="customer-rank customer-rank--regular">
+                                                    常連
+                                                </span>
+                                            </span>
+
+                                            <span class="customer-search-result-id">
+                                                MU00001
+                                            </span>
+
+                                            <span class="customer-search-result-features">
+                                                短髪・髭・筋肉質・シャンパン好き
+                                            </span>
+                                        </span>
+
+                                        <span class="customer-search-result-statistics">
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    最終来店
+                                                </small>
+
+                                                <strong>
+                                                    2026/07/30
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    来店回数
+                                                </small>
+
+                                                <strong>
+                                                    24回
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    累計売上
+                                                </small>
+
+                                                <strong>
+                                                    ¥285,000
+                                                </strong>
+                                            </span>
+                                        </span>
+
+                                        <span
+                                            class="customer-search-result-arrow"
+                                            aria-hidden="true"
+                                        >
+                                            ›
+                                        </span>
+                                    </button>
+                                </article>
+
+                                <!-- 仮顧客データ2 -->
+                                <article
+                                    class="customer-search-result-card"
+                                    data-customer-name="田中 翔"
+                                    data-customer-id="MU00002"
+                                    data-search-text="田中 翔 MU00002 笑顔が素敵 旅行好き スーツ ずーみん"
+                                    data-registration-date="2025-05-18"
+                                    data-last-visit="2026-07-29"
+                                    data-visit-count="18"
+                                    data-total-sales="192000"
+                                    data-birthday-status="known"
+                                    data-birth-month="8"
+                                    data-has-photo="true"
+                                    data-has-memo="true"
+                                    data-has-features="true"
+                                    data-staff-member="ずーみん"
+                                >
+                                    <button
+                                        class="customer-search-result-open"
+                                        type="button"
+                                        aria-label="田中翔さんの顧客詳細を開く"
+                                        data-customer-id="MU00002"
+                                    >
+                                        <span
+                                            class="customer-search-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            田
+                                        </span>
+
+                                        <span class="customer-search-result-profile">
+                                            <span class="customer-search-result-name-row">
+                                                <strong>
+                                                    田中 翔
+                                                </strong>
+
+                                                <span class="customer-rank customer-rank--regular">
+                                                    常連
+                                                </span>
+                                            </span>
+
+                                            <span class="customer-search-result-id">
+                                                MU00002
+                                            </span>
+
+                                            <span class="customer-search-result-features">
+                                                笑顔が素敵・旅行好き・スーツ
+                                            </span>
+                                        </span>
+
+                                        <span class="customer-search-result-statistics">
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    最終来店
+                                                </small>
+
+                                                <strong>
+                                                    2026/07/29
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    来店回数
+                                                </small>
+
+                                                <strong>
+                                                    18回
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    累計売上
+                                                </small>
+
+                                                <strong>
+                                                    ¥192,000
+                                                </strong>
+                                            </span>
+                                        </span>
+
+                                        <span
+                                            class="customer-search-result-arrow"
+                                            aria-hidden="true"
+                                        >
+                                            ›
+                                        </span>
+                                    </button>
+                                </article>
+
+                                <!-- 仮顧客データ3 -->
+                                <article
+                                    class="customer-search-result-card"
+                                    data-customer-name="山本 大輔"
+                                    data-customer-id="MU00003"
+                                    data-search-text="山本 大輔 MU00003 メガネ スーツ ワイン好き よっしー"
+                                    data-registration-date="2025-02-14"
+                                    data-last-visit="2026-07-28"
+                                    data-visit-count="31"
+                                    data-total-sales="410000"
+                                    data-birthday-status="known"
+                                    data-birth-month="12"
+                                    data-has-photo="true"
+                                    data-has-memo="true"
+                                    data-has-features="true"
+                                    data-staff-member="よっしー"
+                                >
+                                    <button
+                                        class="customer-search-result-open"
+                                        type="button"
+                                        aria-label="山本大輔さんの顧客詳細を開く"
+                                        data-customer-id="MU00003"
+                                    >
+                                        <span
+                                            class="customer-search-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            山
+                                        </span>
+
+                                        <span class="customer-search-result-profile">
+                                            <span class="customer-search-result-name-row">
+                                                <strong>
+                                                    山本 大輔
+                                                </strong>
+
+                                                <span class="customer-rank customer-rank--regular">
+                                                    常連
+                                                </span>
+                                            </span>
+
+                                            <span class="customer-search-result-id">
+                                                MU00003
+                                            </span>
+
+                                            <span class="customer-search-result-features">
+                                                メガネ・スーツ・ワイン好き
+                                            </span>
+                                        </span>
+
+                                        <span class="customer-search-result-statistics">
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    最終来店
+                                                </small>
+
+                                                <strong>
+                                                    2026/07/28
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    来店回数
+                                                </small>
+
+                                                <strong>
+                                                    31回
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    累計売上
+                                                </small>
+
+                                                <strong>
+                                                    ¥410,000
+                                                </strong>
+                                            </span>
+                                        </span>
+
+                                        <span
+                                            class="customer-search-result-arrow"
+                                            aria-hidden="true"
+                                        >
+                                            ›
+                                        </span>
+                                    </button>
+                                </article>
+
+                                <!-- 仮顧客データ4 -->
+                                <article
+                                    class="customer-search-result-card"
+                                    data-customer-name="Ren"
+                                    data-customer-id="ME00001"
+                                    data-search-text="Ren ME00001 FEELCYCLE 音楽好き 長身 はるちゃん"
+                                    data-registration-date="2025-08-02"
+                                    data-last-visit="2026-07-27"
+                                    data-visit-count="15"
+                                    data-total-sales="156000"
+                                    data-birthday-status="unknown"
+                                    data-birth-month=""
+                                    data-has-photo="true"
+                                    data-has-memo="true"
+                                    data-has-features="true"
+                                    data-staff-member="はるちゃん"
+                                >
+                                    <button
+                                        class="customer-search-result-open"
+                                        type="button"
+                                        aria-label="Renさんの顧客詳細を開く"
+                                        data-customer-id="ME00001"
+                                    >
+                                        <span
+                                            class="customer-search-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            R
+                                        </span>
+
+                                        <span class="customer-search-result-profile">
+                                            <span class="customer-search-result-name-row">
+                                                <strong>
+                                                    Ren
+                                                </strong>
+
+                                                <span class="customer-rank customer-rank--regular">
+                                                    常連
+                                                </span>
+                                            </span>
+
+                                            <span class="customer-search-result-id">
+                                                ME00001
+                                            </span>
+
+                                            <span class="customer-search-result-features">
+                                                FEELCYCLE・音楽好き・長身
+                                            </span>
+                                        </span>
+
+                                        <span class="customer-search-result-statistics">
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    最終来店
+                                                </small>
+
+                                                <strong>
+                                                    2026/07/27
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    来店回数
+                                                </small>
+
+                                                <strong>
+                                                    15回
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    累計売上
+                                                </small>
+
+                                                <strong>
+                                                    ¥156,000
+                                                </strong>
+                                            </span>
+                                        </span>
+
+                                        <span
+                                            class="customer-search-result-arrow"
+                                            aria-hidden="true"
+                                        >
+                                            ›
+                                        </span>
+                                    </button>
+                                </article>
+
+                                <!-- 仮顧客データ5 -->
+                                <article
+                                    class="customer-search-result-card"
+                                    data-customer-name="佐藤 亮介"
+                                    data-customer-id="MU00050"
+                                    data-search-text="佐藤 亮介 MU00050 爽やか 学生 ボディメイク中 ずーみん"
+                                    data-registration-date="2026-08-01"
+                                    data-last-visit="2026-07-26"
+                                    data-visit-count="3"
+                                    data-total-sales="18000"
+                                    data-birthday-status="known"
+                                    data-birth-month="8"
+                                    data-has-photo="false"
+                                    data-has-memo="false"
+                                    data-has-features="true"
+                                    data-staff-member="ずーみん"
+                                >
+                                    <button
+                                        class="customer-search-result-open"
+                                        type="button"
+                                        aria-label="佐藤亮介さんの顧客詳細を開く"
+                                        data-customer-id="MU00050"
+                                    >
+                                        <span
+                                            class="customer-search-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            佐
+                                        </span>
+
+                                        <span class="customer-search-result-profile">
+                                            <span class="customer-search-result-name-row">
+                                                <strong>
+                                                    佐藤 亮介
+                                                </strong>
+
+                                                <span class="customer-rank customer-rank--new">
+                                                    新規
+                                                </span>
+                                            </span>
+
+                                            <span class="customer-search-result-id">
+                                                MU00050
+                                            </span>
+
+                                            <span class="customer-search-result-features">
+                                                爽やか・学生・ボディメイク中
+                                            </span>
+                                        </span>
+
+                                        <span class="customer-search-result-statistics">
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    最終来店
+                                                </small>
+
+                                                <strong>
+                                                    2026/07/26
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    来店回数
+                                                </small>
+
+                                                <strong>
+                                                    3回
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    累計売上
+                                                </small>
+
+                                                <strong>
+                                                    ¥18,000
+                                                </strong>
+                                            </span>
+                                        </span>
+
+                                        <span
+                                            class="customer-search-result-arrow"
+                                            aria-hidden="true"
+                                        >
+                                            ›
+                                        </span>
+                                    </button>
+                                </article>
+
+                                <!-- 仮顧客データ6 -->
+                                <article
+                                    class="customer-search-result-card"
+                                    data-customer-name="鈴木 健太"
+                                    data-customer-id="MU00012"
+                                    data-search-text="鈴木 健太 MU00012 眼鏡 会社員 ゴルフ好き よっしー"
+                                    data-registration-date="2025-04-22"
+                                    data-last-visit="2026-07-25"
+                                    data-visit-count="27"
+                                    data-total-sales="305000"
+                                    data-birthday-status="known"
+                                    data-birth-month="1"
+                                    data-has-photo="false"
+                                    data-has-memo="true"
+                                    data-has-features="true"
+                                    data-staff-member="よっしー"
+                                >
+                                    <button
+                                        class="customer-search-result-open"
+                                        type="button"
+                                        aria-label="鈴木健太さんの顧客詳細を開く"
+                                        data-customer-id="MU00012"
+                                    >
+                                        <span
+                                            class="customer-search-result-avatar"
+                                            aria-hidden="true"
+                                        >
+                                            鈴
+                                        </span>
+
+                                        <span class="customer-search-result-profile">
+                                            <span class="customer-search-result-name-row">
+                                                <strong>
+                                                    鈴木 健太
+                                                </strong>
+
+                                                <span class="customer-rank customer-rank--regular">
+                                                    常連
+                                                </span>
+                                            </span>
+
+                                            <span class="customer-search-result-id">
+                                                MU00012
+                                            </span>
+
+                                            <span class="customer-search-result-features">
+                                                眼鏡・会社員・ゴルフ好き
+                                            </span>
+                                        </span>
+
+                                        <span class="customer-search-result-statistics">
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    最終来店
+                                                </small>
+
+                                                <strong>
+                                                    2026/07/25
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    来店回数
+                                                </small>
+
+                                                <strong>
+                                                    27回
+                                                </strong>
+                                            </span>
+
+                                            <span class="customer-search-result-stat">
+                                                <small>
+                                                    累計売上
+                                                </small>
+
+                                                <strong>
+                                                    ¥305,000
+                                                </strong>
+                                            </span>
+                                        </span>
+
+                                        <span
+                                            class="customer-search-result-arrow"
+                                            aria-hidden="true"
+                                        >
+                                            ›
+                                        </span>
+                                    </button>
+                                </article>
+                            </div>
+
+                            <!-- 該当する顧客がいない場合 -->
+                            <div
+                                class="customer-search-empty-state"
+                                id="customer-search-empty-state"
+                                hidden
+                            >
+                                <span
+                                    class="customer-search-empty-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 虫眼鏡の円 -->
+                                        <circle cx="10.5" cy="10.5" r="6.5"></circle>
+
+                                        <!-- 虫眼鏡の持ち手 -->
+                                        <path d="m15.5 15.5 4.5 4.5"></path>
+                                    </svg>
+                                </span>
+
+                                <h3>
+                                    該当するお客様が見つかりませんでした
+                                </h3>
+
+                                <p>
+                                    検索文字や絞り込み条件を変更して、もう一度お試しください。
+                                </p>
+
+                                <button
+                                    class="customer-search-reset-button"
+                                    type="button"
+                                >
+                                    条件をリセット
+                                </button>
+                            </div>
+
+                            <!-- 追加データを読み込んでいる間の表示 -->
+                            <div
+                                class="customer-search-loading"
+                                id="customer-search-loading"
+                                aria-live="polite"
+                                hidden
+                            >
+                                <span
+                                    class="customer-search-loading-spinner"
+                                    aria-hidden="true"
+                                ></span>
+
+                                <span>
+                                    さらに読み込み中...
+                                </span>
+                            </div>
+
+                            <button
+                                class="customer-search-load-more"
+                                id="customer-search-load-more"
+                                type="button"
+                            >
+                                さらに読み込む
+                            </button>
+                        </section>
+                    </div>
+
+                    <!-- PC右側の検索設定 -->
+                    <aside
+                        class="customer-search-sidebar"
+                        aria-label="並び替えと検索条件"
+                    >
+                        <!-- 並び替え -->
+                        <section
+                            class="customer-search-side-card customer-search-sort-card"
+                            aria-labelledby="customer-search-sort-title"
+                        >
+                            <div class="customer-search-side-title">
+                                <span aria-hidden="true">
+                                    ⇅
+                                </span>
+
+                                <h3 id="customer-search-sort-title">
+                                    並び替え
+                                </h3>
+                            </div>
+
+                            <fieldset class="customer-search-sort-options">
+                                <legend class="visually-hidden">
+                                    顧客の並び順
+                                </legend>
+
+                                <label class="customer-search-sort-option">
+                                    <input
+                                        name="customerSearchSort"
+                                        type="radio"
+                                        value="recently-viewed"
+                                    >
+
+                                    <span>
+                                        最近見た順
+                                    </span>
+                                </label>
+
+                                <label class="customer-search-sort-option">
+                                    <input
+                                        name="customerSearchSort"
+                                        type="radio"
+                                        value="last-visit"
+                                        checked
+                                    >
+
+                                    <span>
+                                        最終来店順
+                                    </span>
+                                </label>
+
+                                <label class="customer-search-sort-option">
+                                    <input
+                                        name="customerSearchSort"
+                                        type="radio"
+                                        value="registration-date"
+                                    >
+
+                                    <span>
+                                        登録日順
+                                    </span>
+                                </label>
+
+                                <label class="customer-search-sort-option">
+                                    <input
+                                        name="customerSearchSort"
+                                        type="radio"
+                                        value="customer-id"
+                                    >
+
+                                    <span>
+                                        顧客番号順
+                                    </span>
+                                </label>
+
+                                <label class="customer-search-sort-option">
+                                    <input
+                                        name="customerSearchSort"
+                                        type="radio"
+                                        value="visit-count"
+                                    >
+
+                                    <span>
+                                        来店回数順
+                                    </span>
+                                </label>
+
+                                <label class="customer-search-sort-option">
+                                    <input
+                                        name="customerSearchSort"
+                                        type="radio"
+                                        value="total-sales"
+                                    >
+
+                                    <span>
+                                        累計売上順
+                                    </span>
+                                </label>
+                            </fieldset>
+                        </section>
+
+                        <!-- 詳細な検索条件 -->
+                        <section
+                            class="customer-search-side-card customer-search-condition-card"
+                            aria-labelledby="customer-search-condition-title"
+                        >
+                            <div class="customer-search-side-header">
+                                <div class="customer-search-side-title">
+                                    <span
+                                        class="customer-search-condition-icon"
+                                        aria-hidden="true"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <path d="M4 6h7"></path>
+                                            <path d="M15 6h5"></path>
+                                            <circle cx="13" cy="6" r="2"></circle>
+
+                                            <path d="M4 12h3"></path>
+                                            <path d="M11 12h9"></path>
+                                            <circle cx="9" cy="12" r="2"></circle>
+
+                                            <path d="M4 18h9"></path>
+                                            <path d="M17 18h3"></path>
+                                            <circle cx="15" cy="18" r="2"></circle>
+                                        </svg>
+                                    </span>
+
+                                    <h3 id="customer-search-condition-title">
+                                        検索条件
+                                    </h3>
+                                </div>
+
+                                <button
+                                    class="customer-search-condition-reset"
+                                    type="button"
+                                >
+                                    リセット
+                                </button>
+                            </div>
+
+                            <div class="customer-search-condition-list">
+                                <button
+                                    class="customer-search-condition-row"
+                                    type="button"
+                                    data-condition="staff-member"
+                                >
+                                    <span class="customer-search-condition-label">
+                                        <span
+                                            class="customer-search-condition-row-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <!-- 人物の頭 -->
+                                                <circle cx="12" cy="7" r="4"></circle>
+
+                                                <!-- 人物の肩から身体の部分 -->
+                                                <path d="M4 21v-2a8 8 0 0 1 16 0v2"></path>
+                                            </svg>
+                                        </span>
+
+                                        <span>
+                                            担当スタッフ
+                                        </span>
+                                    </span>
+
+                                    <span class="customer-search-condition-value">
+                                        すべて
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-search-condition-row"
+                                    type="button"
+                                    data-condition="birthday"
+                                >
+                                    <span class="customer-search-condition-label">
+                                        <span
+                                            class="customer-search-condition-row-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <!-- ろうそくの炎 -->
+                                                <path d="M12 2.5c1 1 1.4 1.8 1.4 2.6A1.4 1.4 0 0 1 12 6.5a1.4 1.4 0 0 1-1.4-1.4c0-.8.4-1.6 1.4-2.6z"></path>
+
+                                                <!-- ろうそく -->
+                                                <path d="M12 6.5V9"></path>
+
+                                                <!-- ケーキ上部 -->
+                                                <path d="M5 12h14"></path>
+                                                <path d="M7 8h10a2 2 0 0 1 2 2v2H5v-2a2 2 0 0 1 2-2z"></path>
+
+                                                <!-- ケーキ本体 -->
+                                                <path d="M5 12v7h14v-7"></path>
+
+                                                <!-- デコレーション -->
+                                                <path d="M5 15c2 2 4-2 7 0s5-2 7 0"></path>
+                                            </svg>
+                                        </span>
+
+                                        <span>
+                                            誕生日
+                                        </span>
+                                    </span>
+
+                                    <span class="customer-search-condition-value">
+                                        すべて
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-search-condition-row"
+                                    type="button"
+                                    data-condition="registration-date"
+                                >
+                                    <span class="customer-search-condition-label">
+                                        <span
+                                            class="customer-search-condition-row-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <!-- カレンダー本体 -->
+                                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+
+                                                <!-- カレンダー上部 -->
+                                                <path d="M7 3v4"></path>
+                                                <path d="M17 3v4"></path>
+                                                <path d="M3 10h18"></path>
+
+                                                <!-- 登録済みを表すチェック -->
+                                                <path d="m8 15 2 2 5-5"></path>
+                                            </svg>
+                                        </span>
+
+                                        <span>
+                                            登録日
+                                        </span>
+                                    </span>
+
+                                    <span class="customer-search-condition-value">
+                                        すべて
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-search-condition-row"
+                                    type="button"
+                                    data-condition="visit-count"
+                                >
+                                    <span class="customer-search-condition-label">
+                                        <span
+                                            class="customer-search-condition-row-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <!-- カレンダー本体 -->
+                                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+
+                                                <!-- カレンダー上部 -->
+                                                <path d="M7 3v4"></path>
+                                                <path d="M17 3v4"></path>
+                                                <path d="M3 10h18"></path>
+
+                                                <!-- 回数を表す記号 -->
+                                                <path d="M9 13l-1 6"></path>
+                                                <path d="M15 13l-1 6"></path>
+                                                <path d="M7 15h10"></path>
+                                                <path d="M6 18h10"></path>
+                                            </svg>
+                                        </span>
+
+                                        <span>
+                                            来店回数
+                                        </span>
+                                    </span>
+
+                                    <span class="customer-search-condition-value">
+                                        すべて
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-search-condition-row"
+                                    type="button"
+                                    data-condition="total-sales"
+                                >
+                                    <span class="customer-search-condition-label">
+                                        <span
+                                            class="customer-search-condition-row-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <!-- 金額を囲む円 -->
+                                                <circle cx="12" cy="12" r="9"></circle>
+
+                                                <!-- 円マーク -->
+                                                <path d="M8.5 7.5 12 12l3.5-4.5"></path>
+                                                <path d="M8.5 13h7"></path>
+                                                <path d="M8.5 16h7"></path>
+                                                <path d="M12 12v6"></path>
+                                            </svg>
+                                        </span>
+
+                                        <span>
+                                            累計売上
+                                        </span>
+                                    </span>
+
+                                    <span class="customer-search-condition-value">
+                                        すべて
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-search-condition-row"
+                                    type="button"
+                                    data-condition="photo"
+                                >
+                                    <span class="customer-search-condition-label">
+                                        <span
+                                            class="customer-search-condition-row-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <!-- カメラ本体 -->
+                                                <path d="M4 7h4l1.5-2h5L16 7h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+
+                                                <!-- カメラのレンズ -->
+                                                <circle cx="12" cy="13" r="4"></circle>
+                                            </svg>
+                                        </span>
+
+                                        <span>
+                                            写真
+                                        </span>
+                                    </span>
+
+                                    <span class="customer-search-condition-value">
+                                        すべて
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-search-condition-row"
+                                    type="button"
+                                    data-condition="features"
+                                >
+                                    <span class="customer-search-condition-label">
+                                        <span
+                                            class="customer-search-condition-row-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <!-- タグ本体 -->
+                                                <path d="M3 12 12 3h7l2 2v7l-9 9z"></path>
+
+                                                <!-- タグの穴 -->
+                                                <circle cx="16.5" cy="7.5" r="1.5"></circle>
+                                            </svg>
+                                        </span>
+
+                                        <span>
+                                            特徴
+                                        </span>
+                                    </span>
+
+                                    <span class="customer-search-condition-value">
+                                        すべて
+                                    </span>
+                                </button>
+
+                                <button
+                                    class="customer-search-condition-row"
+                                    type="button"
+                                    data-condition="memo"
+                                >
+                                    <span class="customer-search-condition-label">
+                                        <span
+                                            class="customer-search-condition-row-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <!-- 書類本体 -->
+                                                <path d="M5 3h10l4 4v6"></path>
+                                                <path d="M5 3v18h7"></path>
+
+                                                <!-- 右上の折り返し -->
+                                                <path d="M15 3v4h4"></path>
+
+                                                <!-- メモの線 -->
+                                                <path d="M8 11h6"></path>
+                                                <path d="M8 15h4"></path>
+
+                                                <!-- 編集を表す鉛筆 -->
+                                                <path d="M14 19l5-5 2 2-5 5-3 1z"></path>
+                                                <path d="M18 15l2 2"></path>
+                                            </svg>
+                                        </span>
+
+                                        <span>
+                                            メモ
+                                        </span>
+                                    </span>
+
+                                    <span class="customer-search-condition-value">
+                                        すべて
+                                    </span>
+                                </button>
+                            </div>
+
+                            <button
+                                class="customer-search-condition-submit"
+                                type="button"
+                            >
+                                この条件で検索
+                            </button>
+                        </section>
+                    </aside>
+                </div>
+
+                <!-- 一番上へ戻るボタン -->
+                <button
+                    class="customer-search-scroll-top"
+                    type="button"
+                    aria-label="顧客検索画面の一番上へ戻る"
+                >
+                    <span
+                        class="customer-search-scroll-top-text"
+                        aria-hidden="true"
+                    >
+                        TOP
+                    </span>
+
+                    <svg
+                        class="customer-search-scroll-top-arrow"
+                        viewBox="0 0 44 154"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="square"
+                        stroke-linejoin="miter"
+                        aria-hidden="true"
+                    >
+                        <!-- 上から下へ伸びる縦線 -->
+                        <path d="M10 144V10"></path>
+
+                        <!-- 右下へ伸びる矢印の先端 -->
+                        <path d="M10 10 38 48"></path>
+                    </svg>
+                </button>
+            </section>
+
+            <!-- スマホ用の並び替えパネル -->
+            <div
+                class="customer-search-mobile-panel"
+                id="customer-search-sort-panel"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="customer-search-mobile-sort-title"
+                hidden
+            >
+                <div class="customer-search-mobile-panel-content">
+                    <div class="customer-search-mobile-panel-header">
+                        <h2 id="customer-search-mobile-sort-title">
+                            並び替え
+                        </h2>
+
+                        <button
+                            class="customer-search-mobile-panel-close"
+                            type="button"
+                            aria-label="並び替えを閉じる"
+                        >
+                            ×
+                        </button>
+                    </div>
+
+                    <fieldset class="customer-search-sort-options">
+                        <legend class="visually-hidden">
+                            顧客の並び順
+                        </legend>
+
+                        <label class="customer-search-sort-option">
+                            <input
+                                name="customerSearchSortMobile"
+                                type="radio"
+                                value="recently-viewed"
+                            >
+
+                            <span>
+                                最近見た順
+                            </span>
+                        </label>
+
+                        <label class="customer-search-sort-option">
+                            <input
+                                name="customerSearchSortMobile"
+                                type="radio"
+                                value="last-visit"
+                                checked
+                            >
+
+                            <span>
+                                最終来店順
+                            </span>
+                        </label>
+
+                        <label class="customer-search-sort-option">
+                            <input
+                                name="customerSearchSortMobile"
+                                type="radio"
+                                value="registration-date"
+                            >
+
+                            <span>
+                                登録日順
+                            </span>
+                        </label>
+
+                        <label class="customer-search-sort-option">
+                            <input
+                                name="customerSearchSortMobile"
+                                type="radio"
+                                value="customer-id"
+                            >
+
+                            <span>
+                                顧客番号順
+                            </span>
+                        </label>
+
+                        <label class="customer-search-sort-option">
+                            <input
+                                name="customerSearchSortMobile"
+                                type="radio"
+                                value="visit-count"
+                            >
+
+                            <span>
+                                来店回数順
+                            </span>
+                        </label>
+
+                        <label class="customer-search-sort-option">
+                            <input
+                                name="customerSearchSortMobile"
+                                type="radio"
+                                value="total-sales"
+                            >
+
+                            <span>
+                                累計売上順
+                            </span>
+                        </label>
+                    </fieldset>
+
+                    <button
+                        class="customer-search-mobile-panel-submit"
+                        type="button"
+                    >
+                        この並び順にする
+                    </button>
+                </div>
+            </div>
+
+            <!-- スマホ用の詳細条件パネル -->
+            <div
+                class="customer-search-mobile-panel"
+                id="customer-search-condition-panel"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="customer-search-mobile-condition-title"
+                hidden
+            >
+                <div class="customer-search-mobile-panel-content">
+                    <div class="customer-search-mobile-panel-header">
+                        <h2 id="customer-search-mobile-condition-title">
+                            詳細条件
+                        </h2>
+
+                        <button
+                            class="customer-search-mobile-panel-close"
+                            type="button"
+                            aria-label="詳細条件を閉じる"
+                        >
+                            ×
+                        </button>
+                    </div>
+
+                    <div class="customer-search-condition-list">
+                        <button
+                            class="customer-search-condition-row"
+                            type="button"
+                            data-mobile-condition="staff-member"
+                        >
+                            <span class="customer-search-condition-label">
+                                <span
+                                    class="customer-search-condition-row-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 人物の頭 -->
+                                        <circle cx="12" cy="7" r="4"></circle>
+
+                                        <!-- 人物の肩から身体の部分 -->
+                                        <path d="M4 21v-2a8 8 0 0 1 16 0v2"></path>
+                                    </svg>
+                                </span>
+
+                                <span>
+                                    担当スタッフ
+                                </span>
+                            </span>
+
+                            <span class="customer-search-condition-value">
+                                すべて
+                            </span>
+                        </button>
+
+                        <button
+                            class="customer-search-condition-row"
+                            type="button"
+                            data-mobile-condition="birthday"
+                        >
+                            <span class="customer-search-condition-label">
+                                <span
+                                    class="customer-search-condition-row-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- ろうそくの炎 -->
+                                        <path d="M12 2.5c1 1 1.4 1.8 1.4 2.6A1.4 1.4 0 0 1 12 6.5a1.4 1.4 0 0 1-1.4-1.4c0-.8.4-1.6 1.4-2.6z"></path>
+
+                                        <!-- ろうそく -->
+                                        <path d="M12 6.5V9"></path>
+
+                                        <!-- ケーキ上部 -->
+                                        <path d="M5 12h14"></path>
+                                        <path d="M7 8h10a2 2 0 0 1 2 2v2H5v-2a2 2 0 0 1 2-2z"></path>
+
+                                        <!-- ケーキ本体 -->
+                                        <path d="M5 12v7h14v-7"></path>
+
+                                        <!-- デコレーション -->
+                                        <path d="M5 15c2 2 4-2 7 0s5-2 7 0"></path>
+                                    </svg>
+                                </span>
+
+                                <span>
+                                    誕生日
+                                </span>
+                            </span>
+
+                            <span class="customer-search-condition-value">
+                                すべて
+                            </span>
+                        </button>
+
+                        <button
+                            class="customer-search-condition-row"
+                            type="button"
+                            data-mobile-condition="registration-date"
+                        >
+                            <span class="customer-search-condition-label">
+                                <span
+                                    class="customer-search-condition-row-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- カレンダー本体 -->
+                                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+
+                                        <!-- カレンダー上部 -->
+                                        <path d="M7 3v4"></path>
+                                        <path d="M17 3v4"></path>
+                                        <path d="M3 10h18"></path>
+
+                                        <!-- 登録済みを表すチェック -->
+                                        <path d="m8 15 2 2 5-5"></path>
+                                    </svg>
+                                </span>
+
+                                <span>
+                                    登録日
+                                </span>
+                            </span>
+
+                            <span class="customer-search-condition-value">
+                                すべて
+                            </span>
+                        </button>
+
+                        <button
+                            class="customer-search-condition-row"
+                            type="button"
+                            data-mobile-condition="visit-count"
+                        >
+                            <span class="customer-search-condition-label">
+                                <span
+                                    class="customer-search-condition-row-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- カレンダー本体 -->
+                                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+
+                                        <!-- カレンダー上部 -->
+                                        <path d="M7 3v4"></path>
+                                        <path d="M17 3v4"></path>
+                                        <path d="M3 10h18"></path>
+
+                                        <!-- 回数を表す記号 -->
+                                        <path d="M9 13l-1 6"></path>
+                                        <path d="M15 13l-1 6"></path>
+                                        <path d="M7 15h10"></path>
+                                        <path d="M6 18h10"></path>
+                                    </svg>
+                                </span>
+
+                                <span>
+                                    来店回数
+                                </span>
+                            </span>
+
+                            <span class="customer-search-condition-value">
+                                すべて
+                            </span>
+                        </button>
+
+                        <button
+                            class="customer-search-condition-row"
+                            type="button"
+                            data-mobile-condition="total-sales"
+                        >
+                            <span class="customer-search-condition-label">
+                                <span
+                                    class="customer-search-condition-row-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 金額を囲む円 -->
+                                        <circle cx="12" cy="12" r="9"></circle>
+
+                                        <!-- 円マーク -->
+                                        <path d="M8.5 7.5 12 12l3.5-4.5"></path>
+                                        <path d="M8.5 13h7"></path>
+                                        <path d="M8.5 16h7"></path>
+                                        <path d="M12 12v6"></path>
+                                    </svg>
+                                </span>
+
+                                <span class="customer-search-condition-label">
+                                    <span
+                                        class="customer-search-condition-row-icon"
+                                        aria-hidden="true"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.8"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <!-- 金額を囲む円 -->
+                                            <circle cx="12" cy="12" r="9"></circle>
+
+                                            <!-- 円マーク -->
+                                            <path d="M8.5 7.5 12 12l3.5-4.5"></path>
+                                            <path d="M8.5 13h7"></path>
+                                            <path d="M8.5 16h7"></path>
+                                            <path d="M12 12v6"></path>
+                                        </svg>
+                                    </span>
+
+                                    <span>
+                                        累計売上
+                                    </span>
+                                </span>
+                            </span>
+
+                            <span class="customer-search-condition-value">
+                                すべて
+                            </span>
+                        </button>
+
+                        <button
+                            class="customer-search-condition-row"
+                            type="button"
+                            data-mobile-condition="photo"
+                        >
+                            <span class="customer-search-condition-label">
+                                <span
+                                    class="customer-search-condition-row-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- カメラ本体 -->
+                                        <path d="M4 7h4l1.5-2h5L16 7h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"></path>
+
+                                        <!-- カメラのレンズ -->
+                                        <circle cx="12" cy="13" r="4"></circle>
+                                    </svg>
+                                </span>
+
+                                <span>
+                                    写真
+                                </span>
+                            </span>
+
+                            <span class="customer-search-condition-value">
+                                すべて
+                            </span>
+                        </button>
+
+                        <button
+                            class="customer-search-condition-row"
+                            type="button"
+                            data-mobile-condition="features"
+                        >
+                            <span class="customer-search-condition-label">
+                                <span
+                                    class="customer-search-condition-row-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- タグ本体 -->
+                                        <path d="M3 12 12 3h7l2 2v7l-9 9z"></path>
+
+                                        <!-- タグの穴 -->
+                                        <circle cx="16.5" cy="7.5" r="1.5"></circle>
+                                    </svg>
+                                </span>
+
+                                <span>
+                                    特徴
+                                </span>
+                            </span>
+
+                            <span class="customer-search-condition-value">
+                                すべて
+                            </span>
+                        </button>
+
+                        <button
+                            class="customer-search-condition-row"
+                            type="button"
+                            data-mobile-condition="memo"
+                        >
+                            <span class="customer-search-condition-label">
+                                <span
+                                    class="customer-search-condition-row-icon"
+                                    aria-hidden="true"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <!-- 書類本体 -->
+                                        <path d="M5 3h10l4 4v6"></path>
+                                        <path d="M5 3v18h7"></path>
+
+                                        <!-- 右上の折り返し -->
+                                        <path d="M15 3v4h4"></path>
+
+                                        <!-- メモの線 -->
+                                        <path d="M8 11h6"></path>
+                                        <path d="M8 15h4"></path>
+
+                                        <!-- 編集を表す鉛筆 -->
+                                        <path d="M14 19l5-5 2 2-5 5-3 1z"></path>
+                                        <path d="M18 15l2 2"></path>
+                                    </svg>
+                                </span>
+
+                                <span>
+                                    メモ
+                                </span>
+                            </span>
+
+                            <span class="customer-search-condition-value">
+                                すべて
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="customer-search-mobile-panel-actions">
+                        <button
+                            class="customer-search-mobile-condition-reset"
+                            type="button"
+                        >
+                            条件をリセット
+                        </button>
+
+                        <button
+                            class="customer-search-mobile-panel-submit"
+                            type="button"
+                        >
+                            この条件で検索
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 詳細条件1項目の選択肢パネル -->
+            <div
+                class="customer-search-mobile-panel customer-search-condition-choice-panel"
+                id="customer-search-condition-choice-panel"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="customer-search-condition-choice-title"
+                hidden
+            >
+                <div class="customer-search-mobile-panel-content customer-search-condition-choice-content">
+                    <div class="customer-search-mobile-panel-header">
+                        <h2 id="customer-search-condition-choice-title">
+                            条件を選択
+                        </h2>
+
+                        <button
+                            class="customer-search-mobile-panel-close customer-search-condition-choice-close"
+                            type="button"
+                            aria-label="条件選択を閉じる"
+                        >
+                            ×
+                        </button>
+                    </div>
+
+                    <div
+                        class="customer-search-condition-choice-options"
+                        id="customer-search-condition-choice-options"
+                    ></div>
+                </div>
+            </div>
+
             <!-- 常連顧客の更新内容を確認する画面 -->
             <div
                 class="regular-customer-confirm-dialog"
@@ -2697,7 +4907,11 @@
                 </button>
 
                 <!-- 登録済みのお客様を検索する画面 -->
-                <button class="bottom-nav-item" type="button">
+                <button
+                    class="bottom-nav-item"
+                    type="button"
+                    data-view="customer-search"
+                >
                     <!-- 虫眼鏡アイコン -->
                     <span class="bottom-nav-icon" aria-hidden="true">
                         <svg

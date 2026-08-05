@@ -16,6 +16,295 @@ const appViews = document.querySelectorAll(".app-view");
 // 下部ナビゲーションの各ボタンを取得する
 const bottomNavItems = document.querySelectorAll(".bottom-nav-item[data-view]");
 
+// 顧客検索画面に使用する要素を取得する
+const customerSearchInput = document.querySelector("#customer-search-input");
+const customerSearchClearButton = document.querySelector(".customer-search-clear-button");
+const customerSearchResultCards = document.querySelectorAll(".customer-search-result-card");
+const customerSearchResultOpenButtons = document.querySelectorAll(".customer-search-result-open");
+const customerSearchResultCount = document.querySelector("#customer-search-result-count");
+const customerSearchEmptyState = document.querySelector("#customer-search-empty-state");
+const customerSearchResetButton = document.querySelector(".customer-search-reset-button");
+const customerSearchLoadMoreButton = document.querySelector("#customer-search-load-more");
+const customerSearchLoading = document.querySelector("#customer-search-loading");
+const customerSearchScrollTopButton = document.querySelector(".customer-search-scroll-top");
+
+// クイックフィルターに使用する要素を取得する
+const customerQuickFilterButtons = document.querySelectorAll(".customer-quick-filter");
+
+// 顧客検索結果の並び替えに使用する要素を取得する
+const customerSearchResultList = document.querySelector("#customer-search-result-list");
+const customerSearchViewButtons = document.querySelectorAll(".customer-search-view-button");
+const customerSearchResultViewStorageKey = "customerCrmResultView";
+const customerSearchSortInputs = document.querySelectorAll('input[name="customerSearchSort"]');
+const customerSearchMobileSortInputs = document.querySelectorAll('input[name="customerSearchSortMobile"]');
+const customerSearchMobileSortButton = document.querySelector("#customer-search-mobile-sort-button");
+const customerSearchSortPanel = document.querySelector("#customer-search-sort-panel");
+const customerSearchSortPanelCloseButton = document.querySelector("#customer-search-sort-panel .customer-search-mobile-panel-close");
+const customerSearchSortPanelSubmitButton = document.querySelector("#customer-search-sort-panel .customer-search-mobile-panel-submit");
+
+// 顧客検索の詳細条件に使用する要素を取得する
+const customerSearchConditionRows = document.querySelectorAll(".customer-search-sidebar [data-condition]");
+const customerSearchMobileConditionRows = document.querySelectorAll("#customer-search-condition-panel [data-mobile-condition]");
+const customerSearchConditionSubmitButton = document.querySelector(".customer-search-condition-submit");
+const customerSearchConditionResetButton = document.querySelector(".customer-search-condition-reset");
+const customerSearchMobileConditionButton = document.querySelector("#customer-search-mobile-condition-button");
+const customerSearchConditionPanel = document.querySelector("#customer-search-condition-panel");
+const customerSearchConditionPanelCloseButton = document.querySelector("#customer-search-condition-panel .customer-search-mobile-panel-close");
+const customerSearchMobileConditionResetButton = document.querySelector(".customer-search-mobile-condition-reset");
+const customerSearchConditionPanelSubmitButton = document.querySelector("#customer-search-condition-panel .customer-search-mobile-panel-submit");
+
+// 詳細条件1項目の選択肢パネルに使用する要素を取得する
+const customerSearchConditionChoicePanel = document.querySelector("#customer-search-condition-choice-panel");
+const customerSearchConditionChoiceTitle = document.querySelector("#customer-search-condition-choice-title");
+const customerSearchConditionChoiceOptions = document.querySelector("#customer-search-condition-choice-options");
+const customerSearchConditionChoiceCloseButton = document.querySelector(".customer-search-condition-choice-close");
+
+// 現在選択しているクイックフィルター
+let activeCustomerQuickFilter = "all";
+
+// 一度に表示する顧客数
+const customerSearchPageSize = 3;
+
+// 現在表示できる顧客数
+let customerSearchVisibleLimit = customerSearchPageSize;
+
+// 前回の検索条件を記録する
+let lastCustomerSearchConditionSignature = "";
+
+// 追加読み込みの状態を管理する
+let isCustomerSearchLoadingMore = false;
+let customerSearchLoadMoreRequestId = 0;
+
+// 現在選択している並び順
+let activeCustomerSort = "last-visit";
+
+// 前回選択した検索結果の表示方法を取得する
+const savedCustomerResultView = localStorage.getItem(customerSearchResultViewStorageKey);
+
+// 現在選択している検索結果の表示方法
+let activeCustomerResultView = [
+  "grid",
+  "list",
+].includes(savedCustomerResultView)
+  ? savedCustomerResultView
+  : "list";
+
+// 詳細条件の初期状態を作る
+const createDefaultCustomerSearchConditions = () => {
+  return {
+    "staff-member": "all",
+    birthday: "all",
+    "registration-date": "all",
+    "visit-count": "all",
+    "total-sales": "all",
+    photo: "all",
+    features: "all",
+    memo: "all",
+  };
+};
+
+// 画面で選択中の条件
+let draftCustomerSearchConditions = createDefaultCustomerSearchConditions();
+
+// 検索結果へ適用中の条件
+let activeCustomerSearchConditions = createDefaultCustomerSearchConditions();
+
+// 現在編集している詳細条件
+let editingCustomerSearchCondition = "";
+
+// 詳細条件ごとの選択肢
+const customerSearchConditionSettings = {
+  "staff-member": {
+    title: "担当スタッフ",
+    options: [
+      {
+        value: "all",
+        label: "すべて",
+      },
+      {
+        value: "よっしー",
+        label: "よっしー",
+      },
+      {
+        value: "ずーみん",
+        label: "ずーみん",
+      },
+      {
+        value: "はるちゃん",
+        label: "はるちゃん",
+      },
+    ],
+  },
+
+  birthday: {
+    title: "誕生日",
+    options: [
+      {
+        value: "all",
+        label: "すべて",
+      },
+      {
+        value: "this-month",
+        label: "今月が誕生日",
+      },
+      {
+        value: "registered",
+        label: "誕生日登録あり",
+      },
+      {
+        value: "unregistered",
+        label: "誕生日未登録",
+      },
+    ],
+  },
+
+  "registration-date": {
+    title: "登録日",
+    options: [
+      {
+        value: "all",
+        label: "すべて",
+      },
+      {
+        value: "this-month",
+        label: "今月登録",
+      },
+      {
+        value: "within-3-months",
+        label: "3か月以内",
+      },
+      {
+        value: "within-1-year",
+        label: "1年以内",
+      },
+    ],
+  },
+
+  "visit-count": {
+    title: "来店回数",
+    options: [
+      {
+        value: "all",
+        label: "すべて",
+      },
+      {
+        value: "0-5",
+        label: "0〜5回",
+      },
+      {
+        value: "6-10",
+        label: "6〜10回",
+      },
+      {
+        value: "11-20",
+        label: "11〜20回",
+      },
+      {
+        value: "21-plus",
+        label: "21回以上",
+      },
+    ],
+  },
+
+  "total-sales": {
+    title: "累計売上",
+    options: [
+      {
+        value: "all",
+        label: "すべて",
+      },
+      {
+        value: "under-50000",
+        label: "5万円未満",
+      },
+      {
+        value: "50000-99999",
+        label: "5万〜10万円未満",
+      },
+      {
+        value: "100000-299999",
+        label: "10万〜30万円未満",
+      },
+      {
+        value: "300000-plus",
+        label: "30万円以上",
+      },
+    ],
+  },
+
+  photo: {
+    title: "写真",
+    options: [
+      {
+        value: "all",
+        label: "すべて",
+      },
+      {
+        value: "registered",
+        label: "写真あり",
+      },
+      {
+        value: "unregistered",
+        label: "写真なし",
+      },
+    ],
+  },
+
+  features: {
+    title: "特徴",
+    options: [
+      {
+        value: "all",
+        label: "すべて",
+      },
+      {
+        value: "registered",
+        label: "特徴あり",
+      },
+      {
+        value: "unregistered",
+        label: "特徴なし",
+      },
+    ],
+  },
+
+  memo: {
+    title: "メモ",
+    options: [
+      {
+        value: "all",
+        label: "すべて",
+      },
+      {
+        value: "registered",
+        label: "メモあり",
+      },
+      {
+        value: "unregistered",
+        label: "メモなし",
+      },
+    ],
+  },
+};
+
+// 最近見た顧客の保存に使用する設定
+const customerRecentlyViewedStorageKey = "customerCrmRecentlyViewedCustomers";
+const customerRecentlyViewedLimit = 20;
+
+// 最近検索に使用する要素を取得する
+const customerRecentSearchSection = document.querySelector(".customer-recent-search-section");
+const customerRecentSearchList = document.querySelector(".customer-recent-search-list");
+const customerRecentSearchClearButton = document.querySelector(".customer-recent-search-clear");
+const customerRecentSearchStorageKey = "customerCrmRecentSearches";
+const customerRecentSearchLimit = 8;
+
+// HTMLに最初から用意されている検索履歴を取得する
+const defaultCustomerRecentSearches = Array.from(
+  document.querySelectorAll(".customer-recent-search-button")
+).map((searchButton) => {
+  return searchButton.dataset.searchValue || searchButton.textContent.trim();
+}).filter(Boolean).slice(0, customerRecentSearchLimit);
+
 // 常連顧客の検索に使用する要素を取得する
 const regularCustomerSearchInput = document.querySelector("#regular-customer-search");
 
@@ -709,6 +998,1707 @@ regularCustomerChangeButton.addEventListener(
     regularCustomerSearchInput.focus();
   }
 );
+
+// 顧客検索文字を比較しやすい形へ整える
+const normalizeCustomerSearchText = (value) => {
+  return value
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/\s+/g, "");
+};
+
+// 保存されている最近検索を取得する
+const getCustomerRecentSearches = () => {
+  const savedData = localStorage.getItem(customerRecentSearchStorageKey);
+
+  // まだ保存データがない場合はHTMLの仮データを使用する
+  if (savedData === null) {
+    return [...defaultCustomerRecentSearches];
+  }
+
+  try {
+    const recentSearches = JSON.parse(savedData);
+
+    if (!Array.isArray(recentSearches)) {
+      return [...defaultCustomerRecentSearches];
+    }
+
+    return recentSearches
+      .filter((searchValue) => {
+        return typeof searchValue === "string" && searchValue.trim() !== "";
+      })
+      .slice(0, customerRecentSearchLimit);
+  } catch {
+    return [...defaultCustomerRecentSearches];
+  }
+};
+
+// 最近検索をブラウザへ保存する
+const saveCustomerRecentSearches = (recentSearches) => {
+  localStorage.setItem(
+    customerRecentSearchStorageKey,
+    JSON.stringify(recentSearches)
+  );
+};
+
+// 最近検索を画面へ表示する
+const renderCustomerRecentSearches = () => {
+  const recentSearches = getCustomerRecentSearches();
+
+  customerRecentSearchList.replaceChildren();
+
+  recentSearches.forEach((searchValue) => {
+    const recentSearchItem = document.createElement("li");
+    const recentSearchButton = document.createElement("button");
+    const recentSearchRemoveButton = document.createElement("button");
+
+    recentSearchItem.className = "customer-recent-search-item";
+
+    recentSearchButton.className = "customer-recent-search-button";
+    recentSearchButton.type = "button";
+    recentSearchButton.dataset.searchValue = searchValue;
+    recentSearchButton.textContent = searchValue;
+
+    recentSearchRemoveButton.className = "customer-recent-search-remove";
+    recentSearchRemoveButton.type = "button";
+    recentSearchRemoveButton.setAttribute(
+      "aria-label",
+      `${searchValue}を検索履歴から削除`
+    );
+    recentSearchRemoveButton.textContent = "×";
+
+    recentSearchItem.appendChild(recentSearchButton);
+    recentSearchItem.appendChild(recentSearchRemoveButton);
+    customerRecentSearchList.appendChild(recentSearchItem);
+  });
+
+  // 履歴が0件の場合は最近検索カードを隠す
+  customerRecentSearchSection.hidden = recentSearches.length === 0;
+};
+
+// 新しい検索語を最近検索へ追加する
+const addCustomerRecentSearch = (searchValue) => {
+  const trimmedSearchValue = searchValue.trim();
+  const normalizedSearchValue = normalizeCustomerSearchText(trimmedSearchValue);
+
+  if (normalizedSearchValue === "") {
+    return;
+  }
+
+  const recentSearches = getCustomerRecentSearches();
+
+  // 同じ検索語を取り除いてから先頭へ追加する
+  const updatedRecentSearches = recentSearches.filter((savedSearchValue) => {
+    return normalizeCustomerSearchText(savedSearchValue) !== normalizedSearchValue;
+  });
+
+  updatedRecentSearches.unshift(trimmedSearchValue);
+
+  // 最大8件だけ保存する
+  const limitedRecentSearches = updatedRecentSearches.slice(
+    0,
+    customerRecentSearchLimit
+  );
+
+  saveCustomerRecentSearches(limitedRecentSearches);
+  renderCustomerRecentSearches();
+};
+
+// 顧客が選択中のクイックフィルターに一致するか確認する
+const isCustomerQuickFilterMatch = (resultCard) => {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
+
+  if (activeCustomerQuickFilter === "all") {
+    return true;
+  }
+
+  if (activeCustomerQuickFilter === "registered-this-month") {
+    const registrationDate = resultCard.dataset.registrationDate || "";
+
+    const [
+      registrationYear,
+      registrationMonth,
+    ] = registrationDate
+      .split("-")
+      .map(Number);
+
+    return (
+      registrationYear === currentYear &&
+      registrationMonth === currentMonth
+    );
+  }
+
+  if (activeCustomerQuickFilter === "birthday") {
+    return (
+      Number(resultCard.dataset.birthMonth) ===
+      currentMonth
+    );
+  }
+
+  if (activeCustomerQuickFilter === "no-photo") {
+    return resultCard.dataset.hasPhoto === "false";
+  }
+
+  if (activeCustomerQuickFilter === "no-memo") {
+    return resultCard.dataset.hasMemo === "false";
+  }
+
+  if (activeCustomerQuickFilter === "no-features") {
+    return resultCard.dataset.hasFeatures === "false";
+  }
+
+  return true;
+};
+
+// 検索条件に一致する顧客を表示件数の範囲で表示する
+const updateCustomerSearchResults = () => {
+  const searchText = normalizeCustomerSearchText(customerSearchInput.value);
+
+  // 現在の検索条件を文字列化して前回の条件と比較する
+  const currentConditionSignature = JSON.stringify({
+    searchText,
+    quickFilter: activeCustomerQuickFilter,
+    detailConditions: activeCustomerSearchConditions,
+    sort: activeCustomerSort,
+  });
+
+  // 検索条件が変わった場合は最初の表示件数へ戻す
+  if (
+    currentConditionSignature !==
+    lastCustomerSearchConditionSignature
+  ) {
+    lastCustomerSearchConditionSignature =
+      currentConditionSignature;
+
+    customerSearchVisibleLimit =
+      customerSearchPageSize;
+
+    // 進行中の追加読み込みを無効にする
+    customerSearchLoadMoreRequestId += 1;
+    isCustomerSearchLoadingMore = false;
+    customerSearchLoading.hidden = true;
+  }
+
+  // 並び替え後のDOM順で顧客カードを取得する
+  const orderedResultCards = Array.from(
+    customerSearchResultList.querySelectorAll(
+      ".customer-search-result-card"
+    )
+  );
+
+  const matchedResultCards = [];
+
+  orderedResultCards.forEach((resultCard) => {
+    const customerSearchText = normalizeCustomerSearchText(
+      resultCard.dataset.searchText || ""
+    );
+
+    const isSearchMatch =
+      searchText === "" ||
+      customerSearchText.includes(searchText);
+
+    const isQuickFilterMatch =
+      isCustomerQuickFilterMatch(resultCard);
+
+    const isDetailConditionMatch =
+      isCustomerSearchDetailConditionMatch(
+        resultCard
+      );
+
+    const isMatch =
+      isSearchMatch &&
+      isQuickFilterMatch &&
+      isDetailConditionMatch;
+
+    // いったん全カードを隠してから表示対象を決める
+    resultCard.hidden = true;
+
+    if (isMatch) {
+      matchedResultCards.push(resultCard);
+    }
+  });
+
+  const matchCount =
+    matchedResultCards.length;
+
+  const visibleCount = Math.min(
+    customerSearchVisibleLimit,
+    matchCount
+  );
+
+  // 表示上限までの顧客カードだけ表示する
+  matchedResultCards.forEach((resultCard, index) => {
+    resultCard.hidden =
+      index >= customerSearchVisibleLimit;
+  });
+
+  // 一部だけ表示中の場合は表示人数も知らせる
+  customerSearchResultCount.textContent =
+    visibleCount < matchCount
+      ? `${matchCount}名中${visibleCount}名表示`
+      : `${matchCount}名`;
+
+  customerSearchEmptyState.hidden =
+    matchCount > 0;
+
+  const remainingCount =
+    matchCount - visibleCount;
+
+  customerSearchLoadMoreButton.hidden =
+    remainingCount === 0 ||
+    isCustomerSearchLoadingMore;
+
+  // 残り人数に合わせてボタンの文字を更新する
+  if (remainingCount > 0) {
+    const nextLoadCount = Math.min(
+      customerSearchPageSize,
+      remainingCount
+    );
+
+    customerSearchLoadMoreButton.textContent =
+      `さらに${nextLoadCount}名読み込む`;
+  }
+
+  customerSearchClearButton.hidden =
+    customerSearchInput.value === "";
+};
+
+// 検索入力欄だけを空にする
+const clearCustomerSearch = () => {
+  customerSearchInput.value = "";
+
+  updateCustomerSearchResults();
+
+  customerSearchInput.focus();
+};
+
+// 検索文字とクイックフィルターを初期状態へ戻す
+const resetCustomerSearchConditions = () => {
+  customerSearchInput.value = "";
+  activeCustomerQuickFilter = "all";
+
+  draftCustomerSearchConditions =
+    createDefaultCustomerSearchConditions();
+
+  activeCustomerSearchConditions =
+    createDefaultCustomerSearchConditions();
+
+  customerQuickFilterButtons.forEach((filterButton) => {
+    const isAllFilter =
+      filterButton.dataset.quickFilter ===
+      "all";
+
+    filterButton.classList.toggle(
+      "customer-quick-filter--active",
+      isAllFilter
+    );
+
+    filterButton.setAttribute(
+      "aria-pressed",
+      String(isAllFilter)
+    );
+  });
+
+  syncCustomerSearchConditionRows();
+
+  updateCustomerSearchResults();
+
+  customerSearchInput.focus();
+};
+
+// 保存されている最近見た顧客IDを取得する
+const getCustomerRecentlyViewedIds = () => {
+  const savedData = localStorage.getItem(customerRecentlyViewedStorageKey);
+
+  if (!savedData) {
+    return [];
+  }
+
+  try {
+    const customerIds = JSON.parse(savedData);
+
+    return Array.isArray(customerIds)
+      ? customerIds
+      : [];
+  } catch {
+    return [];
+  }
+};
+
+// 顧客を最近見た履歴の先頭へ保存する
+const saveCustomerRecentlyViewedCustomer = (customerId) => {
+  if (!customerId) {
+    return;
+  }
+
+  const recentlyViewedIds = getCustomerRecentlyViewedIds();
+
+  const updatedRecentlyViewedIds = recentlyViewedIds.filter(
+    (savedCustomerId) => {
+      return savedCustomerId !== customerId;
+    }
+  );
+
+  updatedRecentlyViewedIds.unshift(customerId);
+
+  localStorage.setItem(
+    customerRecentlyViewedStorageKey,
+    JSON.stringify(
+      updatedRecentlyViewedIds.slice(
+        0,
+        customerRecentlyViewedLimit
+      )
+    )
+  );
+};
+
+// 日付を並び替えに使用できる数値へ変換する
+const getCustomerSearchDateNumber = (dateValue) => {
+  const dateNumber = Date.parse(dateValue || "");
+
+  return Number.isNaN(dateNumber)
+    ? 0
+    : dateNumber;
+};
+
+// 顧客番号を英字と数字の昇順で比較する
+const compareCustomerSearchIds = (
+  firstCard,
+  secondCard
+) => {
+  const firstCustomerId =
+    firstCard.dataset.customerId ||
+    "";
+
+  const secondCustomerId =
+    secondCard.dataset.customerId ||
+    "";
+
+  return firstCustomerId.localeCompare(
+    secondCustomerId,
+    "en",
+    {
+      sensitivity: "base",
+      numeric: true,
+    }
+  );
+};
+
+// 現在選択中の条件で顧客カードを並び替える
+const applyCustomerSearchSort = () => {
+  const recentlyViewedIds =
+    getCustomerRecentlyViewedIds();
+
+  const recentlyViewedOrder =
+    new Map(
+      recentlyViewedIds.map(
+        (customerId, index) => {
+          return [
+            customerId,
+            index,
+          ];
+        }
+      )
+    );
+
+  const sortedResultCards =
+    Array.from(
+      customerSearchResultCards
+    ).sort(
+      (firstCard, secondCard) => {
+        if (activeCustomerSort === "recently-viewed") {
+          const firstCustomerId =
+            firstCard.dataset.customerId ||
+            "";
+
+          const secondCustomerId =
+            secondCard.dataset.customerId ||
+            "";
+
+          const firstOrder =
+            recentlyViewedOrder.has(
+              firstCustomerId
+            )
+              ? recentlyViewedOrder.get(
+                  firstCustomerId
+                )
+              : Number.MAX_SAFE_INTEGER;
+
+          const secondOrder =
+            recentlyViewedOrder.has(
+              secondCustomerId
+            )
+              ? recentlyViewedOrder.get(
+                  secondCustomerId
+                )
+              : Number.MAX_SAFE_INTEGER;
+
+          if (firstOrder !== secondOrder) {
+            return firstOrder - secondOrder;
+          }
+        }
+
+        if (activeCustomerSort === "registration-date") {
+          const dateDifference =
+            getCustomerSearchDateNumber(
+              secondCard.dataset.registrationDate
+            ) -
+            getCustomerSearchDateNumber(
+              firstCard.dataset.registrationDate
+            );
+
+          if (dateDifference !== 0) {
+            return dateDifference;
+          }
+        }
+
+        if (activeCustomerSort === "customer-id") {
+          return compareCustomerSearchIds(
+            firstCard,
+            secondCard
+          );
+        }
+
+        if (activeCustomerSort === "visit-count") {
+          const visitCountDifference =
+            Number(
+              secondCard.dataset.visitCount ||
+              0
+            ) -
+            Number(
+              firstCard.dataset.visitCount ||
+              0
+            );
+
+          if (visitCountDifference !== 0) {
+            return visitCountDifference;
+          }
+        }
+
+        if (activeCustomerSort === "total-sales") {
+          const totalSalesDifference =
+            Number(
+              secondCard.dataset.totalSales ||
+              0
+            ) -
+            Number(
+              firstCard.dataset.totalSales ||
+              0
+            );
+
+          if (totalSalesDifference !== 0) {
+            return totalSalesDifference;
+          }
+        }
+
+        // 最終来店順と、ほかの条件が同じ場合の並び順
+        const lastVisitDifference =
+          getCustomerSearchDateNumber(
+            secondCard.dataset.lastVisit
+          ) -
+          getCustomerSearchDateNumber(
+            firstCard.dataset.lastVisit
+          );
+
+        if (lastVisitDifference !== 0) {
+          return lastVisitDifference;
+        }
+
+        return compareCustomerSearchIds(
+          firstCard,
+          secondCard
+        );
+      }
+    );
+
+  sortedResultCards.forEach(
+    (resultCard) => {
+      customerSearchResultList.appendChild(
+        resultCard
+      );
+    }
+  );
+};
+
+// PCとスマホの選択状態を同じ並び順へそろえる
+const syncCustomerSearchSortInputs = () => {
+  [
+    ...customerSearchSortInputs,
+    ...customerSearchMobileSortInputs,
+  ].forEach((sortInput) => {
+    sortInput.checked =
+      sortInput.value ===
+      activeCustomerSort;
+  });
+};
+
+// 並び順を変更する
+const setCustomerSearchSort = (sortValue) => {
+  const availableSortValues = [
+    "recently-viewed",
+    "last-visit",
+    "registration-date",
+    "customer-id",
+    "visit-count",
+    "total-sales",
+  ];
+
+  if (!availableSortValues.includes(sortValue)) {
+    return;
+  }
+
+  activeCustomerSort = sortValue;
+
+  syncCustomerSearchSortInputs();
+  applyCustomerSearchSort();
+  updateCustomerSearchResults();
+};
+
+// 顧客検索結果の表示方法を切り替える
+const setCustomerSearchResultView = (
+  viewName,
+  shouldSave = true
+) => {
+  const availableViewNames = [
+    "grid",
+    "list",
+  ];
+
+  if (!availableViewNames.includes(viewName)) {
+    return;
+  }
+
+  activeCustomerResultView = viewName;
+
+  // 一覧表示の場合だけ専用クラスを付ける
+  customerSearchResultList.classList.toggle(
+    "customer-search-result-list--list",
+    viewName === "list"
+  );
+
+  // 選択中のボタンデザインと読み上げ状態を更新する
+  customerSearchViewButtons.forEach((viewButton) => {
+    const isActive =
+      viewButton.dataset.resultView ===
+      viewName;
+
+    viewButton.classList.toggle(
+      "customer-search-view-button--active",
+      isActive
+    );
+
+    viewButton.setAttribute(
+      "aria-pressed",
+      String(isActive)
+    );
+  });
+
+  // 次にページを開いたときも同じ表示方法を復元する
+  if (shouldSave) {
+    localStorage.setItem(
+      customerSearchResultViewStorageKey,
+      viewName
+    );
+  }
+};
+
+// スマホ用の並び替えパネルを開く
+const openCustomerSearchSortPanel = () => {
+  syncCustomerSearchSortInputs();
+
+  customerSearchSortPanel.hidden = false;
+
+  customerSearchMobileSortButton.setAttribute(
+    "aria-expanded",
+    "true"
+  );
+
+  document.body.classList.add(
+    "customer-search-panel-open"
+  );
+
+  const checkedSortInput =
+    customerSearchSortPanel.querySelector(
+      'input[name="customerSearchSortMobile"]:checked'
+    );
+
+  checkedSortInput?.focus();
+};
+
+// スマホ用の並び替えパネルを閉じる
+const closeCustomerSearchSortPanel = () => {
+  customerSearchSortPanel.hidden = true;
+
+  customerSearchMobileSortButton.setAttribute(
+    "aria-expanded",
+    "false"
+  );
+
+  document.body.classList.remove(
+    "customer-search-panel-open"
+  );
+};
+
+// 詳細条件の値に対応する表示名を取得する
+const getCustomerSearchConditionLabel = (
+  conditionKey,
+  conditionValue
+) => {
+  const conditionSetting =
+    customerSearchConditionSettings[
+      conditionKey
+    ];
+
+  if (!conditionSetting) {
+    return "すべて";
+  }
+
+  const conditionOption =
+    conditionSetting.options.find(
+      (option) => {
+        return (
+          option.value ===
+          conditionValue
+        );
+      }
+    );
+
+  return conditionOption
+    ? conditionOption.label
+    : "すべて";
+};
+
+// PCとスマホの詳細条件表示をそろえる
+const syncCustomerSearchConditionRows = () => {
+  [
+    ...customerSearchConditionRows,
+    ...customerSearchMobileConditionRows,
+  ].forEach((conditionRow) => {
+    const conditionKey =
+      conditionRow.dataset.condition ||
+      conditionRow.dataset.mobileCondition ||
+      "";
+
+    const conditionValue =
+      draftCustomerSearchConditions[
+        conditionKey
+      ] ||
+      "all";
+
+    const conditionValueElement =
+      conditionRow.querySelector(
+        ".customer-search-condition-value"
+      );
+
+    if (conditionValueElement) {
+      conditionValueElement.textContent =
+        getCustomerSearchConditionLabel(
+          conditionKey,
+          conditionValue
+        );
+    }
+
+    conditionRow.classList.toggle(
+      "customer-search-condition-row--selected",
+      conditionValue !== "all"
+    );
+  });
+};
+
+// 選択肢パネルの内容を表示する
+const renderCustomerSearchConditionChoices = () => {
+  const conditionSetting =
+    customerSearchConditionSettings[
+      editingCustomerSearchCondition
+    ];
+
+  customerSearchConditionChoiceOptions.replaceChildren();
+
+  if (!conditionSetting) {
+    return;
+  }
+
+  const selectedValue =
+    draftCustomerSearchConditions[
+      editingCustomerSearchCondition
+    ] ||
+    "all";
+
+  conditionSetting.options.forEach((option) => {
+    const optionButton =
+      document.createElement("button");
+
+    const optionLabel =
+      document.createElement("span");
+
+    const optionCheck =
+      document.createElement("span");
+
+    const isSelected =
+      option.value ===
+      selectedValue;
+
+    optionButton.className =
+      "customer-search-condition-choice-button";
+
+    optionButton.type = "button";
+    optionButton.dataset.conditionValue =
+      option.value;
+
+    optionButton.classList.toggle(
+      "customer-search-condition-choice-button--active",
+      isSelected
+    );
+
+    optionButton.setAttribute(
+      "aria-pressed",
+      String(isSelected)
+    );
+
+    optionLabel.textContent =
+      option.label;
+
+    optionCheck.className =
+      "customer-search-condition-choice-check";
+
+    optionCheck.textContent = "✓";
+    optionCheck.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    optionButton.appendChild(
+      optionLabel
+    );
+
+    optionButton.appendChild(
+      optionCheck
+    );
+
+    customerSearchConditionChoiceOptions.appendChild(
+      optionButton
+    );
+  });
+};
+
+// 詳細条件1項目の選択肢パネルを開く
+const openCustomerSearchConditionChoicePanel = (
+  conditionKey
+) => {
+  const conditionSetting =
+    customerSearchConditionSettings[
+      conditionKey
+    ];
+
+  if (!conditionSetting) {
+    return;
+  }
+
+  editingCustomerSearchCondition =
+    conditionKey;
+
+  customerSearchConditionChoiceTitle.textContent =
+    conditionSetting.title;
+
+  renderCustomerSearchConditionChoices();
+
+  customerSearchConditionChoicePanel.hidden =
+    false;
+
+  document.body.classList.add(
+    "customer-search-panel-open"
+  );
+
+  const selectedOptionButton =
+    customerSearchConditionChoiceOptions.querySelector(
+      ".customer-search-condition-choice-button--active"
+    );
+
+  selectedOptionButton?.focus();
+};
+
+// 詳細条件1項目の選択肢パネルを閉じる
+const closeCustomerSearchConditionChoicePanel = () => {
+  customerSearchConditionChoicePanel.hidden =
+    true;
+
+  editingCustomerSearchCondition = "";
+
+  if (
+    customerSearchConditionPanel.hidden &&
+    customerSearchSortPanel.hidden
+  ) {
+    document.body.classList.remove(
+      "customer-search-panel-open"
+    );
+  }
+};
+
+// スマホ用の詳細条件パネルを開く
+const openCustomerSearchConditionPanel = () => {
+  syncCustomerSearchConditionRows();
+
+  customerSearchConditionPanel.hidden =
+    false;
+
+  customerSearchMobileConditionButton.setAttribute(
+    "aria-expanded",
+    "true"
+  );
+
+  document.body.classList.add(
+    "customer-search-panel-open"
+  );
+
+  const firstConditionRow =
+    customerSearchConditionPanel.querySelector(
+      ".customer-search-condition-row"
+    );
+
+  firstConditionRow?.focus();
+};
+
+// スマホ用の詳細条件パネルを閉じる
+const closeCustomerSearchConditionPanel = () => {
+  customerSearchConditionPanel.hidden =
+    true;
+
+  customerSearchMobileConditionButton.setAttribute(
+    "aria-expanded",
+    "false"
+  );
+
+  if (
+    customerSearchConditionChoicePanel.hidden &&
+    customerSearchSortPanel.hidden
+  ) {
+    document.body.classList.remove(
+      "customer-search-panel-open"
+    );
+  }
+};
+
+// 詳細条件を初期状態へ戻す
+const resetCustomerSearchDetailConditions = () => {
+  draftCustomerSearchConditions =
+    createDefaultCustomerSearchConditions();
+
+  activeCustomerSearchConditions =
+    createDefaultCustomerSearchConditions();
+
+  syncCustomerSearchConditionRows();
+  updateCustomerSearchResults();
+};
+
+// 選択中の詳細条件を検索結果へ反映する
+const applyCustomerSearchDetailConditions = () => {
+  activeCustomerSearchConditions = {
+    ...draftCustomerSearchConditions,
+  };
+
+  syncCustomerSearchConditionRows();
+  updateCustomerSearchResults();
+};
+
+// 顧客が詳細条件に一致するか確認する
+const isCustomerSearchDetailConditionMatch = (
+  resultCard
+) => {
+  const today = new Date();
+
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  const currentYear =
+    today.getFullYear();
+
+  const currentMonth =
+    today.getMonth() + 1;
+
+  const staffMemberCondition =
+    activeCustomerSearchConditions[
+      "staff-member"
+    ];
+
+  if (
+    staffMemberCondition !== "all" &&
+    resultCard.dataset.staffMember !==
+      staffMemberCondition
+  ) {
+    return false;
+  }
+
+  const birthdayCondition =
+    activeCustomerSearchConditions.birthday;
+
+  if (
+    birthdayCondition === "this-month" &&
+    Number(
+      resultCard.dataset.birthMonth
+    ) !== currentMonth
+  ) {
+    return false;
+  }
+
+  if (
+    birthdayCondition === "registered" &&
+    resultCard.dataset.birthdayStatus !==
+      "known"
+  ) {
+    return false;
+  }
+
+  if (
+    birthdayCondition === "unregistered" &&
+    resultCard.dataset.birthdayStatus !==
+      "unknown"
+  ) {
+    return false;
+  }
+
+  const registrationDateCondition =
+    activeCustomerSearchConditions[
+      "registration-date"
+    ];
+
+  const registrationDateNumber =
+    getCustomerSearchDateNumber(
+      resultCard.dataset.registrationDate
+    );
+
+  if (
+    registrationDateCondition !== "all"
+  ) {
+    if (registrationDateNumber === 0) {
+      return false;
+    }
+
+    const registrationDate =
+      new Date(
+        registrationDateNumber
+      );
+
+    if (
+      registrationDateCondition ===
+      "this-month"
+    ) {
+      const isThisMonth =
+        registrationDate.getFullYear() ===
+          currentYear &&
+        registrationDate.getMonth() + 1 ===
+          currentMonth;
+
+      if (!isThisMonth) {
+        return false;
+      }
+    }
+
+    if (
+      registrationDateCondition ===
+      "within-3-months"
+    ) {
+      const threeMonthsAgo =
+        new Date(today);
+
+      threeMonthsAgo.setMonth(
+        threeMonthsAgo.getMonth() - 3
+      );
+
+      if (
+        registrationDateNumber <
+        threeMonthsAgo.getTime()
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      registrationDateCondition ===
+      "within-1-year"
+    ) {
+      const oneYearAgo =
+        new Date(today);
+
+      oneYearAgo.setFullYear(
+        oneYearAgo.getFullYear() - 1
+      );
+
+      if (
+        registrationDateNumber <
+        oneYearAgo.getTime()
+      ) {
+        return false;
+      }
+    }
+  }
+
+  const visitCount =
+    Number(
+      resultCard.dataset.visitCount ||
+      0
+    );
+
+  const visitCountCondition =
+    activeCustomerSearchConditions[
+      "visit-count"
+    ];
+
+  if (
+    visitCountCondition === "0-5" &&
+    (
+      visitCount < 0 ||
+      visitCount > 5
+    )
+  ) {
+    return false;
+  }
+
+  if (
+    visitCountCondition === "6-10" &&
+    (
+      visitCount < 6 ||
+      visitCount > 10
+    )
+  ) {
+    return false;
+  }
+
+  if (
+    visitCountCondition === "11-20" &&
+    (
+      visitCount < 11 ||
+      visitCount > 20
+    )
+  ) {
+    return false;
+  }
+
+  if (
+    visitCountCondition === "21-plus" &&
+    visitCount < 21
+  ) {
+    return false;
+  }
+
+  const totalSales =
+    Number(
+      resultCard.dataset.totalSales ||
+      0
+    );
+
+  const totalSalesCondition =
+    activeCustomerSearchConditions[
+      "total-sales"
+    ];
+
+  if (
+    totalSalesCondition ===
+      "under-50000" &&
+    totalSales >= 50000
+  ) {
+    return false;
+  }
+
+  if (
+    totalSalesCondition ===
+      "50000-99999" &&
+    (
+      totalSales < 50000 ||
+      totalSales >= 100000
+    )
+  ) {
+    return false;
+  }
+
+  if (
+    totalSalesCondition ===
+      "100000-299999" &&
+    (
+      totalSales < 100000 ||
+      totalSales >= 300000
+    )
+  ) {
+    return false;
+  }
+
+  if (
+    totalSalesCondition ===
+      "300000-plus" &&
+    totalSales < 300000
+  ) {
+    return false;
+  }
+
+  const booleanConditions = [
+    {
+      key: "photo",
+      datasetValue:
+        resultCard.dataset.hasPhoto,
+    },
+    {
+      key: "features",
+      datasetValue:
+        resultCard.dataset.hasFeatures,
+    },
+    {
+      key: "memo",
+      datasetValue:
+        resultCard.dataset.hasMemo,
+    },
+  ];
+
+  const isBooleanConditionMatch =
+    booleanConditions.every(
+      (condition) => {
+        const conditionValue =
+          activeCustomerSearchConditions[
+            condition.key
+          ];
+
+        if (conditionValue === "all") {
+          return true;
+        }
+
+        if (
+          conditionValue ===
+          "registered"
+        ) {
+          return (
+            condition.datasetValue ===
+            "true"
+          );
+        }
+
+        return (
+          condition.datasetValue ===
+          "false"
+        );
+      }
+    );
+
+  return isBooleanConditionMatch;
+};
+
+// カード表示と一覧表示を切り替える
+customerSearchViewButtons.forEach((viewButton) => {
+  viewButton.addEventListener(
+    "click",
+    () => {
+      setCustomerSearchResultView(
+        viewButton.dataset.resultView ||
+        "list"
+      );
+    }
+  );
+});
+
+// PCの並び替えを変更したらすぐに検索結果へ反映する
+customerSearchSortInputs.forEach((sortInput) => {
+  sortInput.addEventListener(
+    "change",
+    () => {
+      if (!sortInput.checked) {
+        return;
+      }
+
+      setCustomerSearchSort(
+        sortInput.value
+      );
+    }
+  );
+});
+
+// スマホの並び替えボタンからパネルを開く
+customerSearchMobileSortButton.addEventListener(
+  "click",
+  openCustomerSearchSortPanel
+);
+
+// ×ボタンから並び替えパネルを閉じる
+customerSearchSortPanelCloseButton.addEventListener(
+  "click",
+  closeCustomerSearchSortPanel
+);
+
+// パネルの暗い背景を押した場合も閉じる
+customerSearchSortPanel.addEventListener(
+  "click",
+  (event) => {
+    if (event.target !== customerSearchSortPanel) {
+      return;
+    }
+
+    closeCustomerSearchSortPanel();
+  }
+);
+
+// スマホで選択した並び順を適用する
+customerSearchSortPanelSubmitButton.addEventListener(
+  "click",
+  () => {
+    const selectedSortInput =
+      customerSearchSortPanel.querySelector(
+        'input[name="customerSearchSortMobile"]:checked'
+      );
+
+    if (!selectedSortInput) {
+      return;
+    }
+
+    setCustomerSearchSort(
+      selectedSortInput.value
+    );
+
+    closeCustomerSearchSortPanel();
+  }
+);
+
+// Escapeキーでも並び替えパネルを閉じる
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key !== "Escape" ||
+      customerSearchSortPanel.hidden
+    ) {
+      return;
+    }
+
+    closeCustomerSearchSortPanel();
+  }
+);
+
+// PCの詳細条件を押したときに選択肢を開く
+customerSearchConditionRows.forEach((conditionRow) => {
+  conditionRow.addEventListener(
+    "click",
+    () => {
+      openCustomerSearchConditionChoicePanel(
+        conditionRow.dataset.condition ||
+        ""
+      );
+    }
+  );
+});
+
+// スマホの詳細条件を押したときに選択肢を開く
+customerSearchMobileConditionRows.forEach((conditionRow) => {
+  conditionRow.addEventListener(
+    "click",
+    () => {
+      openCustomerSearchConditionChoicePanel(
+        conditionRow.dataset.mobileCondition ||
+        ""
+      );
+    }
+  );
+});
+
+// 選択肢を押したときに条件を変更する
+customerSearchConditionChoiceOptions.addEventListener(
+  "click",
+  (event) => {
+    const optionButton =
+      event.target.closest(
+        ".customer-search-condition-choice-button"
+      );
+
+    if (
+      !optionButton ||
+      !editingCustomerSearchCondition
+    ) {
+      return;
+    }
+
+    draftCustomerSearchConditions[
+      editingCustomerSearchCondition
+    ] =
+      optionButton.dataset.conditionValue ||
+      "all";
+
+    applyCustomerSearchDetailConditions();
+    closeCustomerSearchConditionChoicePanel();
+  }
+);
+
+// ×ボタンから条件選択を閉じる
+customerSearchConditionChoiceCloseButton.addEventListener(
+  "click",
+  closeCustomerSearchConditionChoicePanel
+);
+
+// 条件選択パネルの暗い背景を押して閉じる
+customerSearchConditionChoicePanel.addEventListener(
+  "click",
+  (event) => {
+    if (
+      event.target !==
+      customerSearchConditionChoicePanel
+    ) {
+      return;
+    }
+
+    closeCustomerSearchConditionChoicePanel();
+  }
+);
+
+// PCの詳細条件を検索結果へ反映する
+customerSearchConditionSubmitButton.addEventListener(
+  "click",
+  applyCustomerSearchDetailConditions
+);
+
+// PCの詳細条件をリセットする
+customerSearchConditionResetButton.addEventListener(
+  "click",
+  resetCustomerSearchDetailConditions
+);
+
+// スマホの詳細条件パネルを開く
+customerSearchMobileConditionButton.addEventListener(
+  "click",
+  openCustomerSearchConditionPanel
+);
+
+// ×ボタンからスマホの詳細条件を閉じる
+customerSearchConditionPanelCloseButton.addEventListener(
+  "click",
+  closeCustomerSearchConditionPanel
+);
+
+// スマホ用パネルの暗い背景を押して閉じる
+customerSearchConditionPanel.addEventListener(
+  "click",
+  (event) => {
+    if (
+      event.target !==
+      customerSearchConditionPanel
+    ) {
+      return;
+    }
+
+    closeCustomerSearchConditionPanel();
+  }
+);
+
+// スマホの詳細条件をリセットする
+customerSearchMobileConditionResetButton.addEventListener(
+  "click",
+  resetCustomerSearchDetailConditions
+);
+
+// スマホの詳細条件を検索結果へ反映する
+customerSearchConditionPanelSubmitButton.addEventListener(
+  "click",
+  () => {
+    applyCustomerSearchDetailConditions();
+    closeCustomerSearchConditionPanel();
+  }
+);
+
+// Escapeキーで詳細条件パネルを閉じる
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    if (
+      !customerSearchConditionChoicePanel.hidden
+    ) {
+      closeCustomerSearchConditionChoicePanel();
+
+      return;
+    }
+
+    if (
+      !customerSearchConditionPanel.hidden
+    ) {
+      closeCustomerSearchConditionPanel();
+    }
+  }
+);
+
+// さらに読み込むボタンから次の顧客を表示する
+customerSearchLoadMoreButton.addEventListener(
+  "click",
+  () => {
+    if (isCustomerSearchLoadingMore) {
+      return;
+    }
+
+    isCustomerSearchLoadingMore = true;
+
+    const currentRequestId =
+      ++customerSearchLoadMoreRequestId;
+
+    const requestedConditionSignature =
+      lastCustomerSearchConditionSignature;
+
+    customerSearchLoadMoreButton.hidden =
+      true;
+
+    customerSearchLoading.hidden =
+      false;
+
+    // 通信中の動作を確認できるよう少し待ってから表示する
+    window.setTimeout(
+      () => {
+        // 待機中に検索条件が変わった場合は追加しない
+        if (
+          currentRequestId !==
+            customerSearchLoadMoreRequestId ||
+          requestedConditionSignature !==
+            lastCustomerSearchConditionSignature
+        ) {
+          return;
+        }
+
+        customerSearchVisibleLimit +=
+          customerSearchPageSize;
+
+        isCustomerSearchLoadingMore =
+          false;
+
+        customerSearchLoading.hidden =
+          true;
+
+        updateCustomerSearchResults();
+      },
+      500
+    );
+  }
+);
+
+// 入力するたびに検索結果を更新する
+customerSearchInput.addEventListener(
+  "input",
+  updateCustomerSearchResults
+);
+
+// クイックフィルターを押したときに検索結果を更新する
+customerQuickFilterButtons.forEach((filterButton) => {
+  filterButton.addEventListener(
+    "click",
+    () => {
+      activeCustomerQuickFilter =
+        filterButton.dataset.quickFilter ||
+        "all";
+
+      customerQuickFilterButtons.forEach((button) => {
+        const isActive =
+          button === filterButton;
+
+        button.classList.toggle(
+          "customer-quick-filter--active",
+          isActive
+        );
+
+        button.setAttribute(
+          "aria-pressed",
+          String(isActive)
+        );
+      });
+
+      updateCustomerSearchResults();
+    }
+  );
+});
+
+// Enterを押したときだけ最近検索へ保存する
+customerSearchInput.addEventListener(
+  "keydown",
+  (event) => {
+    if (event.key !== "Enter") {
+      return;
+    }
+
+    event.preventDefault();
+
+    addCustomerRecentSearch(
+      customerSearchInput.value
+    );
+  }
+);
+
+// 検索文字を消去する
+customerSearchClearButton.addEventListener(
+  "click",
+  clearCustomerSearch
+);
+
+// 該当なし画面から検索条件をすべてリセットする
+customerSearchResetButton.addEventListener(
+  "click",
+  resetCustomerSearchConditions
+);
+
+// 最近検索の再検索と個別削除
+customerRecentSearchList.addEventListener(
+  "click",
+  (event) => {
+    const removeButton =
+      event.target.closest(
+        ".customer-recent-search-remove"
+      );
+
+    if (removeButton) {
+      const recentSearchItem =
+        removeButton.closest(
+          ".customer-recent-search-item"
+        );
+
+      const recentSearchButton =
+        recentSearchItem.querySelector(
+          ".customer-recent-search-button"
+        );
+
+      const searchValue =
+        recentSearchButton.dataset.searchValue ||
+        "";
+
+      const normalizedSearchValue =
+        normalizeCustomerSearchText(
+          searchValue
+        );
+
+      const updatedRecentSearches =
+        getCustomerRecentSearches().filter(
+          (savedSearchValue) => {
+            return (
+              normalizeCustomerSearchText(
+                savedSearchValue
+              ) !== normalizedSearchValue
+            );
+          }
+        );
+
+      saveCustomerRecentSearches(
+        updatedRecentSearches
+      );
+
+      renderCustomerRecentSearches();
+
+      return;
+    }
+
+    const searchButton =
+      event.target.closest(
+        ".customer-recent-search-button"
+      );
+
+    if (!searchButton) {
+      return;
+    }
+
+    customerSearchInput.value =
+      searchButton.dataset.searchValue ||
+      "";
+
+    updateCustomerSearchResults();
+
+    customerSearchInput.focus();
+  }
+);
+
+// 最近検索をすべて削除する
+customerRecentSearchClearButton.addEventListener(
+  "click",
+  () => {
+    saveCustomerRecentSearches([]);
+
+    renderCustomerRecentSearches();
+  }
+);
+
+// 顧客カードを開いたときに検索語と閲覧履歴を保存する
+customerSearchResultOpenButtons.forEach((openButton) => {
+  openButton.addEventListener(
+    "click",
+    () => {
+      addCustomerRecentSearch(
+        customerSearchInput.value
+      );
+
+      const customerId =
+        openButton.dataset.customerId ||
+        "";
+
+      saveCustomerRecentlyViewedCustomer(
+        customerId
+      );
+
+      if (
+        activeCustomerSort ===
+        "recently-viewed"
+      ) {
+        applyCustomerSearchSort();
+      }
+    }
+  );
+});
+
+// スクロール量に応じてTOPボタンの表示を切り替える
+const updateCustomerSearchScrollTopButton = () => {
+  const shouldShow =
+    window.scrollY >= 360;
+
+  customerSearchScrollTopButton.classList.toggle(
+    "customer-search-scroll-top--visible",
+    shouldShow
+  );
+
+  customerSearchScrollTopButton.setAttribute(
+    "aria-hidden",
+    String(!shouldShow)
+  );
+
+  customerSearchScrollTopButton.tabIndex =
+    shouldShow
+      ? 0
+      : -1;
+};
+
+// TOPボタンを押したら画面上部へなめらかに戻る
+customerSearchScrollTopButton.addEventListener(
+  "click",
+  () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+);
+
+// スクロールするたびにTOPボタンの表示を更新する
+window.addEventListener(
+  "scroll",
+  updateCustomerSearchScrollTopButton,
+  {
+    passive: true,
+  }
+);
+
+// 初期表示時にも現在のスクロール位置を確認する
+updateCustomerSearchScrollTopButton();
+
+// ページ表示時に履歴・表示方法・並び順・検索結果を反映する
+renderCustomerRecentSearches();
+setCustomerSearchResultView(
+  activeCustomerResultView,
+  false
+);
+syncCustomerSearchSortInputs();
+syncCustomerSearchConditionRows();
+applyCustomerSearchSort();
+updateCustomerSearchResults();
 
 // 指定された画面だけを表示する共通処理
 const showView = (viewName, scrollBehavior = "smooth") => {
