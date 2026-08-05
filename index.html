@@ -58,7 +58,13 @@
                                     />
                                     <path d="M10.3 17.3a1.9 1.9 0 0 0 3.4 0" />
                                 </svg>
-                                <span class="notification-badge" aria-hidden="true">3</span>
+                                <span
+                                    class="notification-badge"
+                                    id="notification-badge"
+                                    aria-hidden="true"
+                                >
+                                    0
+                                </span>
                             </span>
                             <span class="action-label">お知らせ</span>
                         </button>
@@ -71,49 +77,19 @@
                         >
                             <div class="notification-panel-header">
                                 <h2 class="notification-panel-title">お知らせ</h2>
-                                <span class="notification-panel-count">3件</span>
+                                <span
+                                    class="notification-panel-count"
+                                    id="notification-panel-count"
+                                >
+                                    0件
+                                </span>
                             </div>
 
-                            <div class="notification-list">
-                                <button class="notification-item" type="button">
-                                    <span class="notification-item-dot" aria-hidden="true"></span>
-
-                                    <span class="notification-item-content">
-                                        <span class="notification-item-title">
-                                            今月お誕生日のお客様が9名います
-                                        </span>
-                                        <span class="notification-item-description">
-                                            お祝いの準備を確認しましょう。
-                                        </span>
-                                    </span>
-                                </button>
-
-                                <button class="notification-item" type="button">
-                                    <span class="notification-item-dot" aria-hidden="true"></span>
-
-                                    <span class="notification-item-content">
-                                        <span class="notification-item-title">
-                                            最近30日間来店がない常連が5名います
-                                        </span>
-                                        <span class="notification-item-description">
-                                            お客様の最終来店日を確認しましょう。
-                                        </span>
-                                    </span>
-                                </button>
-
-                                <button class="notification-item" type="button">
-                                    <span class="notification-item-dot" aria-hidden="true"></span>
-
-                                    <span class="notification-item-content">
-                                        <span class="notification-item-title">
-                                            写真未登録のお客様が5名います
-                                        </span>
-                                        <span class="notification-item-description">
-                                            顧客情報を更新しましょう。
-                                        </span>
-                                    </span>
-                                </button>
-                            </div>
+                            <!-- JavaScriptで最新のお知らせを表示する -->
+                            <div
+                                class="notification-list"
+                                id="notification-list"
+                            ></div>
                         </div>
                     </div>
 
@@ -300,12 +276,11 @@
                             <span class="new-label">NEW</span>
                         </div>
 
-                        <!-- 現在は画面確認用の仮データ -->
-                        <ul class="ai-summary-list">
-                            <li>今月お誕生日のお客様が9名います。</li>
-                            <li>今月の新規登録は12名です。</li>
-                            <li>最近30日間来店がない常連が5名います。</li>
-                        </ul>
+                        <!-- JavaScriptで最新の集計内容を表示する -->
+                        <ul
+                            class="ai-summary-list"
+                            id="home-ai-summary-list"
+                        ></ul>
                     </section>
                 </section>
 
@@ -627,8 +602,12 @@
                             <span>やることリスト</span>
                         </h2>
 
-                        <!-- 後から一覧画面へ移動する機能を追加する予定 -->
-                        <button class="section-link" type="button">
+                        <!-- 対応が必要なお客様をまとめて確認するボタン -->
+                        <button
+                            class="section-link"
+                            type="button"
+                            data-home-todo-action="all"
+                        >
                             すべて見る
                             <span aria-hidden="true"></span>
                         </button>
@@ -637,8 +616,12 @@
                     <!-- 対応が必要な項目をカード形式で並べる領域 -->
                     <div class="todo-grid">
 
-                        <!-- 顧客写真が未登録のお客様を確認するカード -->
-                        <button class="todo-card" type="button">
+                        <!-- 写真未登録 -->
+                        <button
+                            class="todo-card"
+                            type="button"
+                            data-home-todo-action="photo"
+                        >
 
                             <!-- アイコンと項目名を横並びにする -->
                             <span class="todo-card-header">
@@ -662,14 +645,19 @@
                                 <span class="todo-card-title">写真未登録</span>
                             </span>
                             <span class="todo-card-value">
-                                5<span class="todo-card-unit">名</span>
+                                <span id="home-todo-photo-count">0</span>
+                                <span class="todo-card-unit">名</span>
                             </span>
                             <span class="todo-card-description">写真を登録しましょう</span>
                             <span class="todo-card-arrow" aria-hidden="true"></span>
                         </button>
 
-                        <!-- 誕生日が未登録のお客様を確認するカード -->
-                        <button class="todo-card" type="button">
+                        <!-- 誕生日未登録 -->
+                        <button
+                            class="todo-card"
+                            type="button"
+                            data-home-todo-action="birthday"
+                        >
 
                             <!-- アイコンと項目名を横並びにする -->
                             <span class="todo-card-header">
@@ -703,14 +691,19 @@
                                 <span class="todo-card-title">誕生日未登録</span>
                             </span>
                             <span class="todo-card-value">
-                                18<span class="todo-card-unit">名</span>
+                                <span id="home-todo-birthday-count">0</span>
+                                <span class="todo-card-unit">名</span>
                             </span>
                             <span class="todo-card-description">誕生日を登録しましょう</span>
                             <span class="todo-card-arrow" aria-hidden="true"></span>
                         </button>
 
-                        <!-- 顧客メモが未登録のお客様を確認するカード -->
-                        <button class="todo-card" type="button">
+                        <!-- メモ未登録 -->
+                        <button
+                            class="todo-card"
+                            type="button"
+                            data-home-todo-action="memo"
+                        >
 
                             <!-- アイコンと項目名を横並びにする -->
                             <span class="todo-card-header">
@@ -738,14 +731,19 @@
                                 <span class="todo-card-title">メモ未登録</span>
                             </span>
                             <span class="todo-card-value">
-                                3<span class="todo-card-unit">名</span>
+                                <span id="home-todo-memo-count">0</span>
+                                <span class="todo-card-unit">名</span>
                             </span>
                             <span class="todo-card-description">接客メモを残しましょう</span>
                             <span class="todo-card-arrow" aria-hidden="true"></span>
                         </button>
 
-                        <!-- 顧客の特徴が未登録のお客様を確認するカード -->
-                        <button class="todo-card" type="button">
+                        <!-- 特徴未登録 -->
+                        <button
+                            class="todo-card"
+                            type="button"
+                            data-home-todo-action="features"
+                        >
                             
                             <!-- アイコンと項目名を横並びにする -->
                             <span class="todo-card-header">
@@ -769,7 +767,8 @@
                                 <span class="todo-card-title">特徴未登録</span>
                             </span>
                             <span class="todo-card-value">
-                                7<span class="todo-card-unit">名</span>
+                                <span id="home-todo-features-count">0</span>
+                                <span class="todo-card-unit">名</span>
                             </span>
                             <span class="todo-card-description">特徴を登録しましょう</span>
                             <span class="todo-card-arrow" aria-hidden="true"></span>
@@ -2502,6 +2501,15 @@
                                 <button
                                     class="customer-quick-filter"
                                     type="button"
+                                    data-quick-filter="needs-action"
+                                    aria-pressed="false"
+                                >
+                                    要対応
+                                </button>
+
+                                <button
+                                    class="customer-quick-filter"
+                                    type="button"
                                     data-quick-filter="registered-this-month"
                                     aria-pressed="false"
                                 >
@@ -2515,6 +2523,15 @@
                                     aria-pressed="false"
                                 >
                                     誕生日
+                                </button>
+
+                                <button
+                                    class="customer-quick-filter"
+                                    type="button"
+                                    data-quick-filter="no-birthday"
+                                    aria-pressed="false"
+                                >
+                                    誕生日なし
                                 </button>
 
                                 <button

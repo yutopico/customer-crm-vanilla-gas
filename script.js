@@ -17,6 +17,55 @@ const appViews = document.querySelectorAll(".app-view");
 const brandTitle = document.querySelector(".brand-text h1");
 const brandDescription = document.querySelector(".brand-text p");
 
+// ホーム画面のAIサマリー表示先を取得する
+const homeAiSummaryList =
+  document.querySelector(
+    "#home-ai-summary-list"
+  );
+
+// お知らせの件数と一覧の表示先を取得する
+const notificationBadge =
+  document.querySelector(
+    "#notification-badge"
+  );
+
+const notificationPanelCount =
+  document.querySelector(
+    "#notification-panel-count"
+  );
+
+const notificationList =
+  document.querySelector(
+    "#notification-list"
+  );
+
+// ホーム画面のやることボタンを取得する
+const homeTodoActionButtons =
+  document.querySelectorAll(
+    "[data-home-todo-action]"
+  );
+
+// やることカードの人数表示先を取得する
+const homeTodoPhotoCount =
+  document.querySelector(
+    "#home-todo-photo-count"
+  );
+
+const homeTodoBirthdayCount =
+  document.querySelector(
+    "#home-todo-birthday-count"
+  );
+
+const homeTodoMemoCount =
+  document.querySelector(
+    "#home-todo-memo-count"
+  );
+
+const homeTodoFeaturesCount =
+  document.querySelector(
+    "#home-todo-features-count"
+  );
+
 // 各画面のヘッダーに表示するタイトルと説明文
 const viewHeaderSettings = {
   home: {
@@ -1257,6 +1306,37 @@ const isCustomerQuickFilterMatch = (resultCard) => {
 
   if (activeCustomerQuickFilter === "all") {
     return true;
+  }
+
+  // 何らかの情報が未登録のお客様
+  if (
+    activeCustomerQuickFilter ===
+    "needs-action"
+  ) {
+    return (
+      resultCard.dataset.hasPhoto ===
+        "false" ||
+      resultCard.dataset
+        .birthdayStatus ===
+        "unknown" ||
+      resultCard.dataset.hasMemo ===
+        "false" ||
+      resultCard.dataset
+        .hasFeatures ===
+        "false"
+    );
+  }
+
+  // 誕生日が未登録のお客様
+  if (
+    activeCustomerQuickFilter ===
+    "no-birthday"
+  ) {
+    return (
+      resultCard.dataset
+        .birthdayStatus ===
+      "unknown"
+    );
   }
 
   if (activeCustomerQuickFilter === "registered-this-month") {
@@ -5259,6 +5339,268 @@ const getSummaryDaysSinceVisit = (
   );
 };
 
+// ホーム画面に必要な最新データをまとめる
+const getHomeDashboardData = () => {
+  const monthData =
+    getActiveSummaryMonthData();
+
+  const periodData =
+    monthData.periods.month;
+
+  const customerCards =
+    Array.from(
+      customerSearchResultCards
+    );
+
+  // 現在の月を取得する
+  const currentMonth =
+    new Date().getMonth() + 1;
+
+  // 今月が誕生日のお客様を数える
+  const currentMonthBirthdayCount =
+    customerCards.filter(
+      (customerCard) => {
+        return (
+          Number(
+            customerCard.dataset.birthMonth
+          ) === currentMonth
+        );
+      }
+    ).length;
+
+  // 誕生日が未登録のお客様を数える
+  const birthdayUnregisteredCount =
+    customerCards.filter(
+      (customerCard) => {
+        return (
+          customerCard.dataset
+            .birthdayStatus ===
+          "unknown"
+        );
+      }
+    ).length;
+
+  // 30日以上来店していない顧客を数える
+  const noVisitCount =
+    monthData.noVisitCustomers.filter(
+      (customer) => {
+        return (
+          getSummaryDaysSinceVisit(
+            customer.lastVisit,
+            monthData.referenceDate
+          ) >= 30
+        );
+      }
+    ).length;
+
+  // 指定した情報が未登録の顧客を数える
+  const countUnregisteredCustomers = (
+    datasetKey
+  ) => {
+    return customerCards.filter(
+      (customerCard) => {
+        return (
+          customerCard.dataset[
+            datasetKey
+          ] !== "true"
+        );
+      }
+    ).length;
+  };
+
+  return {
+    monthNumber: monthData.monthNumber,
+
+    sales: periodData.sales,
+    salesRate: periodData.salesRate,
+    visits: periodData.visits,
+    newCustomers:
+      periodData.newCustomers,
+    averageSpend:
+      periodData.averageSpend,
+
+    birthdayMonth:
+      currentMonth,
+
+    // 誕生日通知で表示する対象月
+    birthdayMonth:
+      currentMonth,
+
+    // 今月が誕生日のお客様の人数
+    birthdays:
+      currentMonthBirthdayCount,
+
+    birthdayUnregistered:
+      birthdayUnregisteredCount,
+
+    noVisitCount,
+
+    photoUnregistered:
+      countUnregisteredCustomers(
+        "hasPhoto"
+      ),
+
+    memoUnregistered:
+      countUnregisteredCustomers(
+        "hasMemo"
+      ),
+
+    featuresUnregistered:
+      countUnregisteredCustomers(
+        "hasFeatures"
+      ),
+  };
+};
+
+
+// ホーム画面のAIサマリーと通知を表示する
+const renderHomeDashboard = () => {
+  const homeData =
+    getHomeDashboardData();
+
+  // 現在のデータからサマリー文章を作る
+  const summaryItems = [
+    `${homeData.monthNumber}月の売上は${formatSummaryCurrency(
+      homeData.sales
+    )}で、前月比${homeData.salesRate}です。`,
+
+    `新規顧客は${homeData.newCustomers}名、来店回数は${homeData.visits}回です。`,
+
+    `平均単価は${formatSummaryCurrency(
+      homeData.averageSpend
+    )}、30日以上来店のない顧客は${homeData.noVisitCount}名です。`,
+  ];
+
+  homeAiSummaryList.innerHTML =
+    summaryItems
+      .map((summaryItem) => {
+        return `<li>${summaryItem}</li>`;
+      })
+      .join("");
+
+    // やることカードへ最新人数を表示する
+    homeTodoPhotoCount.textContent =
+      String(
+        homeData.photoUnregistered
+      );
+
+    homeTodoBirthdayCount.textContent =
+      String(
+        homeData.birthdayUnregistered
+      );
+
+    homeTodoMemoCount.textContent =
+      String(
+        homeData.memoUnregistered
+      );
+
+    homeTodoFeaturesCount.textContent =
+      String(
+        homeData.featuresUnregistered
+      );
+
+  // 対応が必要な項目から通知を作る
+  const notifications = [
+    {
+      action: "birthday",
+      count: homeData.birthdays,
+      title:
+        `${homeData.birthdayMonth}月がお誕生日のお客様が${homeData.birthdays}名います`,
+      description:
+        "お祝いの準備を確認しましょう。",
+    },
+
+    {
+      action: "no-visit",
+      count: homeData.noVisitCount,
+      title:
+        `30日以上来店のない顧客が${homeData.noVisitCount}名います`,
+      description:
+        "最終来店日を確認しましょう。",
+    },
+
+    {
+      action: "photo",
+      count:
+        homeData.photoUnregistered,
+      title:
+        `写真未登録のお客様が${homeData.photoUnregistered}名います`,
+      description:
+        "顧客写真を登録しましょう。",
+    },
+
+    {
+      action: "memo",
+      count:
+        homeData.memoUnregistered,
+      title:
+        `メモ未登録のお客様が${homeData.memoUnregistered}名います`,
+      description:
+        "接客メモを登録しましょう。",
+    },
+
+    {
+      action: "features",
+      count:
+        homeData.featuresUnregistered,
+      title:
+        `特徴未登録のお客様が${homeData.featuresUnregistered}名います`,
+      description:
+        "お客様の特徴を登録しましょう。",
+    },
+  ].filter((notification) => {
+    return notification.count > 0;
+  });
+
+  // 通知件数を表示する
+  const notificationCount =
+    notifications.length;
+
+  notificationBadge.textContent =
+    String(notificationCount);
+
+  notificationPanelCount.textContent =
+    `${notificationCount}件`;
+
+  notificationButton.setAttribute(
+    "aria-label",
+    `お知らせ ${notificationCount}件`
+  );
+
+  // 通知が0件ならバッジを隠す
+  notificationBadge.hidden =
+    notificationCount === 0;
+
+  // 通知一覧を表示する
+  notificationList.innerHTML =
+    notifications
+      .map((notification) => {
+        return `
+          <button
+            class="notification-item"
+            type="button"
+            data-notification-action="${notification.action}"
+          >
+            <span
+              class="notification-item-dot"
+              aria-hidden="true"
+            ></span>
+
+            <span class="notification-item-content">
+              <span class="notification-item-title">
+                ${notification.title}
+              </span>
+
+              <span class="notification-item-description">
+                ${notification.description}
+              </span>
+            </span>
+          </button>
+        `;
+      })
+      .join("");
+};
+
 // 主要な数字を表示する
 const renderSummaryKpis = () => {
   const periodData =
@@ -6263,6 +6605,15 @@ const showView = (viewName, scrollBehavior = "smooth") => {
   brandTitle.textContent = headerSetting.title;
   brandDescription.textContent = headerSetting.description;
 
+  // ホーム画面かどうかを判定する
+  const isHomeView =
+    viewName === "home";
+
+  // ホーム画面を開くたびに最新データを表示する
+  if (isHomeView) {
+    renderHomeDashboard();
+  }
+
   // サマリー画面かどうかを判定する
   const isSummaryView = viewName === "summary";
 
@@ -6306,6 +6657,182 @@ notificationButton.addEventListener("click", () => {
     closeMenuPanel();
   }
 });
+
+// 通知をクリックしたときに該当する画面を開く
+notificationList.addEventListener(
+  "click",
+  (event) => {
+    // クリックされた通知ボタンを取得する
+    const notificationItem =
+      event.target.closest(
+        "[data-notification-action]"
+      );
+
+    if (!notificationItem) {
+      return;
+    }
+
+    const notificationAction =
+      notificationItem.dataset
+        .notificationAction;
+
+    // 通知パネルを閉じる
+    closeNotificationPanel();
+
+    // 来店なし通知はサマリー画面の該当欄を開く
+    if (
+      notificationAction ===
+      "no-visit"
+    ) {
+      activeSummaryNoVisitDays = 30;
+      isSummaryNoVisitShowingAll = false;
+
+      // 1か月ボタンを選択状態にする
+      summaryNoVisitFilters.forEach(
+        (filterButton) => {
+          const isActive =
+            Number(
+              filterButton.dataset
+                .noVisitDays
+            ) === 30;
+
+          filterButton.classList.toggle(
+            "summary-no-visit-filter--active",
+            isActive
+          );
+
+          filterButton.setAttribute(
+            "aria-pressed",
+            String(isActive)
+          );
+        }
+      );
+
+      renderSummaryNoVisitCustomers();
+      showView("summary", "auto");
+
+      // 来店なし顧客カードまで移動する
+      window.requestAnimationFrame(
+        () => {
+          document
+            .querySelector(
+              ".summary-no-visit-card"
+            )
+            ?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+        }
+      );
+
+      return;
+    }
+
+    // 通知の種類に対応する検索フィルター
+    const quickFilterSettings = {
+      birthday: "birthday",
+      photo: "no-photo",
+      memo: "no-memo",
+      features: "no-features",
+    };
+
+    const quickFilter =
+      quickFilterSettings[
+        notificationAction
+      ];
+
+    if (!quickFilter) {
+      return;
+    }
+
+    // 以前の検索条件を初期化する
+    customerSearchInput.value = "";
+
+    draftCustomerSearchConditions =
+      createDefaultCustomerSearchConditions();
+
+    activeCustomerSearchConditions =
+      createDefaultCustomerSearchConditions();
+
+    // 通知に対応するフィルターを設定する
+    activeCustomerQuickFilter =
+      quickFilter;
+
+    // 誕生日通知から移動する場合は常に今月を使用する
+    activeCustomerBirthdayFilterMonth =
+      quickFilter === "birthday"
+        ? new Date().getMonth() + 1
+        : null;
+
+    syncCustomerQuickFilterButtons();
+    syncCustomerSearchConditionRows();
+    updateCustomerSearchResults();
+
+    // 顧客検索画面へ移動する
+    showView(
+      "customer-search",
+      "auto"
+    );
+  }
+);
+
+// やることカードから対象顧客を検索する
+homeTodoActionButtons.forEach(
+  (actionButton) => {
+    actionButton.addEventListener(
+      "click",
+      () => {
+        const todoAction =
+          actionButton.dataset
+            .homeTodoAction;
+
+        // ボタンに対応する検索フィルター
+        const todoFilterSettings = {
+          all: "needs-action",
+          photo: "no-photo",
+          birthday: "no-birthday",
+          memo: "no-memo",
+          features: "no-features",
+        };
+
+        const quickFilter =
+          todoFilterSettings[
+            todoAction
+          ];
+
+        if (!quickFilter) {
+          return;
+        }
+
+        // 以前の検索条件を初期化する
+        customerSearchInput.value = "";
+
+        draftCustomerSearchConditions =
+          createDefaultCustomerSearchConditions();
+
+        activeCustomerSearchConditions =
+          createDefaultCustomerSearchConditions();
+
+        // 選択したカードの条件を設定する
+        activeCustomerQuickFilter =
+          quickFilter;
+
+        activeCustomerBirthdayFilterMonth =
+          null;
+
+        syncCustomerQuickFilterButtons();
+        syncCustomerSearchConditionRows();
+        updateCustomerSearchResults();
+
+        // 顧客検索画面へ移動する
+        showView(
+          "customer-search",
+          "auto"
+        );
+      }
+    );
+  }
+);
 
 // メニューボタンをクリックしたときにパネルの表示を切り替える
 menuButton.addEventListener("click", () => {
