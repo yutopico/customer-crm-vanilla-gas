@@ -109,6 +109,75 @@ let isSmoothScrollEnabled =
     smoothScrollStorageKey
   ) !== "false";
 
+// 既読通知の保存に使用する名前
+const readNotificationsStorageKey =
+  "customerCrmReadNotifications";
+
+// 保存済みの既読通知を取得する
+const getSavedReadNotificationIds =
+  () => {
+    const savedData =
+      localStorage.getItem(
+        readNotificationsStorageKey
+      );
+
+    if (!savedData) {
+      return [];
+    }
+
+    try {
+      const parsedData =
+        JSON.parse(savedData);
+
+      return Array.isArray(parsedData)
+        ? parsedData
+        : [];
+    } catch {
+      return [];
+    }
+  };
+
+// 既読通知を管理する
+const readNotificationIds =
+  new Set(
+    getSavedReadNotificationIds()
+  );
+
+// 既読通知をブラウザへ保存する
+const saveReadNotificationIds =
+  () => {
+    localStorage.setItem(
+      readNotificationsStorageKey,
+      JSON.stringify(
+        Array.from(
+          readNotificationIds
+        )
+      )
+    );
+  };
+
+// 通知を既読にする
+const markNotificationAsRead = (
+  notificationId
+) => {
+  if (
+    !notificationId ||
+    readNotificationIds.has(
+      notificationId
+    )
+  ) {
+    return false;
+  }
+
+  readNotificationIds.add(
+    notificationId
+  );
+
+  saveReadNotificationIds();
+
+  return true;
+};
+
 // 各画面のヘッダーに表示するタイトルと説明文
 const viewHeaderSettings = {
   home: {
@@ -5611,26 +5680,54 @@ const renderHomeDashboard = () => {
     },
   ].filter((notification) => {
     return notification.count > 0;
+  }).map((notification) => {
+    // 通知の種類と人数から通知IDを作る
+    const notificationId =
+      `${notification.action}:${notification.count}`;
+
+    return {
+      ...notification,
+
+      id:
+        notificationId,
+
+      isRead:
+        readNotificationIds.has(
+          notificationId
+        ),
+    };
   });
 
-  // 通知件数を表示する
-  const notificationCount =
-    notifications.length;
+  // 未読通知だけを数える
+  const unreadNotificationCount =
+    notifications.filter(
+      (notification) => {
+        return !notification.isRead;
+      }
+    ).length;
 
+  // 未読通知件数を表示する
   notificationBadge.textContent =
-    String(notificationCount);
+    String(
+      unreadNotificationCount
+    );
 
   notificationPanelCount.textContent =
-    `${notificationCount}件`;
+    unreadNotificationCount > 0
+      ? `未読${unreadNotificationCount}件`
+      : "確認済み";
+
+  notificationsViewCount.textContent =
+    `未読${unreadNotificationCount}件`;
 
   notificationButton.setAttribute(
     "aria-label",
-    `お知らせ ${notificationCount}件`
+    `お知らせ 未読${unreadNotificationCount}件`
   );
 
-  // 通知が0件ならバッジを隠す
+  // 未読が0件ならバッジを隠す
   notificationBadge.hidden =
-    notificationCount === 0;
+    unreadNotificationCount === 0;
 
   // 通知1件分のHTMLをまとめて作る
   const notificationItemsMarkup =
@@ -5638,9 +5735,14 @@ const renderHomeDashboard = () => {
       .map((notification) => {
         return `
           <button
-            class="notification-item"
+            class="notification-item${
+              notification.isRead
+                ? " notification-item--read"
+                : ""
+            }"
             type="button"
             data-notification-action="${notification.action}"
+            data-notification-id="${notification.id}"
           >
             <span
               class="notification-item-dot"
@@ -5669,12 +5771,9 @@ const renderHomeDashboard = () => {
   notificationsViewList.innerHTML =
     notificationItemsMarkup;
 
-  notificationsViewCount.textContent =
-    `${notificationCount}件`;
-
-  // 通知が0件の場合だけ空の案内を表示する
+  // 既読・未読を問わず、通知が1件もない場合だけ空の案内を表示する
   notificationsViewEmpty.hidden =
-    notificationCount > 0;
+   notifications.length > 0;
 };
 
 
@@ -6682,21 +6781,8 @@ const showView = (viewName, scrollBehavior = "smooth") => {
   brandTitle.textContent = headerSetting.title;
   brandDescription.textContent = headerSetting.description;
 
-  // ホーム画面かどうかを判定する
-  const isHomeView =
-    viewName === "home";
-
-  // 通知一覧画面かどうかを判定する
-  const isNotificationsView =
-    viewName === "notifications";
-
-  // ホームまたは通知一覧を開くたびに最新データを表示する
-  if (
-    isHomeView ||
-    isNotificationsView
-  ) {
-    renderHomeDashboard();
-  }
+  // ヘッダー通知はすべての画面で使用するため毎回更新する
+  renderHomeDashboard();
 
   // 設定画面を開くたびに現在の設定を反映する
   if (viewName === "settings") {
@@ -6771,6 +6857,22 @@ notificationList.addEventListener(
     const notificationAction =
       notificationItem.dataset
         .notificationAction;
+
+    // クリックした通知を既読にする
+    const notificationId =
+      notificationItem.dataset
+        .notificationId ||
+      "";
+
+    const wasMarkedAsRead =
+      markNotificationAsRead(
+        notificationId
+      );
+
+    // 初めて読んだ通知なら表示を更新する
+    if (wasMarkedAsRead) {
+      renderHomeDashboard();
+    }
 
     // 通知パネルを閉じる
     closeNotificationPanel();

@@ -8938,6 +8938,31 @@ body.customer-detail-mode .app-container {
   transform: translateY(-1px);
 }
 
+/* 既読になった通知 */
+.notification-item--read {
+  opacity: 0.48;
+}
+
+/* 既読通知の丸を落ち着いた色にする */
+.notification-item--read
+.notification-item-dot {
+  background-color: #c9bdaf;
+}
+
+/* 通知一覧画面の既読カード */
+.notification-page-list
+.notification-item--read {
+  background:
+    rgb(255 255 255 / 42%);
+}
+
+/* 既読カードへマウスを乗せても明るくしすぎない */
+.notification-page-list
+.notification-item--read:hover {
+  background:
+    rgb(255 255 255 / 58%);
+}
+
 /* 通知がない場合の案内 */
 .utility-empty-message {
   margin: 0;
@@ -9130,7 +9155,7 @@ body.customer-detail-mode .app-container {
   .utility-screen {
     margin-top: 16px;
   }
-  
+
   /* メニューから開く画面のスマホ表示 */
   .utility-card {
     padding: 20px 16px;
