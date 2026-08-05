@@ -72,6 +72,43 @@ const homeTodoFeaturesCount =
     "#home-todo-features-count"
   );
 
+// 通知一覧画面に使用する要素を取得する
+const notificationsViewList =
+  document.querySelector(
+    "#notifications-view-list"
+  );
+
+const notificationsViewCount =
+  document.querySelector(
+    "#notifications-view-count"
+  );
+
+const notificationsViewEmpty =
+  document.querySelector(
+    "#notifications-view-empty"
+  );
+
+// 設定画面に使用する要素を取得する
+const settingsResultViewInputs =
+  document.querySelectorAll(
+    'input[name="settingsCustomerResultView"]'
+  );
+
+const settingsSmoothScrollInput =
+  document.querySelector(
+    "#settings-smooth-scroll"
+  );
+
+// なめらかな画面移動設定の保存名
+const smoothScrollStorageKey =
+  "customerCrmSmoothScroll";
+
+// 保存済み設定を読み込む
+let isSmoothScrollEnabled =
+  localStorage.getItem(
+    smoothScrollStorageKey
+  ) !== "false";
+
 // 各画面のヘッダーに表示するタイトルと説明文
 const viewHeaderSettings = {
   home: {
@@ -107,6 +144,24 @@ const viewHeaderSettings = {
   "customer-detail": {
     title: "顧客詳細",
     description: "お客様の基本情報や来店履歴、売上情報を確認できます。",
+  },
+
+    notifications: {
+    title: "通知一覧",
+    description:
+      "対応が必要なお知らせをまとめて確認できます。",
+  },
+
+  settings: {
+    title: "設定",
+    description:
+      "アプリの表示や動作を変更できます。",
+  },
+
+  about: {
+    title: "アプリについて",
+    description:
+      "このアプリの概要や使用技術を確認できます。",
   },
 };
 
@@ -5577,8 +5632,8 @@ const renderHomeDashboard = () => {
   notificationBadge.hidden =
     notificationCount === 0;
 
-  // 通知一覧を表示する
-  notificationList.innerHTML =
+  // 通知1件分のHTMLをまとめて作る
+  const notificationItemsMarkup =
     notifications
       .map((notification) => {
         return `
@@ -5605,7 +5660,23 @@ const renderHomeDashboard = () => {
         `;
       })
       .join("");
+
+  // ヘッダーの通知パネルへ表示する
+  notificationList.innerHTML =
+    notificationItemsMarkup;
+
+  // 通知一覧画面へも同じ内容を表示する
+  notificationsViewList.innerHTML =
+    notificationItemsMarkup;
+
+  notificationsViewCount.textContent =
+    `${notificationCount}件`;
+
+  // 通知が0件の場合だけ空の案内を表示する
+  notificationsViewEmpty.hidden =
+    notificationCount > 0;
 };
+
 
 // 主要な数字を表示する
 const renderSummaryKpis = () => {
@@ -6615,9 +6686,21 @@ const showView = (viewName, scrollBehavior = "smooth") => {
   const isHomeView =
     viewName === "home";
 
-  // ホーム画面を開くたびに最新データを表示する
-  if (isHomeView) {
+  // 通知一覧画面かどうかを判定する
+  const isNotificationsView =
+    viewName === "notifications";
+
+  // ホームまたは通知一覧を開くたびに最新データを表示する
+  if (
+    isHomeView ||
+    isNotificationsView
+  ) {
     renderHomeDashboard();
+  }
+
+  // 設定画面を開くたびに現在の設定を反映する
+  if (viewName === "settings") {
+    syncSettingsScreen();
   }
 
   // サマリー画面かどうかを判定する
@@ -6642,10 +6725,17 @@ const showView = (viewName, scrollBehavior = "smooth") => {
   // 現在の画面を、このタブが開いている間だけ記憶する
   sessionStorage.setItem("currentView", viewName);
 
+  // 設定と呼び出し元に合わせて移動方法を決める
+  const resolvedScrollBehavior =
+    scrollBehavior === "auto" ||
+    !isSmoothScrollEnabled
+      ? "auto"
+      : "smooth";
+
   // 切り替え後は画面の先頭へ移動する
   window.scrollTo({
     top: 0,
-    behavior: scrollBehavior,
+    behavior: resolvedScrollBehavior,
   });
 };
 
@@ -6778,6 +6868,82 @@ notificationList.addEventListener(
     showView(
       "customer-search",
       "auto"
+    );
+  }
+);
+
+// 通知一覧画面でも通知パネルと同じ処理を使用する
+notificationsViewList.addEventListener(
+  "click",
+  (event) => {
+    const notificationItem =
+      event.target.closest(
+        "[data-notification-action]"
+      );
+
+    if (!notificationItem) {
+      return;
+    }
+
+    const notificationAction =
+      notificationItem.dataset
+        .notificationAction;
+
+    // 通知パネル内にある同じ通知を取得する
+    const matchingPanelItem =
+      notificationList.querySelector(
+        `[data-notification-action="${notificationAction}"]`
+      );
+
+    // 既存の通知クリック処理を呼び出す
+    matchingPanelItem?.click();
+  }
+);
+
+// 現在の設定を設定画面へ反映する
+const syncSettingsScreen = () => {
+  settingsResultViewInputs.forEach(
+    (resultViewInput) => {
+      resultViewInput.checked =
+        resultViewInput.value ===
+        activeCustomerResultView;
+    }
+  );
+
+  settingsSmoothScrollInput.checked =
+    isSmoothScrollEnabled;
+};
+
+// 顧客検索の表示方法を変更する
+settingsResultViewInputs.forEach(
+  (resultViewInput) => {
+    resultViewInput.addEventListener(
+      "change",
+      () => {
+        if (!resultViewInput.checked) {
+          return;
+        }
+
+        setCustomerSearchResultView(
+          resultViewInput.value
+        );
+
+        syncSettingsScreen();
+      }
+    );
+  }
+);
+
+// なめらかな画面移動設定を保存する
+settingsSmoothScrollInput.addEventListener(
+  "change",
+  () => {
+    isSmoothScrollEnabled =
+      settingsSmoothScrollInput.checked;
+
+    localStorage.setItem(
+      smoothScrollStorageKey,
+      String(isSmoothScrollEnabled)
     );
   }
 );

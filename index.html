@@ -199,7 +199,11 @@
                                             </span>
                                         </button>
 
-                                        <button class="menu-item" type="button">
+                                        <button
+                                            class="menu-item"
+                                            type="button"
+                                            data-view="notifications"
+                                        >
                                             <span class="menu-item-text">
                                                 <span class="menu-item-title">
                                                     通知一覧
@@ -215,7 +219,11 @@
                                             </span>
                                         </button>
 
-                                        <button class="menu-item" type="button">
+                                        <button
+                                            class="menu-item"
+                                            type="button"
+                                            data-view="settings"
+                                        >
                                             <span class="menu-item-text">
                                                 <span class="menu-item-title">
                                                     設定
@@ -231,7 +239,11 @@
                                             </span>
                                         </button>
 
-                                        <button class="menu-item" type="button">
+                                        <button
+                                            class="menu-item"
+                                            type="button"
+                                            data-view="about"
+                                        >
                                             <span class="menu-item-text">
                                                 <span class="menu-item-title">
                                                     アプリについて
@@ -6398,6 +6410,221 @@
                     </div>
                 </div>
             </div>
+
+            <!-- お知らせをまとめて確認する画面 -->
+            <section
+                class="app-view"
+                id="notifications-view"
+                aria-labelledby="notifications-view-section-title"
+            >
+                <div class="utility-screen">
+                    <section class="utility-card">
+                        <div class="utility-section-header">
+                            <div>
+                                <p class="utility-eyebrow">
+                                    NOTIFICATIONS
+                                </p>
+
+                                <h2 id="notifications-view-section-title">
+                                    現在のお知らせ
+                                </h2>
+
+                                <p>
+                                    対応が必要な顧客情報をまとめています。
+                                </p>
+                            </div>
+
+                            <strong
+                                class="utility-count"
+                                id="notifications-view-count"
+                            >
+                                0件
+                            </strong>
+                        </div>
+
+                        <!-- JavaScriptで最新のお知らせを表示する -->
+                        <div
+                            class="notification-page-list"
+                            id="notifications-view-list"
+                        ></div>
+
+                        <p
+                            class="utility-empty-message"
+                            id="notifications-view-empty"
+                            hidden
+                        >
+                            現在のお知らせはありません。
+                        </p>
+                    </section>
+                </div>
+            </section>
+
+
+            <!-- アプリの動作を設定する画面 -->
+            <section
+                class="app-view"
+                id="settings-view"
+                aria-labelledby="settings-result-view-title"
+            >
+                <div class="utility-screen">
+                    <section class="utility-card">
+                        <p class="utility-eyebrow">
+                            SETTINGS
+                        </p>
+
+                        <fieldset class="settings-group">
+                            <legend id="settings-result-view-title">
+                                顧客検索の表示方法
+                            </legend>
+
+                            <p class="settings-group-description">
+                                顧客検索を開いたときの表示方法を選択します。
+                            </p>
+
+                            <div class="settings-option-grid">
+                                <label class="settings-option">
+                                    <input
+                                        type="radio"
+                                        name="settingsCustomerResultView"
+                                        value="list"
+                                    >
+
+                                    <span>
+                                        <strong>一覧表示</strong>
+                                        <small>
+                                            顧客情報を横一列で確認する
+                                        </small>
+                                    </span>
+                                </label>
+
+                                <label class="settings-option">
+                                    <input
+                                        type="radio"
+                                        name="settingsCustomerResultView"
+                                        value="grid"
+                                    >
+
+                                    <span>
+                                        <strong>カード表示</strong>
+                                        <small>
+                                            顧客情報をカード形式で確認する
+                                        </small>
+                                    </span>
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="settings-group">
+                            <legend>
+                                画面移動
+                            </legend>
+
+                            <p class="settings-group-description">
+                                画面を切り替えたときの動きを設定します。
+                            </p>
+
+                            <label class="settings-toggle-option">
+                                <input
+                                    type="checkbox"
+                                    id="settings-smooth-scroll"
+                                >
+
+                                <span>
+                                    <strong>
+                                        なめらかに画面上部へ移動する
+                                    </strong>
+
+                                    <small>
+                                        オフにすると即座に画面上部へ移動します
+                                    </small>
+                                </span>
+                            </label>
+                        </fieldset>
+
+                        <p class="settings-save-note">
+                            変更内容は、このブラウザに自動保存されます。
+                        </p>
+                    </section>
+                </div>
+            </section>
+
+
+            <!-- アプリの概要を確認する画面 -->
+            <section
+                class="app-view"
+                id="about-view"
+                aria-labelledby="about-version-title"
+            >
+                <div class="utility-screen">
+                    <section class="utility-card">
+                        <p class="utility-eyebrow">
+                            ABOUT
+                        </p>
+
+                        <div class="about-heading">
+                            <div>
+                                <h2 id="about-version-title">
+                                    顧客管理Webアプリ
+                                </h2>
+
+                                <p>
+                                    顧客情報と来店状況を、
+                                    分かりやすく管理するためのアプリです。
+                                </p>
+                            </div>
+
+                            <span class="about-version">
+                                Ver.1
+                            </span>
+                        </div>
+
+                        <div class="about-information-grid">
+                            <article class="about-information-card">
+                                <h3>
+                                    使用技術
+                                </h3>
+
+                                <p>
+                                    HTML / CSS / JavaScript
+                                </p>
+                            </article>
+
+                            <article class="about-information-card">
+                                <h3>
+                                    データ連携
+                                </h3>
+
+                                <p>
+                                    Google Apps Script /
+                                    Google Sheets連携予定
+                                </p>
+                            </article>
+
+                            <article class="about-information-card">
+                                <h3>
+                                    保存について
+                                </h3>
+
+                                <p>
+                                    表示設定や閲覧履歴の一部は、
+                                    ブラウザ内に保存されます。
+                                </p>
+                            </article>
+
+                            <article class="about-information-card">
+                                <h3>
+                                    開発目的
+                                </h3>
+
+                                <p>
+                                    業務課題を想定し、
+                                    顧客情報や来店状況を効率的に管理するために開発しました。
+                                </p>
+                            </article>
+                        </div>
+                    </section>
+                </div>
+            </section>
 
             <!-- ホーム画面の主要機能へ移動する下部ナビゲーション -->
             <nav class="bottom-navigation" aria-label="メインナビゲーション">

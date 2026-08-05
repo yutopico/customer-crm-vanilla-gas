@@ -8821,8 +8821,343 @@ body.customer-detail-mode .app-container {
   }
 }
 
+/* ========================================
+   通知一覧・設定・アプリについて
+======================================== */
+
+/* メニューから開く補助画面の共通レイアウト */
+.utility-screen {
+  max-width: 880px;
+
+  /* ヘッダーとの間に余白を作り、左右は中央配置する */
+  margin: 24px auto 0;
+
+  padding-bottom: 110px;
+}
+
+/* 補助画面の共通カード */
+.utility-card {
+  padding: 28px;
+
+  background:
+    rgb(248 242 235 / 92%);
+
+  border:
+    1px solid rgb(129 134 133 / 14%);
+  border-radius: 24px;
+
+  box-shadow:
+    0 14px 36px
+    rgb(105 91 76 / 8%);
+}
+
+/* カード上部の見出し */
+.utility-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+.utility-section-header h2,
+.about-heading h2 {
+  margin: 4px 0 8px;
+
+  color: #656b6a;
+
+  font-size: 24px;
+}
+
+.utility-section-header p,
+.about-heading p {
+  margin: 0;
+
+  color: #818685;
+
+  line-height: 1.8;
+}
+
+/* 英字の小さな見出し */
+.utility-eyebrow {
+  margin: 0;
+
+  color: #b58f76;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 通知件数 */
+.utility-count {
+  flex-shrink: 0;
+
+  padding: 7px 12px;
+
+  color: #ffffff;
+  background: #7d9680;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+}
+
+/* 通知一覧画面のリスト */
+.notification-page-list {
+  display: grid;
+  gap: 10px;
+}
+
+/* 通知パネル用の項目を一覧画面向けに整える */
+.notification-page-list
+.notification-item {
+  width: 100%;
+  padding: 18px;
+
+  background:
+    rgb(255 255 255 / 70%);
+
+  border:
+    1px solid rgb(129 134 133 / 12%);
+  border-radius: 16px;
+
+  text-align: left;
+}
+
+.notification-page-list
+.notification-item:hover {
+  background:
+    rgb(255 255 255 / 96%);
+
+  transform: translateY(-1px);
+}
+
+/* 通知がない場合の案内 */
+.utility-empty-message {
+  margin: 0;
+  padding: 30px 20px;
+
+  color: #818685;
+
+  text-align: center;
+}
+
+/* 設定項目のまとまり */
+.settings-group {
+  margin: 0;
+  padding: 24px 0;
+
+  border: 0;
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+.settings-group:first-of-type {
+  padding-top: 18px;
+}
+
+.settings-group legend {
+  padding: 0;
+
+  color: #656b6a;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* 設定項目の説明 */
+.settings-group-description {
+  margin: 8px 0 18px;
+
+  color: #818685;
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 一覧表示・カード表示の選択肢 */
+.settings-option-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* 設定の選択カード */
+.settings-option,
+.settings-toggle-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 18px;
+
+  background:
+    rgb(255 255 255 / 70%);
+
+  border:
+    1px solid rgb(129 134 133 / 14%);
+  border-radius: 16px;
+
+  cursor: pointer;
+}
+
+.settings-option:hover,
+.settings-toggle-option:hover {
+  border-color:
+    rgb(125 150 128 / 46%);
+}
+
+.settings-option input,
+.settings-toggle-option input {
+  flex-shrink: 0;
+
+  width: 18px;
+  height: 18px;
+
+  accent-color: #7d9680;
+}
+
+.settings-option span,
+.settings-toggle-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.settings-option strong,
+.settings-toggle-option strong {
+  color: #656b6a;
+
+  font-size: 14px;
+}
+
+.settings-option small,
+.settings-toggle-option small {
+  color: #818685;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* 設定の保存案内 */
+.settings-save-note {
+  margin: 20px 0 0;
+
+  color: #818685;
+
+  font-size: 12px;
+  text-align: right;
+}
+
+/* アプリ概要上部 */
+.about-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+
+  margin-top: 8px;
+  padding-bottom: 24px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* バージョン表示 */
+.about-version {
+  flex-shrink: 0;
+
+  padding: 8px 14px;
+
+  color: #7d9680;
+  background:
+    rgb(125 150 128 / 12%);
+
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* アプリ情報カード一覧 */
+.about-information-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 14px;
+
+  margin-top: 24px;
+}
+
+/* アプリ情報1項目 */
+.about-information-card {
+  padding: 20px;
+
+  background:
+    rgb(255 255 255 / 68%);
+
+  border:
+    1px solid rgb(129 134 133 / 12%);
+  border-radius: 16px;
+}
+
+.about-information-card h3 {
+  margin: 0 0 8px;
+
+  color: #656b6a;
+
+  font-size: 14px;
+}
+
+.about-information-card p {
+  margin: 0;
+
+  color: #818685;
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
 /* 横幅が767px以下のスマートフォン向け設定 */
 @media (max-width: 767px) {
+    /* 補助画面とヘッダーの間隔をスマホ向けに調整する */
+  .utility-screen {
+    margin-top: 16px;
+  }
+  
+  /* メニューから開く画面のスマホ表示 */
+  .utility-card {
+    padding: 20px 16px;
+
+    border-radius: 20px;
+  }
+
+  .utility-section-header,
+  .about-heading {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .utility-section-header h2,
+  .about-heading h2 {
+    font-size: 21px;
+  }
+
+  .settings-option-grid,
+  .about-information-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-save-note {
+    text-align: left;
+  }
+
   .home-overview {
     /* スマホでは挨拶とAIサマリーを縦に並べる */
     grid-template-columns: 1fr;
