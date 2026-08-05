@@ -426,7 +426,11 @@
                         </button>
 
                         <!-- 顧客や来店状況を確認するメニュー -->
-                        <button class="action-card action-card--summary" type="button">
+                        <button
+                            class="action-card action-card--summary"
+                            type="button"
+                            data-view="summary"
+                        >
 
                             <!-- アイコンと機能名を横並びにする -->
                             <span class="action-card-header">
@@ -4584,7 +4588,759 @@
                 </div>
             </div>
 
-                        <!-- 顧客検索から選択したお客様の詳細画面 -->
+            <!-- 店舗全体の売上や来店状況を確認するサマリー画面 -->
+            <section
+                class="app-view"
+                id="summary-view"
+                aria-label="店舗サマリー"
+            >
+                <div class="summary-screen">
+                    <!-- 表示する月と集計期間を選択する -->
+                    <section
+                        class="summary-control-bar"
+                        aria-label="集計期間"
+                    >
+                                                <div class="summary-month-picker">
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                <path d="M7 3v4"></path>
+                                <path d="M17 3v4"></path>
+                                <path d="M3 10h18"></path>
+                            </svg>
+
+                            <button
+                                class="summary-month-button"
+                                id="summary-month-button"
+                                type="button"
+                                aria-expanded="false"
+                                aria-controls="summary-month-options"
+                            >
+                                <span id="summary-month-label">
+                                    2026年7月
+                                </span>
+
+                                <svg
+                                    class="summary-month-chevron"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="m7 9 5 5 5-5"></path>
+                                </svg>
+                            </button>
+
+                            <div
+                                class="summary-month-options"
+                                id="summary-month-options"
+                                role="listbox"
+                                aria-label="表示する月"
+                                hidden
+                            >
+                                <button
+                                    class="summary-month-option summary-month-option--active"
+                                    type="button"
+                                    role="option"
+                                    data-summary-month="2026-07"
+                                    aria-selected="true"
+                                >
+                                    2026年7月
+                                </button>
+
+                                <button
+                                    class="summary-month-option"
+                                    type="button"
+                                    role="option"
+                                    data-summary-month="2026-06"
+                                    aria-selected="false"
+                                >
+                                    2026年6月
+                                </button>
+
+                                <button
+                                    class="summary-month-option"
+                                    type="button"
+                                    role="option"
+                                    data-summary-month="2026-05"
+                                    aria-selected="false"
+                                >
+                                    2026年5月
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            class="summary-period-buttons"
+                            role="group"
+                            aria-label="集計期間を選択"
+                        >
+                            <button
+                                class="summary-period-button summary-period-button--active"
+                                type="button"
+                                data-summary-period="month"
+                                aria-pressed="true"
+                            >
+                                今月
+                            </button>
+
+                            <button
+                                class="summary-period-button"
+                                type="button"
+                                data-summary-period="three-months"
+                                aria-pressed="false"
+                            >
+                                3か月
+                            </button>
+
+                            <button
+                                class="summary-period-button"
+                                type="button"
+                                data-summary-period="six-months"
+                                aria-pressed="false"
+                            >
+                                6か月
+                            </button>
+
+                            <button
+                                class="summary-period-button"
+                                type="button"
+                                data-summary-period="year"
+                                aria-pressed="false"
+                            >
+                                1年
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- 売上・来店回数などの主要な数字 -->
+                    <section
+                        class="summary-kpi-grid"
+                        aria-label="主要な集計"
+                    >
+                        <!-- 売上 -->
+                        <article class="summary-kpi-card">
+                            <div class="summary-kpi-title">
+                                <span class="summary-kpi-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M7 4l5 7 5-7"></path>
+                                        <path d="M8 12h8"></path>
+                                        <path d="M8 16h8"></path>
+                                        <path d="M12 11v9"></path>
+                                    </svg>
+                                </span>
+
+                                <h2 id="summary-sales-title">
+                                    今月売上
+                                </h2>
+                            </div>
+
+                            <strong
+                                class="summary-kpi-value"
+                                id="summary-sales-value"
+                            >
+                                ¥548,000
+                            </strong>
+
+                            <div class="summary-kpi-comparison">
+                                <div>
+                                    <span>
+                                        前月比
+                                    </span>
+
+                                    <strong id="summary-sales-rate">
+                                        +8.2%
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        前月より
+                                    </span>
+
+                                    <strong id="summary-sales-difference">
+                                        +¥41,000
+                                    </strong>
+                                </div>
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M4 18l6-6 4 4 6-8"></path>
+                                    <path d="M15 8h5v5"></path>
+                                </svg>
+                            </div>
+                        </article>
+
+                        <!-- 来店回数 -->
+                        <article class="summary-kpi-card">
+                            <div class="summary-kpi-title">
+                                <span class="summary-kpi-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <circle cx="9" cy="8" r="3"></circle>
+                                        <circle cx="17" cy="9" r="2"></circle>
+                                        <path d="M3 20v-1a6 6 0 0 1 12 0v1"></path>
+                                        <path d="M15 15a5 5 0 0 1 6 5"></path>
+                                    </svg>
+                                </span>
+
+                                <h2>
+                                    来店回数
+                                </h2>
+                            </div>
+
+                            <strong
+                                class="summary-kpi-value"
+                                id="summary-visit-value"
+                            >
+                                63回
+                            </strong>
+
+                            <div class="summary-kpi-comparison">
+                                <div>
+                                    <span>
+                                        前月比
+                                    </span>
+
+                                    <strong id="summary-visit-difference">
+                                        +6回
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        前月より
+                                    </span>
+
+                                    <strong id="summary-visit-rate">
+                                        +10.5%
+                                    </strong>
+                                </div>
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M4 18l6-6 4 4 6-8"></path>
+                                    <path d="M15 8h5v5"></path>
+                                </svg>
+                            </div>
+                        </article>
+
+                        <!-- 新規顧客 -->
+                        <article class="summary-kpi-card summary-kpi-card--new">
+                            <div class="summary-kpi-title">
+                                <span class="summary-kpi-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M3 21v-2a6 6 0 0 1 6-6h2"></path>
+                                        <path d="M19 14v6"></path>
+                                        <path d="M16 17h6"></path>
+                                    </svg>
+                                </span>
+
+                                <h2>
+                                    新規顧客
+                                </h2>
+                            </div>
+
+                            <strong
+                                class="summary-kpi-value"
+                                id="summary-new-value"
+                            >
+                                12名
+                            </strong>
+
+                            <div class="summary-kpi-comparison">
+                                <div>
+                                    <span>
+                                        前月比
+                                    </span>
+
+                                    <strong id="summary-new-difference">
+                                        +3名
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        前月より
+                                    </span>
+
+                                    <strong id="summary-new-rate">
+                                        +33.3%
+                                    </strong>
+                                </div>
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M4 18l6-6 4 4 6-8"></path>
+                                    <path d="M15 8h5v5"></path>
+                                </svg>
+                            </div>
+                        </article>
+
+                        <!-- 平均単価 -->
+                        <article class="summary-kpi-card">
+                            <div class="summary-kpi-title">
+                                <span class="summary-kpi-icon">
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M7 4l5 7 5-7"></path>
+                                        <path d="M8 12h8"></path>
+                                        <path d="M8 16h8"></path>
+                                        <path d="M12 11v9"></path>
+                                        <rect x="3" y="2" width="18" height="20" rx="3"></rect>
+                                    </svg>
+                                </span>
+
+                                <h2>
+                                    平均単価
+                                </h2>
+                            </div>
+
+                            <strong
+                                class="summary-kpi-value"
+                                id="summary-average-value"
+                            >
+                                ¥8,698
+                            </strong>
+
+                            <div class="summary-kpi-comparison">
+                                <div>
+                                    <span>
+                                        前月比
+                                    </span>
+
+                                    <strong id="summary-average-difference">
+                                        +¥620
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        前月より
+                                    </span>
+
+                                    <strong id="summary-average-rate">
+                                        +7.7%
+                                    </strong>
+                                </div>
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M4 18l6-6 4 4 6-8"></path>
+                                    <path d="M15 8h5v5"></path>
+                                </svg>
+                            </div>
+                        </article>
+                    </section>
+
+                    <!-- 売上推移と新規・常連の割合 -->
+                    <section class="summary-main-grid">
+                        <!-- 売上推移 -->
+                        <article class="summary-panel summary-trend-card">
+                            <div class="summary-panel-header summary-trend-header">
+                                <div>
+                                    <h2>
+                                        売上推移
+                                    </h2>
+
+                                    <div class="summary-chart-legend">
+                                        <span>
+                                            <i class="summary-chart-legend-line"></i>
+                                            売上（円）
+                                        </span>
+
+                                        <span>
+                                            <i class="summary-chart-legend-dashed"></i>
+                                            来店回数（回）
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="summary-chart-mode-buttons"
+                                    role="group"
+                                    aria-label="グラフの表示方法"
+                                >
+                                    <button
+                                        class="summary-chart-mode-button summary-chart-mode-button--active"
+                                        type="button"
+                                        data-summary-chart-mode="daily"
+                                        aria-pressed="true"
+                                    >
+                                        日別
+                                    </button>
+
+                                    <button
+                                        class="summary-chart-mode-button"
+                                        type="button"
+                                        data-summary-chart-mode="monthly"
+                                        aria-pressed="false"
+                                    >
+                                        月別
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div
+                                class="summary-trend-chart"
+                                id="summary-trend-chart"
+                            ></div>
+                        </article>
+
+                        <!-- 新規・常連の割合 -->
+                        <article class="summary-panel summary-ratio-card">
+                            <div class="summary-panel-header">
+                                <h2>
+                                    新規・常連の割合
+                                </h2>
+
+                                <span>
+                                    来店件数ベース
+                                </span>
+                            </div>
+
+                            <div
+                                class="summary-ratio-donut"
+                                id="summary-ratio-donut"
+                                style="--regular-percent: 81%;"
+                            >
+                                <div class="summary-ratio-donut-center">
+                                    <strong id="summary-ratio-total">
+                                        63
+                                    </strong>
+
+                                    <span>
+                                        回
+                                    </span>
+
+                                    <small>
+                                        集計期間の来店件数
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="summary-ratio-legend">
+                                <div>
+                                    <span class="summary-ratio-dot summary-ratio-dot--regular"></span>
+
+                                    <span>
+                                        常連
+                                    </span>
+
+                                    <strong id="summary-regular-count">
+                                        51回
+                                    </strong>
+
+                                    <small id="summary-regular-percent">
+                                        81%
+                                    </small>
+                                </div>
+
+                                <div>
+                                    <span class="summary-ratio-dot summary-ratio-dot--new"></span>
+
+                                    <span>
+                                        新規
+                                    </span>
+
+                                    <strong id="summary-new-count">
+                                        12回
+                                    </strong>
+
+                                    <small id="summary-new-percent">
+                                        19%
+                                    </small>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+
+                    <!-- 来店なし顧客・誕生日・曜日・AI分析 -->
+                    <section class="summary-sub-grid">
+                        <!-- ランキングの代わりに表示する来店なし顧客 -->
+                        <article class="summary-panel summary-no-visit-card">
+                            <div class="summary-panel-header">
+                                <div>
+                                    <h2>
+                                        来店なし顧客
+                                    </h2>
+
+                                    <p>
+                                        最終来店日を基準に表示しています
+                                    </p>
+                                </div>
+
+                                <strong id="summary-no-visit-count">
+                                    5名
+                                </strong>
+                            </div>
+
+                            <div
+                                class="summary-no-visit-filters"
+                                role="group"
+                                aria-label="来店がない期間"
+                            >
+                                <button
+                                    class="summary-no-visit-filter summary-no-visit-filter--active"
+                                    type="button"
+                                    data-no-visit-days="30"
+                                    aria-pressed="true"
+                                >
+                                    1か月
+                                </button>
+
+                                <button
+                                    class="summary-no-visit-filter"
+                                    type="button"
+                                    data-no-visit-days="90"
+                                    aria-pressed="false"
+                                >
+                                    3か月
+                                </button>
+
+                                <button
+                                    class="summary-no-visit-filter"
+                                    type="button"
+                                    data-no-visit-days="180"
+                                    aria-pressed="false"
+                                >
+                                    6か月
+                                </button>
+                            </div>
+
+                            <div
+                                class="summary-no-visit-list"
+                                id="summary-no-visit-list"
+                            ></div>
+
+                            <button
+                                class="summary-list-more-button"
+                                id="summary-no-visit-show-all"
+                                type="button"
+                            >
+                                <span>
+                                    すべて表示
+                                </span>
+
+                                <span aria-hidden="true">
+                                    ›
+                                </span>
+                            </button>
+                        </article>
+
+                        <!-- 今月の誕生日 -->
+                        <article class="summary-panel summary-birthday-card">
+                            <div class="summary-panel-header">
+                                <h2 id="summary-birthday-title">
+                                    今月の誕生日
+                                </h2>
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <!-- ろうそくの炎 -->
+                                    <path d="M12 2.5c1 1 1.4 1.8 1.4 2.6A1.4 1.4 0 0 1 12 6.5a1.4 1.4 0 0 1-1.4-1.4c0-.8.4-1.6 1.4-2.6z"></path>
+
+                                    <!-- ろうそく -->
+                                    <path d="M12 6.5V9"></path>
+
+                                    <!-- ケーキ上部 -->
+                                    <path d="M5 12h14"></path>
+                                    <path d="M7 8h10a2 2 0 0 1 2 2v2H5v-2a2 2 0 0 1 2-2z"></path>
+
+                                    <!-- ケーキ本体 -->
+                                    <path d="M5 12v7h14v-7"></path>
+
+                                    <!-- デコレーション -->
+                                    <path d="M5 15c2 2 4-2 7 0s5-2 7 0"></path>
+                                </svg>
+                            </div>
+
+                            <div class="summary-birthday-total">
+                                <strong id="summary-birthday-total">
+                                    9
+                                </strong>
+
+                                <span>
+                                    名
+                                </span>
+                            </div>
+
+                            <div class="summary-birthday-breakdown">
+                                <div>
+                                    <span>
+                                        今週
+                                    </span>
+
+                                    <strong id="summary-birthday-this-week">
+                                        2名
+                                    </strong>
+                                </div>
+
+                                <div>
+                                    <span>
+                                        来週
+                                    </span>
+
+                                    <strong id="summary-birthday-next-week">
+                                        3名
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <button
+                                class="summary-card-link-button"
+                                id="summary-birthday-search-button"
+                                type="button"
+                            >
+                                <span>
+                                    顧客検索で確認
+                                </span>
+
+                                <span aria-hidden="true">
+                                    ›
+                                </span>
+                            </button>
+                        </article>
+
+                        <!-- 来店が多い曜日 -->
+                        <article class="summary-panel summary-weekday-card">
+                            <div class="summary-panel-header">
+                                <h2>
+                                    来店が多い曜日
+                                </h2>
+
+                                <span>
+                                    来店回数ベース
+                                </span>
+                            </div>
+
+                            <div
+                                class="summary-weekday-list"
+                                id="summary-weekday-list"
+                            ></div>
+                        </article>
+
+                        <!-- AIによる分析 -->
+                        <article class="summary-panel summary-ai-card">
+                            <div class="summary-panel-header">
+                                <h2>
+                                    AI分析
+                                </h2>
+
+                                <span class="summary-ai-label">
+                                    Gemini
+                                    <span aria-hidden="true">
+                                        ✦
+                                    </span>
+                                </span>
+                            </div>
+
+                            <div
+                                class="summary-ai-list"
+                                id="summary-ai-list"
+                            ></div>
+                        </article>
+                    </section>
+
+                    <p class="summary-update-note">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 11v5"></path>
+                            <path d="M12 8h.01"></path>
+                        </svg>
+
+                        <span>
+                            サマリーのデータは毎日0:00に更新されます。
+                        </span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- 顧客検索から選択したお客様の詳細画面 -->
             <section
                 class="app-view"
                 id="customer-detail-view"
@@ -5759,7 +6515,11 @@
                 </button>
 
                 <!-- 売上や顧客情報のサマリー -->
-                <button class="bottom-nav-item" type="button">
+                <button
+                    class="bottom-nav-item"
+                    type="button"
+                    data-view="summary"
+                >
                     <!-- 売上や顧客情報のサマリーを表す棒グラフアイコン -->
                     <span class="bottom-nav-icon" aria-hidden="true">
                         <svg

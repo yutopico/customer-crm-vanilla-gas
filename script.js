@@ -13,6 +13,10 @@ const menuCloseButton = document.querySelector(".menu-close-button");
 const viewButtons = document.querySelectorAll("[data-view]");
 const appViews = document.querySelectorAll(".app-view");
 
+// 画面に合わせて変更するヘッダー文字を取得する
+const brandTitle = document.querySelector(".brand-text h1");
+const brandDescription = document.querySelector(".brand-text p");
+
 // 下部ナビゲーションの各ボタンを取得する
 const bottomNavItems = document.querySelectorAll(".bottom-nav-item[data-view]");
 
@@ -30,6 +34,13 @@ const customerSearchScrollTopButton = document.querySelector(".customer-search-s
 
 // クイックフィルターに使用する要素を取得する
 const customerQuickFilterButtons = document.querySelectorAll(".customer-quick-filter");
+const customerBirthdayQuickFilterButton = document.querySelector('[data-quick-filter="birthday"]');
+
+// 現在選択しているクイックフィルター
+let activeCustomerQuickFilter = "all";
+
+// 誕生日フィルターで表示する月
+let activeCustomerBirthdayFilterMonth = null;
 
 // 顧客検索結果の並び替えに使用する要素を取得する
 const customerSearchResultList = document.querySelector("#customer-search-result-list");
@@ -111,8 +122,45 @@ const customerDetailEditStaffInput = document.querySelector("#customer-detail-ed
 const customerDetailEditFeaturesInput = document.querySelector("#customer-detail-edit-features");
 const customerDetailEditMemoInput = document.querySelector("#customer-detail-edit-memo");
 
-// 現在選択しているクイックフィルター
-let activeCustomerQuickFilter = "all";
+// サマリー画面に使用する要素を取得する
+const summaryMonthPicker = document.querySelector(".summary-month-picker");
+const summaryMonthButton = document.querySelector("#summary-month-button");
+const summaryMonthLabel = document.querySelector("#summary-month-label");
+const summaryMonthOptions = document.querySelector("#summary-month-options");
+const summaryMonthOptionButtons = document.querySelectorAll("[data-summary-month]");
+const summarySalesTitle = document.querySelector("#summary-sales-title");
+const summaryBirthdayTitle = document.querySelector("#summary-birthday-title");
+const summaryPeriodButtons = document.querySelectorAll("[data-summary-period]");
+const summaryChartModeButtons = document.querySelectorAll("[data-summary-chart-mode]");
+const summarySalesValue = document.querySelector("#summary-sales-value");
+const summarySalesRate = document.querySelector("#summary-sales-rate");
+const summarySalesDifference = document.querySelector("#summary-sales-difference");
+const summaryVisitValue = document.querySelector("#summary-visit-value");
+const summaryVisitDifference = document.querySelector("#summary-visit-difference");
+const summaryVisitRate = document.querySelector("#summary-visit-rate");
+const summaryNewValue = document.querySelector("#summary-new-value");
+const summaryNewDifference = document.querySelector("#summary-new-difference");
+const summaryNewRate = document.querySelector("#summary-new-rate");
+const summaryAverageValue = document.querySelector("#summary-average-value");
+const summaryAverageDifference = document.querySelector("#summary-average-difference");
+const summaryAverageRate = document.querySelector("#summary-average-rate");
+const summaryTrendChart = document.querySelector("#summary-trend-chart");
+const summaryRatioDonut = document.querySelector("#summary-ratio-donut");
+const summaryRatioTotal = document.querySelector("#summary-ratio-total");
+const summaryRegularCount = document.querySelector("#summary-regular-count");
+const summaryRegularPercent = document.querySelector("#summary-regular-percent");
+const summaryNewCount = document.querySelector("#summary-new-count");
+const summaryNewPercent = document.querySelector("#summary-new-percent");
+const summaryNoVisitCount = document.querySelector("#summary-no-visit-count");
+const summaryNoVisitFilters = document.querySelectorAll("[data-no-visit-days]");
+const summaryNoVisitList = document.querySelector("#summary-no-visit-list");
+const summaryNoVisitShowAllButton = document.querySelector("#summary-no-visit-show-all");
+const summaryBirthdayTotal = document.querySelector("#summary-birthday-total");
+const summaryBirthdayThisWeek = document.querySelector("#summary-birthday-this-week");
+const summaryBirthdayNextWeek = document.querySelector("#summary-birthday-next-week");
+const summaryBirthdaySearchButton = document.querySelector("#summary-birthday-search-button");
+const summaryWeekdayList = document.querySelector("#summary-weekday-list");
+const summaryAiList = document.querySelector("#summary-ai-list");
 
 // 一度に表示する顧客数
 const customerSearchPageSize = 3;
@@ -1164,6 +1212,11 @@ const isCustomerQuickFilterMatch = (resultCard) => {
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1;
 
+  // サマリーから移動した場合は、サマリーで選択した月を使用する
+  const birthdayFilterMonth =
+    activeCustomerBirthdayFilterMonth ||
+    currentMonth;
+
   if (activeCustomerQuickFilter === "all") {
     return true;
   }
@@ -1187,7 +1240,7 @@ const isCustomerQuickFilterMatch = (resultCard) => {
   if (activeCustomerQuickFilter === "birthday") {
     return (
       Number(resultCard.dataset.birthMonth) ===
-      currentMonth
+      birthdayFilterMonth
     );
   }
 
@@ -1328,10 +1381,41 @@ const clearCustomerSearch = () => {
   customerSearchInput.focus();
 };
 
+// 選択中のクイックフィルターをボタンへ反映する
+const syncCustomerQuickFilterButtons = () => {
+  customerQuickFilterButtons.forEach(
+    (filterButton) => {
+      const isActive =
+        filterButton.dataset
+          .quickFilter ===
+        activeCustomerQuickFilter;
+
+      filterButton.classList.toggle(
+        "customer-quick-filter--active",
+        isActive
+      );
+
+      filterButton.setAttribute(
+        "aria-pressed",
+        String(isActive)
+      );
+    }
+  );
+
+  // サマリーから移動した場合は対象月も表示する
+  customerBirthdayQuickFilterButton.textContent =
+    activeCustomerQuickFilter ===
+      "birthday" &&
+    activeCustomerBirthdayFilterMonth
+      ? `${activeCustomerBirthdayFilterMonth}月誕生日`
+      : "誕生日";
+};
+
 // 検索文字とクイックフィルターを初期状態へ戻す
 const resetCustomerSearchConditions = () => {
   customerSearchInput.value = "";
   activeCustomerQuickFilter = "all";
+  activeCustomerBirthdayFilterMonth = null;
 
   draftCustomerSearchConditions =
     createDefaultCustomerSearchConditions();
@@ -1339,21 +1423,7 @@ const resetCustomerSearchConditions = () => {
   activeCustomerSearchConditions =
     createDefaultCustomerSearchConditions();
 
-  customerQuickFilterButtons.forEach((filterButton) => {
-    const isAllFilter =
-      filterButton.dataset.quickFilter ===
-      "all";
-
-    filterButton.classList.toggle(
-      "customer-quick-filter--active",
-      isAllFilter
-    );
-
-    filterButton.setAttribute(
-      "aria-pressed",
-      String(isAllFilter)
-    );
-  });
+  syncCustomerQuickFilterButtons();
 
   syncCustomerSearchConditionRows();
 
@@ -2538,33 +2608,29 @@ customerSearchInput.addEventListener(
 );
 
 // クイックフィルターを押したときに検索結果を更新する
-customerQuickFilterButtons.forEach((filterButton) => {
-  filterButton.addEventListener(
-    "click",
-    () => {
-      activeCustomerQuickFilter =
-        filterButton.dataset.quickFilter ||
-        "all";
+customerQuickFilterButtons.forEach(
+  (filterButton) => {
+    filterButton.addEventListener(
+      "click",
+      () => {
+        activeCustomerQuickFilter =
+          filterButton.dataset
+            .quickFilter ||
+          "all";
 
-      customerQuickFilterButtons.forEach((button) => {
-        const isActive =
-          button === filterButton;
+        // 顧客検索画面から直接押した場合は、現在の月を使用する
+        activeCustomerBirthdayFilterMonth =
+          activeCustomerQuickFilter ===
+          "birthday"
+            ? new Date().getMonth() + 1
+            : null;
 
-        button.classList.toggle(
-          "customer-quick-filter--active",
-          isActive
-        );
-
-        button.setAttribute(
-          "aria-pressed",
-          String(isActive)
-        );
-      });
-
-      updateCustomerSearchResults();
-    }
-  );
-});
+        syncCustomerQuickFilterButtons();
+        updateCustomerSearchResults();
+      }
+    );
+  }
+);
 
 // Enterを押したときだけ最近検索へ保存する
 customerSearchInput.addEventListener(
@@ -4363,6 +4429,1778 @@ syncCustomerSearchConditionRows();
 applyCustomerSearchSort();
 updateCustomerSearchResults();
 
+// 選択した月ごとのサマリー仮データ
+const summaryMonthData = {
+  "2026-07": {
+    monthNumber: 7,
+    referenceDate: "2026-07-31",
+
+    periods: {
+      month: {
+        sales: 548000,
+        salesRate: "+8.2%",
+        salesDifference: "+¥41,000",
+        visits: 63,
+        visitDifference: "+6回",
+        visitRate: "+10.5%",
+        newCustomers: 12,
+        newDifference: "+3名",
+        newRate: "+33.3%",
+        averageSpend: 8698,
+        averageDifference: "+¥620",
+        averageRate: "+7.7%",
+        regularVisits: 51,
+        newVisits: 12,
+        chartFactor: 1,
+      },
+
+      "three-months": {
+        sales: 1542000,
+        salesRate: "+6.4%",
+        salesDifference: "+¥93,000",
+        visits: 184,
+        visitDifference: "+15回",
+        visitRate: "+8.9%",
+        newCustomers: 34,
+        newDifference: "+7名",
+        newRate: "+25.9%",
+        averageSpend: 8380,
+        averageDifference: "+¥210",
+        averageRate: "+2.6%",
+        regularVisits: 150,
+        newVisits: 34,
+        chartFactor: 2.7,
+      },
+
+      "six-months": {
+        sales: 2980000,
+        salesRate: "+11.2%",
+        salesDifference: "+¥300,000",
+        visits: 352,
+        visitDifference: "+31回",
+        visitRate: "+9.7%",
+        newCustomers: 61,
+        newDifference: "+12名",
+        newRate: "+24.5%",
+        averageSpend: 8466,
+        averageDifference: "+¥340",
+        averageRate: "+4.2%",
+        regularVisits: 291,
+        newVisits: 61,
+        chartFactor: 5.2,
+      },
+
+      year: {
+        sales: 6320000,
+        salesRate: "+13.7%",
+        salesDifference: "+¥762,000",
+        visits: 731,
+        visitDifference: "+74回",
+        visitRate: "+11.3%",
+        newCustomers: 124,
+        newDifference: "+25名",
+        newRate: "+25.3%",
+        averageSpend: 8646,
+        averageDifference: "+¥185",
+        averageRate: "+2.2%",
+        regularVisits: 607,
+        newVisits: 124,
+        chartFactor: 10.8,
+      },
+    },
+
+    birthdays: {
+      total: 9,
+      thisWeek: 2,
+      nextWeek: 3,
+    },
+
+    weekdays: [
+      { weekday: "月", count: 5 },
+      { weekday: "火", count: 7 },
+      { weekday: "水", count: 6 },
+      { weekday: "木", count: 9 },
+      { weekday: "金", count: 14 },
+      { weekday: "土", count: 10 },
+      { weekday: "日", count: 4 },
+    ],
+
+    noVisitCustomers: [
+      {
+        id: "MU00001",
+        name: "浅田 けん",
+        initial: "浅",
+        lastVisit: "2026-06-18",
+        staff: "よっしー",
+      },
+
+      {
+        id: "MU00003",
+        name: "山本 大輔",
+        initial: "山",
+        lastVisit: "2026-05-30",
+        staff: "ずーみん",
+      },
+
+      {
+        id: "MU00002",
+        name: "田中 翔",
+        initial: "田",
+        lastVisit: "2026-04-08",
+        staff: "ずーみん",
+      },
+
+      {
+        id: "ME00001",
+        name: "Ren",
+        initial: "R",
+        lastVisit: "2026-02-15",
+        staff: "はるちゃん",
+      },
+
+      {
+        id: "MU00012",
+        name: "鈴木 健太",
+        initial: "鈴",
+        lastVisit: "2025-12-10",
+        staff: "よっしー",
+      },
+
+      {
+        id: "MU00050",
+        name: "佐藤 亮介",
+        initial: "佐",
+        lastVisit: "2025-08-01",
+        staff: "ずーみん",
+      },
+    ],
+
+    charts: {
+      daily: {
+        labels: [
+          "7/1",
+          "7/3",
+          "7/5",
+          "7/8",
+          "7/10",
+          "7/13",
+          "7/15",
+          "7/18",
+          "7/20",
+          "7/23",
+          "7/26",
+          "7/31",
+        ],
+
+        sales: [
+          10000,
+          28000,
+          13000,
+          24000,
+          17000,
+          29000,
+          8000,
+          23000,
+          18000,
+          33000,
+          75000,
+          28000,
+        ],
+
+        visits: [
+          1,
+          2,
+          2,
+          3,
+          2,
+          4,
+          2,
+          3,
+          3,
+          4,
+          6,
+          3,
+        ],
+      },
+
+      monthly: {
+        labels: [
+          "2月",
+          "3月",
+          "4月",
+          "5月",
+          "6月",
+          "7月",
+        ],
+
+        sales: [
+          360000,
+          430000,
+          468000,
+          481000,
+          507000,
+          548000,
+        ],
+
+        visits: [
+          48,
+          52,
+          56,
+          53,
+          57,
+          63,
+        ],
+      },
+    },
+  },
+
+  "2026-06": {
+    monthNumber: 6,
+    referenceDate: "2026-06-30",
+
+    periods: {
+      month: {
+        sales: 507000,
+        salesRate: "+5.4%",
+        salesDifference: "+¥26,000",
+        visits: 57,
+        visitDifference: "+4回",
+        visitRate: "+7.5%",
+        newCustomers: 9,
+        newDifference: "+1名",
+        newRate: "+12.5%",
+        averageSpend: 8078,
+        averageDifference: "+¥230",
+        averageRate: "+2.9%",
+        regularVisits: 48,
+        newVisits: 9,
+        chartFactor: 1,
+      },
+
+      "three-months": {
+        sales: 1458000,
+        salesRate: "+5.8%",
+        salesDifference: "+¥80,000",
+        visits: 171,
+        visitDifference: "+12回",
+        visitRate: "+7.5%",
+        newCustomers: 31,
+        newDifference: "+5名",
+        newRate: "+19.2%",
+        averageSpend: 8526,
+        averageDifference: "+¥180",
+        averageRate: "+2.2%",
+        regularVisits: 140,
+        newVisits: 31,
+        chartFactor: 2.6,
+      },
+
+      "six-months": {
+        sales: 2810000,
+        salesRate: "+9.6%",
+        salesDifference: "+¥246,000",
+        visits: 331,
+        visitDifference: "+26回",
+        visitRate: "+8.5%",
+        newCustomers: 56,
+        newDifference: "+10名",
+        newRate: "+21.7%",
+        averageSpend: 8489,
+        averageDifference: "+¥280",
+        averageRate: "+3.4%",
+        regularVisits: 275,
+        newVisits: 56,
+        chartFactor: 5,
+      },
+
+      year: {
+        sales: 6080000,
+        salesRate: "+12.4%",
+        salesDifference: "+¥671,000",
+        visits: 702,
+        visitDifference: "+65回",
+        visitRate: "+10.2%",
+        newCustomers: 117,
+        newDifference: "+21名",
+        newRate: "+21.9%",
+        averageSpend: 8661,
+        averageDifference: "+¥160",
+        averageRate: "+1.9%",
+        regularVisits: 585,
+        newVisits: 117,
+        chartFactor: 10.4,
+      },
+    },
+
+    birthdays: {
+      total: 7,
+      thisWeek: 1,
+      nextWeek: 2,
+    },
+
+    weekdays: [
+      { weekday: "月", count: 6 },
+      { weekday: "火", count: 8 },
+      { weekday: "水", count: 5 },
+      { weekday: "木", count: 10 },
+      { weekday: "金", count: 12 },
+      { weekday: "土", count: 9 },
+      { weekday: "日", count: 7 },
+    ],
+
+    noVisitCustomers: [
+      {
+        id: "MU00003",
+        name: "山本 大輔",
+        initial: "山",
+        lastVisit: "2026-05-20",
+        staff: "よっしー",
+      },
+
+      {
+        id: "ME00001",
+        name: "Ren",
+        initial: "R",
+        lastVisit: "2026-04-12",
+        staff: "はるちゃん",
+      },
+
+      {
+        id: "MU00002",
+        name: "田中 翔",
+        initial: "田",
+        lastVisit: "2026-03-18",
+        staff: "ずーみん",
+      },
+
+      {
+        id: "MU00012",
+        name: "鈴木 健太",
+        initial: "鈴",
+        lastVisit: "2026-01-10",
+        staff: "よっしー",
+      },
+
+      {
+        id: "MU00050",
+        name: "佐藤 亮介",
+        initial: "佐",
+        lastVisit: "2025-11-01",
+        staff: "ずーみん",
+      },
+
+      {
+        id: "MU00001",
+        name: "浅田 けん",
+        initial: "浅",
+        lastVisit: "2025-07-20",
+        staff: "よっしー",
+      },
+    ],
+
+    charts: {
+      daily: {
+        labels: [
+          "6/1",
+          "6/3",
+          "6/6",
+          "6/9",
+          "6/12",
+          "6/15",
+          "6/18",
+          "6/21",
+          "6/24",
+          "6/26",
+          "6/28",
+          "6/30",
+        ],
+
+        sales: [
+          14000,
+          21000,
+          18000,
+          32000,
+          12000,
+          26000,
+          19000,
+          36000,
+          24000,
+          51000,
+          29000,
+          34000,
+        ],
+
+        visits: [
+          1,
+          2,
+          2,
+          3,
+          1,
+          3,
+          2,
+          4,
+          3,
+          5,
+          3,
+          4,
+        ],
+      },
+
+      monthly: {
+        labels: [
+          "1月",
+          "2月",
+          "3月",
+          "4月",
+          "5月",
+          "6月",
+        ],
+
+        sales: [
+          332000,
+          360000,
+          430000,
+          468000,
+          481000,
+          507000,
+        ],
+
+        visits: [
+          44,
+          48,
+          52,
+          56,
+          53,
+          57,
+        ],
+      },
+    },
+  },
+
+  "2026-05": {
+    monthNumber: 5,
+    referenceDate: "2026-05-31",
+
+    periods: {
+      month: {
+        sales: 481000,
+        salesRate: "+4.1%",
+        salesDifference: "+¥19,000",
+        visits: 53,
+        visitDifference: "+2回",
+        visitRate: "+3.9%",
+        newCustomers: 8,
+        newDifference: "+2名",
+        newRate: "+33.3%",
+        averageSpend: 7848,
+        averageDifference: "+¥150",
+        averageRate: "+1.9%",
+        regularVisits: 45,
+        newVisits: 8,
+        chartFactor: 1,
+      },
+
+      "three-months": {
+        sales: 1379000,
+        salesRate: "+4.9%",
+        salesDifference: "+¥64,000",
+        visits: 159,
+        visitDifference: "+9回",
+        visitRate: "+6%",
+        newCustomers: 27,
+        newDifference: "+4名",
+        newRate: "+17.4%",
+        averageSpend: 8673,
+        averageDifference: "+¥120",
+        averageRate: "+1.4%",
+        regularVisits: 132,
+        newVisits: 27,
+        chartFactor: 2.5,
+      },
+
+      "six-months": {
+        sales: 2640000,
+        salesRate: "+8.1%",
+        salesDifference: "+¥198,000",
+        visits: 305,
+        visitDifference: "+21回",
+        visitRate: "+7.4%",
+        newCustomers: 49,
+        newDifference: "+8名",
+        newRate: "+19.5%",
+        averageSpend: 8656,
+        averageDifference: "+¥210",
+        averageRate: "+2.5%",
+        regularVisits: 256,
+        newVisits: 49,
+        chartFactor: 4.8,
+      },
+
+      year: {
+        sales: 5790000,
+        salesRate: "+10.8%",
+        salesDifference: "+¥565,000",
+        visits: 663,
+        visitDifference: "+55回",
+        visitRate: "+9%",
+        newCustomers: 108,
+        newDifference: "+18名",
+        newRate: "+20%",
+        averageSpend: 8733,
+        averageDifference: "+¥140",
+        averageRate: "+1.6%",
+        regularVisits: 555,
+        newVisits: 108,
+        chartFactor: 10,
+      },
+    },
+
+    birthdays: {
+      total: 6,
+      thisWeek: 1,
+      nextWeek: 1,
+    },
+
+    weekdays: [
+      { weekday: "月", count: 5 },
+      { weekday: "火", count: 6 },
+      { weekday: "水", count: 7 },
+      { weekday: "木", count: 8 },
+      { weekday: "金", count: 11 },
+      { weekday: "土", count: 10 },
+      { weekday: "日", count: 6 },
+    ],
+
+    noVisitCustomers: [
+      {
+        id: "MU00001",
+        name: "浅田 けん",
+        initial: "浅",
+        lastVisit: "2026-04-20",
+        staff: "よっしー",
+      },
+
+      {
+        id: "MU00002",
+        name: "田中 翔",
+        initial: "田",
+        lastVisit: "2026-03-29",
+        staff: "ずーみん",
+      },
+
+      {
+        id: "MU00003",
+        name: "山本 大輔",
+        initial: "山",
+        lastVisit: "2026-02-14",
+        staff: "よっしー",
+      },
+
+      {
+        id: "ME00001",
+        name: "Ren",
+        initial: "R",
+        lastVisit: "2026-01-08",
+        staff: "はるちゃん",
+      },
+
+      {
+        id: "MU00012",
+        name: "鈴木 健太",
+        initial: "鈴",
+        lastVisit: "2025-10-15",
+        staff: "よっしー",
+      },
+
+      {
+        id: "MU00050",
+        name: "佐藤 亮介",
+        initial: "佐",
+        lastVisit: "2025-06-01",
+        staff: "ずーみん",
+      },
+    ],
+
+    charts: {
+      daily: {
+        labels: [
+          "5/1",
+          "5/4",
+          "5/7",
+          "5/10",
+          "5/13",
+          "5/16",
+          "5/19",
+          "5/21",
+          "5/24",
+          "5/27",
+          "5/29",
+          "5/31",
+        ],
+
+        sales: [
+          12000,
+          19000,
+          26000,
+          15000,
+          31000,
+          22000,
+          17000,
+          29000,
+          38000,
+          24000,
+          46000,
+          27000,
+        ],
+
+        visits: [
+          1,
+          2,
+          3,
+          2,
+          3,
+          2,
+          2,
+          3,
+          4,
+          3,
+          5,
+          3,
+        ],
+      },
+
+      monthly: {
+        labels: [
+          "12月",
+          "1月",
+          "2月",
+          "3月",
+          "4月",
+          "5月",
+        ],
+
+        sales: [
+          310000,
+          332000,
+          360000,
+          430000,
+          468000,
+          481000,
+        ],
+
+        visits: [
+          41,
+          44,
+          48,
+          52,
+          56,
+          53,
+        ],
+      },
+    },
+  },
+};
+
+// 選択した月を保存するときに使用する名前
+const summaryMonthStorageKey =
+  "customerCrmSummaryMonth";
+
+// 前回選択した月を取得する
+const savedSummaryMonth =
+  localStorage.getItem(
+    summaryMonthStorageKey
+  );
+
+// 保存されている月が使用可能なら復元する
+let activeSummaryMonth =
+  Object.prototype.hasOwnProperty.call(
+    summaryMonthData,
+    savedSummaryMonth
+  )
+    ? savedSummaryMonth
+    : "2026-07";
+
+// 現在選択中の集計期間
+let activeSummaryPeriod = "month";
+
+// 現在選択中のグラフ表示
+let activeSummaryChartMode = "daily";
+
+// 現在選択中の来店なし期間
+let activeSummaryNoVisitDays = 30;
+
+// 来店なし顧客をすべて表示するか
+let isSummaryNoVisitShowingAll = false;
+
+// 現在選択中の月データを取得する
+const getActiveSummaryMonthData = () => {
+  return (
+    summaryMonthData[
+      activeSummaryMonth
+    ] ||
+    summaryMonthData["2026-07"]
+  );
+};
+
+// 現在選択中の集計期間データを取得する
+const getActiveSummaryPeriodData = () => {
+  const monthData =
+    getActiveSummaryMonthData();
+
+  return (
+    monthData.periods[
+      activeSummaryPeriod
+    ] ||
+    monthData.periods.month
+  );
+};
+
+// 選択中の期間名を取得する
+const getActiveSummaryPeriodLabel = () => {
+  const monthData =
+    getActiveSummaryMonthData();
+
+  const periodLabels = {
+    month:
+      `${monthData.monthNumber}月`,
+    "three-months":
+      "3か月",
+    "six-months":
+      "6か月",
+    year:
+      "1年",
+  };
+
+  return (
+    periodLabels[
+      activeSummaryPeriod
+    ] ||
+    `${monthData.monthNumber}月`
+  );
+};
+
+// サマリー用の円表記
+const formatSummaryCurrency = (amount) => {
+  return `¥${Number(amount || 0).toLocaleString("ja-JP")}`;
+};
+
+// 来店日から選択月の基準日までの日数を計算する
+const getSummaryDaysSinceVisit = (
+  lastVisit,
+  referenceDate
+) => {
+  const visitDate = new Date(
+    `${lastVisit}T00:00:00`
+  );
+
+  const selectedReferenceDate =
+    new Date(
+      `${referenceDate}T00:00:00`
+    );
+
+  if (
+    Number.isNaN(
+      visitDate.getTime()
+    ) ||
+    Number.isNaN(
+      selectedReferenceDate.getTime()
+    )
+  ) {
+    return 0;
+  }
+
+  return Math.max(
+    0,
+    Math.floor(
+      (
+        selectedReferenceDate.getTime() -
+        visitDate.getTime()
+      ) /
+      86400000
+    )
+  );
+};
+
+// 主要な数字を表示する
+const renderSummaryKpis = () => {
+  const periodData =
+    getActiveSummaryPeriodData();
+
+  summarySalesValue.textContent =
+    formatSummaryCurrency(
+      periodData.sales
+    );
+
+  summarySalesRate.textContent =
+    periodData.salesRate;
+
+  summarySalesDifference.textContent =
+    periodData.salesDifference;
+
+  summaryVisitValue.textContent =
+    `${periodData.visits}回`;
+
+  summaryVisitDifference.textContent =
+    periodData.visitDifference;
+
+  summaryVisitRate.textContent =
+    periodData.visitRate;
+
+  summaryNewValue.textContent =
+    `${periodData.newCustomers}名`;
+
+  summaryNewDifference.textContent =
+    periodData.newDifference;
+
+  summaryNewRate.textContent =
+    periodData.newRate;
+
+  summaryAverageValue.textContent =
+    formatSummaryCurrency(
+      periodData.averageSpend
+    );
+
+  summaryAverageDifference.textContent =
+    periodData.averageDifference;
+
+  summaryAverageRate.textContent =
+    periodData.averageRate;
+};
+
+// 新規・常連の割合を表示する
+const renderSummaryRatio = () => {
+  const periodData =
+    getActiveSummaryPeriodData();
+
+  const totalVisits =
+    periodData.regularVisits +
+    periodData.newVisits;
+
+  const regularPercent =
+    totalVisits > 0
+      ? Math.round(
+          (
+            periodData.regularVisits /
+            totalVisits
+          ) *
+          100
+        )
+      : 0;
+
+  const newPercent =
+    100 -
+    regularPercent;
+
+  summaryRatioDonut.style.setProperty(
+    "--regular-percent",
+    `${regularPercent}%`
+  );
+
+  summaryRatioTotal.textContent =
+    totalVisits;
+
+  summaryRegularCount.textContent =
+    `${periodData.regularVisits}回`;
+
+  summaryRegularPercent.textContent =
+    `${regularPercent}%`;
+
+  summaryNewCount.textContent =
+    `${periodData.newVisits}回`;
+
+  summaryNewPercent.textContent =
+    `${newPercent}%`;
+};
+
+// 売上推移グラフを表示する
+const renderSummaryTrendChart = () => {
+  const monthData =
+    getActiveSummaryMonthData();
+
+  const periodData =
+    getActiveSummaryPeriodData();
+
+  const sourceData =
+    activeSummaryChartMode ===
+    "monthly"
+      ? monthData.charts.monthly
+      : monthData.charts.daily;
+
+  const salesData =
+    sourceData.sales.map(
+      (salesAmount) => {
+        return Math.round(
+          salesAmount *
+          periodData.chartFactor
+        );
+      }
+    );
+
+  const visitData =
+    sourceData.visits.map(
+      (visitCount) => {
+        return Math.max(
+          1,
+          Math.round(
+            visitCount *
+            Math.sqrt(
+              periodData.chartFactor
+            )
+          )
+        );
+      }
+    );
+
+  const width = 780;
+  const height = 300;
+  const leftPadding = 58;
+  const rightPadding = 48;
+  const topPadding = 24;
+  const bottomPadding = 42;
+
+  const chartWidth =
+    width -
+    leftPadding -
+    rightPadding;
+
+  const chartHeight =
+    height -
+    topPadding -
+    bottomPadding;
+
+  const maximumSales =
+    Math.max(
+      ...salesData,
+      1
+    );
+
+  const maximumVisits =
+    Math.max(
+      ...visitData,
+      1
+    );
+
+  const getXPosition = (index) => {
+    if (
+      sourceData.labels.length ===
+      1
+    ) {
+      return leftPadding;
+    }
+
+    return (
+      leftPadding +
+      (
+        chartWidth /
+        (
+          sourceData.labels.length -
+          1
+        )
+      ) *
+      index
+    );
+  };
+
+  const getSalesYPosition = (
+    salesAmount
+  ) => {
+    return (
+      topPadding +
+      chartHeight -
+      (
+        salesAmount /
+        maximumSales
+      ) *
+      chartHeight
+    );
+  };
+
+  const getVisitYPosition = (
+    visitCount
+  ) => {
+    return (
+      topPadding +
+      chartHeight -
+      (
+        visitCount /
+        maximumVisits
+      ) *
+      chartHeight
+    );
+  };
+
+  const salesPoints =
+    salesData.map(
+      (salesAmount, index) => {
+        return (
+          `${getXPosition(index)},` +
+          `${getSalesYPosition(
+            salesAmount
+          )}`
+        );
+      }
+    ).join(" ");
+
+  const visitPoints =
+    visitData.map(
+      (visitCount, index) => {
+        return (
+          `${getXPosition(index)},` +
+          `${getVisitYPosition(
+            visitCount
+          )}`
+        );
+      }
+    ).join(" ");
+
+  const gridLineCount = 4;
+
+  const gridLines =
+    Array.from(
+      {
+        length:
+          gridLineCount + 1,
+      },
+      (_, index) => {
+        const ratio =
+          index /
+          gridLineCount;
+
+        const y =
+          topPadding +
+          chartHeight *
+          ratio;
+
+        const salesLabel =
+          Math.round(
+            maximumSales *
+            (
+              1 -
+              ratio
+            )
+          );
+
+        const visitLabel =
+          Math.round(
+            maximumVisits *
+            (
+              1 -
+              ratio
+            )
+          );
+
+        return `
+          <line
+            class="summary-chart-grid-line"
+            x1="${leftPadding}"
+            y1="${y}"
+            x2="${width - rightPadding}"
+            y2="${y}"
+          ></line>
+
+          <text
+            class="summary-chart-axis-label"
+            x="${leftPadding - 9}"
+            y="${y + 4}"
+            text-anchor="end"
+          >
+            ${salesLabel.toLocaleString("ja-JP")}
+          </text>
+
+          <text
+            class="summary-chart-axis-label"
+            x="${width - rightPadding + 9}"
+            y="${y + 4}"
+            text-anchor="start"
+          >
+            ${visitLabel}
+          </text>
+        `;
+      }
+    ).join("");
+
+  const xLabels =
+    sourceData.labels.map(
+      (label, index) => {
+        return `
+          <text
+            class="summary-chart-axis-label"
+            x="${getXPosition(index)}"
+            y="${height - 14}"
+            text-anchor="middle"
+          >
+            ${label}
+          </text>
+        `;
+      }
+    ).join("");
+
+  const salesCircles =
+    salesData.map(
+      (salesAmount, index) => {
+        return `
+          <circle
+            class="summary-chart-sales-point"
+            cx="${getXPosition(index)}"
+            cy="${getSalesYPosition(
+              salesAmount
+            )}"
+            r="4"
+          >
+            <title>
+              ${sourceData.labels[index]} 売上 ${formatSummaryCurrency(salesAmount)}
+            </title>
+          </circle>
+        `;
+      }
+    ).join("");
+
+  const visitCircles =
+    visitData.map(
+      (visitCount, index) => {
+        return `
+          <circle
+            class="summary-chart-visit-point"
+            cx="${getXPosition(index)}"
+            cy="${getVisitYPosition(
+              visitCount
+            )}"
+            r="3.5"
+          >
+            <title>
+              ${sourceData.labels[index]} 来店 ${visitCount}回
+            </title>
+          </circle>
+        `;
+      }
+    ).join("");
+
+  summaryTrendChart.innerHTML = `
+    <svg
+      class="summary-trend-svg"
+      viewBox="0 0 ${width} ${height}"
+      role="img"
+      aria-label="売上と来店回数の推移"
+    >
+      ${gridLines}
+      ${xLabels}
+
+      <polyline
+        class="summary-chart-sales-line"
+        points="${salesPoints}"
+      ></polyline>
+
+      <polyline
+        class="summary-chart-visit-line"
+        points="${visitPoints}"
+      ></polyline>
+
+      ${salesCircles}
+      ${visitCircles}
+    </svg>
+  `;
+};
+
+// 来店なし顧客を表示する
+const renderSummaryNoVisitCustomers = () => {
+  const monthData =
+    getActiveSummaryMonthData();
+
+  const matchingCustomers =
+    monthData.noVisitCustomers
+      .map((customer) => {
+        return {
+          ...customer,
+
+          daysSinceVisit:
+            getSummaryDaysSinceVisit(
+              customer.lastVisit,
+              monthData.referenceDate
+            ),
+        };
+      })
+      .filter((customer) => {
+        return (
+          customer.daysSinceVisit >=
+          activeSummaryNoVisitDays
+        );
+      })
+      .sort((customerA, customerB) => {
+        return (
+          customerB.daysSinceVisit -
+          customerA.daysSinceVisit
+        );
+      });
+
+  summaryNoVisitCount.textContent =
+    `${matchingCustomers.length}名`;
+
+  const visibleCustomers =
+    isSummaryNoVisitShowingAll
+      ? matchingCustomers
+      : matchingCustomers.slice(
+          0,
+          5
+        );
+
+  if (
+    visibleCustomers.length ===
+    0
+  ) {
+    summaryNoVisitList.innerHTML = `
+      <p class="summary-no-visit-empty">
+        現在、該当する顧客はいません。
+      </p>
+    `;
+  } else {
+    summaryNoVisitList.innerHTML =
+      visibleCustomers.map(
+        (customer) => {
+          return `
+            <article class="summary-no-visit-item">
+              <span
+                class="summary-no-visit-avatar"
+                aria-hidden="true"
+              >
+                ${customer.initial}
+              </span>
+
+              <div class="summary-no-visit-information">
+                <strong>
+                  ${customer.name}
+                </strong>
+
+                <span>
+                  最終来店：${formatCustomerDetailDate(customer.lastVisit)}
+                  ${customer.daysSinceVisit}日前
+                </span>
+
+                <span>
+                  担当：${customer.staff}
+                </span>
+              </div>
+
+              <button
+                class="summary-no-visit-detail"
+                type="button"
+                data-summary-customer-id="${customer.id}"
+              >
+                顧客詳細を見る
+              </button>
+            </article>
+          `;
+        }
+      ).join("");
+  }
+
+  const hasHiddenCustomers =
+    matchingCustomers.length >
+    5;
+
+  summaryNoVisitShowAllButton.hidden =
+    !hasHiddenCustomers;
+
+  if (hasHiddenCustomers) {
+    summaryNoVisitShowAllButton.querySelector(
+      "span"
+    ).textContent =
+      isSummaryNoVisitShowingAll
+        ? "5名表示に戻す"
+        : "すべて表示";
+  }
+
+  const detailButtons =
+    summaryNoVisitList.querySelectorAll(
+      "[data-summary-customer-id]"
+    );
+
+  detailButtons.forEach(
+    (detailButton) => {
+      detailButton.addEventListener(
+        "click",
+        () => {
+          const customerId =
+            detailButton.dataset
+              .summaryCustomerId ||
+            "";
+
+          renderCustomerDetail(
+            customerId
+          );
+
+          showView(
+            "customer-detail"
+          );
+        }
+      );
+    }
+  );
+};
+
+// 曜日別の来店状況を表示する
+const renderSummaryWeekdays = () => {
+  const weekdayDataList =
+    getActiveSummaryMonthData()
+      .weekdays;
+  
+  const maximumCount =
+    Math.max(
+      ...weekdayDataList.map(
+        (weekdayData) => {
+          return weekdayData.count;
+        }
+      ),
+      1
+    );
+
+  summaryWeekdayList.innerHTML =
+    weekdayDataList.map(
+      (weekdayData) => {
+        const width =
+          Math.round(
+            (
+              weekdayData.count /
+              maximumCount
+            ) *
+            100
+          );
+
+        const isHighest =
+          weekdayData.count ===
+          maximumCount;
+
+        return `
+          <div
+            class="summary-weekday-item${
+              isHighest
+                ? " summary-weekday-item--highest"
+                : ""
+            }"
+          >
+            <span>
+              ${weekdayData.weekday}
+            </span>
+
+            <div class="summary-weekday-track">
+              <div
+                class="summary-weekday-bar"
+                style="--weekday-width: ${width}%"
+              ></div>
+            </div>
+
+            <strong>
+              ${weekdayData.count}回
+            </strong>
+          </div>
+        `;
+      }
+    ).join("");
+};
+
+// AI分析を表示する
+const renderSummaryAiAnalysis = () => {
+  const periodData =
+    getActiveSummaryPeriodData();
+
+  const analysisItems = [
+    {
+      title:
+        `売上は前の期間より${periodData.salesRate}増加しています。`,
+      description:
+        "売上推移と平均単価の両方が上向いています。",
+      warning: false,
+    },
+
+    {
+      title:
+        `新規顧客は${periodData.newCustomers}名です。`,
+      description:
+        "新規登録後の再来店状況もあわせて確認しましょう。",
+      warning: false,
+    },
+
+    {
+      title:
+        `平均単価は${formatSummaryCurrency(periodData.averageSpend)}です。`,
+      description:
+        "高単価メニューの利用状況を確認できます。",
+      warning: false,
+    },
+
+    {
+      title:
+        "長期間来店のない顧客がいます。",
+      description:
+        "来店なし顧客欄で、最終来店日と担当スタッフを確認できます。",
+      warning: true,
+    },
+  ];
+
+  summaryAiList.innerHTML =
+    analysisItems.map(
+      (analysisItem) => {
+        return `
+          <article
+            class="summary-ai-item${
+              analysisItem.warning
+                ? " summary-ai-item--warning"
+                : ""
+            }"
+          >
+            <span class="summary-ai-item-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                ${
+                  analysisItem.warning
+                    ? `
+                      <path d="M12 3 2.5 20h19z"></path>
+                      <path d="M12 9v5"></path>
+                      <path d="M12 17h.01"></path>
+                    `
+                    : `
+                      <path d="M4 18l6-6 4 4 6-8"></path>
+                      <path d="M15 8h5v5"></path>
+                    `
+                }
+              </svg>
+            </span>
+
+            <div class="summary-ai-item-content">
+              <strong>
+                ${analysisItem.title}
+              </strong>
+
+              <span>
+                ${analysisItem.description}
+              </span>
+            </div>
+          </article>
+        `;
+      }
+    ).join("");
+};
+
+// 選択中の月の誕生日人数を表示する
+const renderSummaryBirthdays = () => {
+  const birthdayData =
+    getActiveSummaryMonthData()
+      .birthdays;
+
+  summaryBirthdayTotal.textContent =
+    birthdayData.total;
+
+  summaryBirthdayThisWeek.textContent =
+    `${birthdayData.thisWeek}名`;
+
+  summaryBirthdayNextWeek.textContent =
+    `${birthdayData.nextWeek}名`;
+};
+
+// サマリー画面全体を表示する
+const renderSummaryScreen = () => {
+  const monthData =
+    getActiveSummaryMonthData();
+
+  const periodLabel =
+    getActiveSummaryPeriodLabel();
+
+  summarySalesTitle.textContent =
+    `${periodLabel}売上`;
+
+  summaryBirthdayTitle.textContent =
+    `${monthData.monthNumber}月の誕生日`;
+
+  renderSummaryKpis();
+  renderSummaryRatio();
+  renderSummaryTrendChart();
+  renderSummaryNoVisitCustomers();
+  renderSummaryWeekdays();
+  renderSummaryAiAnalysis();
+  renderSummaryBirthdays();
+};
+
+// 集計期間を変更する
+summaryPeriodButtons.forEach(
+  (periodButton) => {
+    periodButton.addEventListener(
+      "click",
+      () => {
+        activeSummaryPeriod =
+          periodButton.dataset
+            .summaryPeriod ||
+          "month";
+
+        summaryPeriodButtons.forEach(
+          (button) => {
+            const isActive =
+              button ===
+              periodButton;
+
+            button.classList.toggle(
+              "summary-period-button--active",
+              isActive
+            );
+
+            button.setAttribute(
+              "aria-pressed",
+              String(isActive)
+            );
+          }
+        );
+
+        renderSummaryScreen();
+      }
+    );
+  }
+);
+
+// 日別と月別を切り替える
+summaryChartModeButtons.forEach(
+  (chartModeButton) => {
+    chartModeButton.addEventListener(
+      "click",
+      () => {
+        activeSummaryChartMode =
+          chartModeButton.dataset
+            .summaryChartMode ||
+          "daily";
+
+        summaryChartModeButtons.forEach(
+          (button) => {
+            const isActive =
+              button ===
+              chartModeButton;
+
+            button.classList.toggle(
+              "summary-chart-mode-button--active",
+              isActive
+            );
+
+            button.setAttribute(
+              "aria-pressed",
+              String(isActive)
+            );
+          }
+        );
+
+        renderSummaryTrendChart();
+      }
+    );
+  }
+);
+
+// 来店なし期間を切り替える
+summaryNoVisitFilters.forEach(
+  (filterButton) => {
+    filterButton.addEventListener(
+      "click",
+      () => {
+        activeSummaryNoVisitDays =
+          Number(
+            filterButton.dataset
+              .noVisitDays ||
+            30
+          );
+
+        isSummaryNoVisitShowingAll =
+          false;
+
+        summaryNoVisitFilters.forEach(
+          (button) => {
+            const isActive =
+              button ===
+              filterButton;
+
+            button.classList.toggle(
+              "summary-no-visit-filter--active",
+              isActive
+            );
+
+            button.setAttribute(
+              "aria-pressed",
+              String(isActive)
+            );
+          }
+        );
+
+        renderSummaryNoVisitCustomers();
+      }
+    );
+  }
+);
+
+// 来店なし顧客をすべて表示する
+summaryNoVisitShowAllButton.addEventListener(
+  "click",
+  () => {
+    isSummaryNoVisitShowingAll =
+      !isSummaryNoVisitShowingAll;
+
+    renderSummaryNoVisitCustomers();
+  }
+);
+
+// 選択中の月が誕生日の顧客を検索画面で確認する
+summaryBirthdaySearchButton.addEventListener(
+  "click",
+  () => {
+    const monthData =
+      getActiveSummaryMonthData();
+
+    // 以前の検索文字や詳細条件が混ざらないよう初期化する
+    customerSearchInput.value = "";
+
+    draftCustomerSearchConditions =
+      createDefaultCustomerSearchConditions();
+
+    activeCustomerSearchConditions =
+      createDefaultCustomerSearchConditions();
+
+    // 誕生日フィルターと対象月を設定する
+    activeCustomerQuickFilter =
+      "birthday";
+
+    activeCustomerBirthdayFilterMonth =
+      monthData.monthNumber;
+
+    syncCustomerQuickFilterButtons();
+    syncCustomerSearchConditionRows();
+    updateCustomerSearchResults();
+
+    showView(
+      "customer-search",
+      "auto"
+    );
+  }
+);
+
+// 選択中の月をプルダウン表示へ反映する
+const syncSummaryMonthSelection = () => {
+  summaryMonthOptionButtons.forEach(
+    (monthOptionButton) => {
+      const isActive =
+        monthOptionButton.dataset
+          .summaryMonth ===
+        activeSummaryMonth;
+
+      monthOptionButton.classList.toggle(
+        "summary-month-option--active",
+        isActive
+      );
+
+      monthOptionButton.setAttribute(
+        "aria-selected",
+        String(isActive)
+      );
+
+      if (isActive) {
+        summaryMonthLabel.textContent =
+          monthOptionButton.textContent.trim();
+      }
+    }
+  );
+};
+
+// 月選択のプルダウンを閉じる
+const closeSummaryMonthOptions = () => {
+  summaryMonthOptions.hidden =
+    true;
+
+  summaryMonthButton.setAttribute(
+    "aria-expanded",
+    "false"
+  );
+};
+
+// 月選択ボタンを押したときにプルダウンを開閉する
+summaryMonthButton.addEventListener(
+  "click",
+  (event) => {
+    event.stopPropagation();
+
+    const willOpen =
+      summaryMonthOptions.hidden;
+
+    summaryMonthOptions.hidden =
+      !willOpen;
+
+    summaryMonthButton.setAttribute(
+      "aria-expanded",
+      String(willOpen)
+    );
+  }
+);
+
+// 選択した月を画面へ反映する
+summaryMonthOptionButtons.forEach(
+  (monthOptionButton) => {
+    monthOptionButton.addEventListener(
+      "click",
+      () => {
+        const selectedMonth =
+          monthOptionButton.dataset
+            .summaryMonth ||
+          "2026-07";
+
+        activeSummaryMonth =
+          selectedMonth;
+
+        // ブラウザを更新しても選択月を復元できるよう保存する
+        localStorage.setItem(
+          summaryMonthStorageKey,
+          activeSummaryMonth
+        );
+
+        isSummaryNoVisitShowingAll =
+          false;
+
+        syncSummaryMonthSelection();
+
+                closeSummaryMonthOptions();
+                renderSummaryScreen();
+              }
+            );
+          }
+        );
+
+// 月選択以外の場所を押したときに閉じる
+document.addEventListener(
+  "click",
+  (event) => {
+    if (
+      !summaryMonthPicker.contains(
+        event.target
+      )
+    ) {
+      closeSummaryMonthOptions();
+    }
+  }
+);
+
+// Escapeキーでも月選択を閉じる
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key === "Escape" &&
+      !summaryMonthOptions.hidden
+    ) {
+      closeSummaryMonthOptions();
+      summaryMonthButton.focus();
+    }
+  }
+);
+
+// ページを開いたときに前回選択した月を反映する
+syncSummaryMonthSelection();
+
 // 指定された画面だけを表示する共通処理
 const showView = (viewName, scrollBehavior = "smooth") => {
   // data-viewの値に対応する画面を探す
@@ -4378,6 +6216,25 @@ const showView = (viewName, scrollBehavior = "smooth") => {
     "customer-detail-mode",
     viewName === "customer-detail"
   );
+
+  // サマリー画面ではヘッダーのタイトルと説明を変更する
+  const isSummaryView =
+    viewName === "summary";
+
+  brandTitle.textContent =
+    isSummaryView
+      ? "サマリー"
+      : "顧客管理";
+
+  brandDescription.textContent =
+    isSummaryView
+      ? "お店全体の状況をまとめて確認できます。"
+      : "顧客情報を、もっとスマートに。";
+
+  // サマリー画面を開くたびに最新の表示へ整える
+  if (isSummaryView) {
+    renderSummaryScreen();
+  }
 
   // すべての画面をいったん非表示にする
   appViews.forEach((view) => {
