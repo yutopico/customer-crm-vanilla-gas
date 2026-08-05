@@ -17,6 +17,44 @@ const appViews = document.querySelectorAll(".app-view");
 const brandTitle = document.querySelector(".brand-text h1");
 const brandDescription = document.querySelector(".brand-text p");
 
+// 各画面のヘッダーに表示するタイトルと説明文
+const viewHeaderSettings = {
+  home: {
+    title: "顧客管理",
+    description: "顧客情報を、もっとスマートに。",
+  },
+
+  "visit-registration": {
+    title: "来店を登録",
+    description: "お客様の種類を選んでください。",
+  },
+
+  "new-customer": {
+    title: "新規顧客",
+    description: "初めて来店するお客様を登録します。",
+  },
+
+  "regular-customer": {
+    title: "常連顧客",
+    description: "登録済みのお客様を検索して、来店情報を追加します。",
+  },
+
+  "customer-search": {
+    title: "顧客検索",
+    description: "お客様を検索して、登録情報や来店履歴を確認できます。",
+  },
+
+  summary: {
+    title: "サマリー",
+    description: "お店全体の状況をまとめて確認できます。",
+  },
+
+  "customer-detail": {
+    title: "顧客詳細",
+    description: "お客様の基本情報や来店履歴、売上情報を確認できます。",
+  },
+};
+
 // 下部ナビゲーションの各ボタンを取得する
 const bottomNavItems = document.querySelectorAll(".bottom-nav-item[data-view]");
 
@@ -6217,19 +6255,16 @@ const showView = (viewName, scrollBehavior = "smooth") => {
     viewName === "customer-detail"
   );
 
-  // サマリー画面ではヘッダーのタイトルと説明を変更する
-  const isSummaryView =
-    viewName === "summary";
+  // 表示する画面に対応したヘッダー設定を取得する
+  const headerSetting =
+    viewHeaderSettings[viewName] ?? viewHeaderSettings.home;
 
-  brandTitle.textContent =
-    isSummaryView
-      ? "サマリー"
-      : "顧客管理";
+  // 共通ヘッダーのタイトルと説明文を変更する
+  brandTitle.textContent = headerSetting.title;
+  brandDescription.textContent = headerSetting.description;
 
-  brandDescription.textContent =
-    isSummaryView
-      ? "お店全体の状況をまとめて確認できます。"
-      : "顧客情報を、もっとスマートに。";
+  // サマリー画面かどうかを判定する
+  const isSummaryView = viewName === "summary";
 
   // サマリー画面を開くたびに最新の表示へ整える
   if (isSummaryView) {
