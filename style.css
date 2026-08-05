@@ -5993,7 +5993,1442 @@ body.confirm-dialog-open {
 
 
 /* ==================================================
-   14. レスポンシブ設定
+   14. 顧客詳細画面
+   概要・タイムライン・売上
+================================================== */
+
+/* 顧客詳細画面ではアプリ共通ヘッダーと下部ナビを隠す */
+body.customer-detail-mode {
+  padding-bottom: 0;
+
+  background-color: #f5f1ea;
+}
+
+body.customer-detail-mode .top-header,
+body.customer-detail-mode .bottom-navigation {
+  display: none;
+}
+
+/* 顧客詳細画面では中央の横幅を少し狭くする */
+body.customer-detail-mode .app-container {
+  max-width: 880px;
+  padding-top: 18px;
+  padding-bottom: 40px;
+}
+
+/* 検索結果に残っている顧客ランクを表示しない */
+.customer-search-result-card .customer-rank {
+  display: none;
+}
+
+/* 顧客詳細の内側 */
+.customer-detail-shell {
+  display: grid;
+  gap: 14px;
+}
+
+/* 顧客一覧へ戻る行 */
+.customer-detail-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 顧客一覧へ戻るボタン */
+.customer-detail-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  min-height: 40px;
+  padding: 6px 2px;
+
+  background-color: transparent;
+  border: none;
+
+  color: #607862;
+  font: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+/* 戻る矢印 */
+.customer-detail-back-button svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* 写真とプロフィールのカード */
+.customer-detail-hero-card {
+  display: grid;
+  grid-template-columns:
+    142px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+
+  padding: 20px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 15%);
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 24px rgb(81 82 84 / 7%);
+}
+
+/* メイン写真 */
+.customer-detail-main-photo {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 142px;
+  height: 142px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e5e8df,
+      #cfd8c9
+    );
+  border-radius: 13px;
+
+  overflow: hidden;
+}
+
+/* 写真未登録 */
+.customer-detail-main-photo--empty {
+  background:
+    linear-gradient(
+      145deg,
+      #eee8de,
+      #e4ddd2
+    );
+}
+
+/* 写真部分の頭文字 */
+.customer-detail-main-photo-initial {
+  color: #607862;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+/* 写真の登録状態 */
+.customer-detail-photo-status {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+
+  padding: 4px 7px;
+
+  background-color: rgb(255 253 249 / 88%);
+  border-radius: 999px;
+
+  color: #607862;
+  font-size: 9px;
+
+  backdrop-filter: blur(5px);
+}
+
+/* 名前周辺 */
+.customer-detail-hero-information {
+  display: grid;
+  gap: 12px;
+
+  min-width: 0;
+}
+
+/* 名前と編集ボタン */
+.customer-detail-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* 顧客名 */
+.customer-detail-name-row h2 {
+  margin: 0;
+
+  color: #3f4543;
+  font-size: clamp(25px, 5vw, 36px);
+  letter-spacing: 0.06em;
+}
+
+/* 上部編集ボタン */
+.customer-detail-edit-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+
+  min-height: 40px;
+  padding: 8px 15px;
+
+  background-color: #fffdf9;
+  border: 1px solid #c9bdaf;
+  border-radius: 9px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+/* 編集アイコン */
+.customer-detail-edit-button svg {
+  width: 17px;
+  height: 17px;
+
+  color: #607862;
+}
+
+/* 顧客番号 */
+.customer-detail-id {
+  margin: 0;
+
+  color: #606563;
+  font-size: 15px;
+}
+
+/* 最終来店情報 */
+.customer-detail-last-visit {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 最終来店日 */
+.customer-detail-last-visit strong {
+  color: #515254;
+  font-size: 16px;
+}
+
+/* 最終来店からの日数 */
+.customer-detail-last-visit small {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* 3つのタブ */
+.customer-detail-tabs {
+  position: sticky;
+  top: 8px;
+  z-index: 20;
+
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  padding: 3px;
+
+  background-color: rgb(247 243 236 / 94%);
+  border: 1px solid rgb(129 134 133 / 13%);
+  border-radius: 12px;
+
+  backdrop-filter: blur(12px);
+}
+
+/* タブボタン */
+.customer-detail-tab-button {
+  min-height: 43px;
+  padding: 9px 10px;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 9px;
+
+  color: #606563;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 選択中のタブ */
+.customer-detail-tab-button--active {
+  background-color: #7d9680;
+
+  color: #ffffff;
+}
+
+/* タブの中身 */
+.customer-detail-panel {
+  display: grid;
+  gap: 12px;
+}
+
+/* 非表示のタブ */
+.customer-detail-panel[hidden] {
+  display: none;
+}
+
+/* 共通カード */
+.customer-detail-section-card {
+  padding: 18px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 15%);
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 16px rgb(81 82 84 / 5%);
+}
+
+/* カード上部 */
+.customer-detail-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  margin-bottom: 13px;
+}
+
+/* カード見出し */
+.customer-detail-section-header h3 {
+  margin: 0;
+
+  color: #454b49;
+  font-size: 16px;
+}
+
+/* カード右側の小さな文字 */
+.customer-detail-section-header > span {
+  color: #818685;
+  font-size: 11px;
+}
+
+/* 小さな編集ボタン */
+.customer-detail-section-edit {
+  min-height: 32px;
+  padding: 5px 14px;
+
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+  border-radius: 8px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+/* 基本情報一覧 */
+.customer-detail-basic-list {
+  display: grid;
+
+  margin: 0;
+}
+
+/* 基本情報1件 */
+.customer-detail-basic-list > div {
+  display: grid;
+  grid-template-columns:
+    130px minmax(0, 1fr);
+  gap: 18px;
+
+  padding: 11px 4px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 11%);
+}
+
+/* 最後の基本情報 */
+.customer-detail-basic-list > div:last-child {
+  border-bottom: none;
+}
+
+/* 基本情報の項目名 */
+.customer-detail-basic-list dt {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* 基本情報の内容 */
+.customer-detail-basic-list dd {
+  margin: 0;
+
+  color: #454b49;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 年齢 */
+.customer-detail-basic-list dd small {
+  margin-left: 7px;
+
+  color: #818685;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+/* 来店サマリー */
+.customer-detail-summary-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
+  margin: 0;
+}
+
+/* 来店サマリー1件 */
+.customer-detail-summary-grid > div {
+  display: grid;
+  gap: 5px;
+
+  min-height: 108px;
+  padding: 13px;
+
+  background-color: rgb(227 232 228 / 40%);
+  border: 1px solid rgb(125 150 128 / 11%);
+  border-radius: 10px;
+
+  text-align: center;
+}
+
+/* 来店サマリーの見出し */
+.customer-detail-summary-grid dt {
+  color: #818685;
+  font-size: 11px;
+}
+
+/* 来店サマリーの数値 */
+.customer-detail-summary-grid dd {
+  margin: 0;
+
+  color: #607862;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* 来店サマリーの補足 */
+.customer-detail-summary-grid small {
+  color: #818685;
+  font-size: 10px;
+}
+
+/* 特徴一覧 */
+.customer-detail-feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+/* 特徴タグ */
+.customer-detail-feature-tag {
+  padding: 6px 13px;
+
+  background-color: #e3e8e4;
+  border-radius: 999px;
+
+  color: #5f7261;
+  font-size: 12px;
+}
+
+/* 特徴が未登録の場合 */
+.customer-detail-feature-empty {
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 顧客メモ */
+.customer-detail-customer-memo {
+  min-height: 100px;
+  margin: 0;
+  padding: 14px;
+
+  background-color: #f8f5ee;
+  border: 1px solid #e4ddd2;
+  border-radius: 10px;
+
+  color: #515254;
+  font-size: 13px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+
+/* 写真一覧 */
+.customer-detail-gallery-list {
+  display: flex;
+  gap: 9px;
+
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* 写真1件 */
+.customer-detail-gallery-item {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 7px;
+  flex: 0 0 118px;
+
+  height: 104px;
+  padding: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e7e9e3,
+      #d5ddcf
+    );
+  border: 1px solid rgb(129 134 133 / 13%);
+  border-radius: 10px;
+
+  color: #607862;
+  text-align: center;
+}
+
+/* 写真アイコン */
+.customer-detail-gallery-item svg {
+  width: 25px;
+  height: 25px;
+}
+
+/* 写真名 */
+.customer-detail-gallery-item span {
+  font-size: 10px;
+}
+
+/* 写真未登録 */
+.customer-detail-gallery-item--empty {
+  background-color: #f5f1ea;
+  background-image: none;
+  border-style: dashed;
+
+  color: #818685;
+}
+
+/* 画面下部の2ボタン */
+.customer-detail-bottom-actions {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 0.8fr)
+    minmax(0, 1.2fr);
+  gap: 10px;
+
+  margin-top: 2px;
+  padding: 12px;
+
+  background-color: rgb(255 253 249 / 92%);
+  border: 1px solid rgb(129 134 133 / 13%);
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 22px rgb(81 82 84 / 7%);
+}
+
+/* 下部の編集ボタンと来店登録ボタン */
+.customer-detail-bottom-edit,
+.customer-detail-register-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 46px;
+  padding: 10px 14px;
+
+  border-radius: 999px;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 下部編集ボタン */
+.customer-detail-bottom-edit {
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+
+  color: #515254;
+}
+
+/* 来店登録ボタン */
+.customer-detail-register-button {
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+
+  color: #ffffff;
+}
+
+/* 下部ボタンのアイコン */
+.customer-detail-bottom-edit svg,
+.customer-detail-register-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* タイムライン上部 */
+.customer-detail-timeline-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 4px 2px;
+}
+
+/* 来店履歴の文字 */
+.customer-detail-timeline-toolbar > span {
+  color: #515254;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* タイムライン上部の登録ボタン */
+.customer-detail-timeline-register {
+  min-height: 38px;
+  padding: 7px 14px;
+
+  background-color: transparent;
+  border-color: #7d9680;
+  border-radius: 9px;
+
+  color: #607862;
+}
+
+/* タイムライン一覧 */
+.customer-detail-timeline-list {
+  display: grid;
+}
+
+/* タイムライン1件 */
+.customer-detail-timeline-item {
+  display: grid;
+  grid-template-columns:
+    92px minmax(0, 1fr);
+  gap: 20px;
+}
+
+/* 左側の日付 */
+.customer-detail-timeline-date {
+  position: relative;
+
+  display: grid;
+  align-content: start;
+  justify-items: end;
+  gap: 2px;
+
+  padding: 17px 16px 28px 0;
+
+  border-right:
+    1px solid rgb(125 150 128 / 35%);
+}
+
+/* タイムラインの丸 */
+.customer-detail-timeline-date::after {
+  content: "";
+
+  position: absolute;
+  top: 28px;
+  right: -5px;
+
+  width: 9px;
+  height: 9px;
+
+  background-color: #7d9680;
+  border: 2px solid #f5f1ea;
+  border-radius: 50%;
+}
+
+/* 年 */
+.customer-detail-timeline-date span {
+  color: #818685;
+  font-size: 10px;
+}
+
+/* 月日 */
+.customer-detail-timeline-date strong {
+  color: #515254;
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+/* 何日前 */
+.customer-detail-timeline-date small {
+  color: #818685;
+  font-size: 9px;
+}
+
+/* 右側の来店カード */
+.customer-detail-timeline-card {
+  display: grid;
+  gap: 10px;
+
+  margin-bottom: 10px;
+  padding: 15px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 15%);
+  border-radius: 12px;
+
+  box-shadow:
+    0 5px 15px rgb(81 82 84 / 5%);
+}
+
+/* 会計金額・担当・来店回数 */
+.customer-detail-timeline-card-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+/* 会計金額 */
+.customer-detail-timeline-card-header strong {
+  margin-right: auto;
+
+  color: #454b49;
+  font-size: 19px;
+}
+
+/* 担当スタッフ */
+.customer-detail-timeline-staff {
+  color: #607862;
+  font-size: 11px;
+}
+
+/* 何回目の来店か */
+.customer-detail-timeline-count {
+  padding: 3px 7px;
+
+  background-color: rgb(245 177 135 / 13%);
+  border: 1px solid rgb(245 177 135 / 44%);
+  border-radius: 5px;
+
+  color: #d78151;
+  font-size: 9px;
+}
+
+/* タイムラインのメモ */
+.customer-detail-timeline-memo {
+  margin: 0;
+
+  color: #515254;
+  font-size: 12px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+/* 読み込み中 */
+.customer-detail-timeline-loading {
+  margin: 8px 0;
+
+  color: #818685;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* さらに読み込むボタン */
+.customer-detail-timeline-load-more {
+  width: 100%;
+  min-height: 42px;
+
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+  border-radius: 9px;
+
+  color: #606563;
+  font: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+/* 売上画面の2列配置 */
+.customer-detail-sales-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* 売上グラフ */
+.customer-detail-sales-chart {
+  display: grid;
+  grid-template-columns:
+    repeat(6, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px;
+
+  min-height: 210px;
+  padding: 18px 6px 0;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 18%);
+}
+
+/* グラフ1か月分 */
+.customer-detail-sales-bar-item {
+  display: grid;
+  grid-template-rows:
+    20px 150px 20px;
+  align-items: end;
+  gap: 5px;
+
+  min-width: 0;
+
+  text-align: center;
+}
+
+/* 売上金額 */
+.customer-detail-sales-bar-item small {
+  color: #818685;
+  font-size: 8px;
+}
+
+/* 棒グラフの領域 */
+.customer-detail-sales-bar-track {
+  position: relative;
+
+  width: 100%;
+  height: 150px;
+}
+
+/* 売上の棒 */
+.customer-detail-sales-bar {
+  position: absolute;
+  right: 16%;
+  bottom: 0;
+  left: 16%;
+
+  height: var(--bar-height);
+
+  min-height: 4px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #91a791,
+      #718a73
+    );
+  border-radius: 5px 5px 0 0;
+}
+
+/* 月 */
+.customer-detail-sales-bar-item span {
+  color: #606563;
+  font-size: 10px;
+}
+
+/* 分析一覧 */
+.customer-detail-analysis-list {
+  display: grid;
+  gap: 0;
+
+  margin: 0;
+}
+
+/* 分析1項目 */
+.customer-detail-analysis-list > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 11px 2px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 11%);
+}
+
+/* 最後の分析項目 */
+.customer-detail-analysis-list > div:last-child {
+  border-bottom: none;
+}
+
+/* 分析項目名 */
+.customer-detail-analysis-list dt {
+  color: #818685;
+  font-size: 11px;
+}
+
+/* 分析数値 */
+.customer-detail-analysis-list dd {
+  margin: 0;
+
+  color: #515254;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* 最も多い曜日 */
+.customer-detail-weekday-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+
+  margin-bottom: 15px;
+}
+
+/* 曜日名 */
+.customer-detail-weekday-summary strong {
+  color: #607862;
+  font-size: 23px;
+}
+
+/* 補足文 */
+.customer-detail-weekday-summary span {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* 曜日ごとの回数 */
+.customer-detail-weekday-list {
+  display: grid;
+  gap: 8px;
+}
+
+/* 曜日1件 */
+.customer-detail-weekday-item {
+  display: grid;
+  grid-template-columns:
+    34px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 曜日名と回数 */
+.customer-detail-weekday-item span,
+.customer-detail-weekday-item strong {
+  color: #606563;
+  font-size: 11px;
+}
+
+/* 曜日バーの背景 */
+.customer-detail-weekday-track {
+  height: 7px;
+
+  background-color: #ece8e1;
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+/* 曜日バー */
+.customer-detail-weekday-bar {
+  width: var(--weekday-width);
+  height: 100%;
+
+  background-color: #7d9680;
+  border-radius: inherit;
+}
+
+/* 好みと傾向 */
+.customer-detail-tendency-list {
+  display: grid;
+  gap: 7px;
+
+  margin: 0;
+  padding-left: 20px;
+
+  color: #515254;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 編集モーダルを閉じている状態 */
+.customer-detail-edit-dialog[hidden] {
+  display: none;
+}
+
+/* 編集モーダル */
+.customer-detail-edit-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background-color: rgb(81 82 84 / 32%);
+  backdrop-filter: blur(4px);
+}
+
+/* 編集内容 */
+.customer-detail-edit-content {
+  width: min(100%, 600px);
+  max-height: calc(100dvh - 40px);
+  padding: 22px;
+
+  background-color: #fffdf9;
+  border-radius: 18px;
+
+  box-shadow:
+    0 24px 70px rgb(81 82 84 / 24%);
+
+  overflow-y: auto;
+}
+
+/* 編集画面上部 */
+.customer-detail-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+/* 編集画面タイトル */
+.customer-detail-edit-header h2 {
+  margin: 0;
+
+  color: #454b49;
+  font-size: 21px;
+}
+
+/* 編集画面を閉じるボタン */
+.customer-detail-edit-close {
+  width: 38px;
+  height: 38px;
+
+  background-color: transparent;
+  border: none;
+
+  color: #515254;
+  font-size: 24px;
+
+  cursor: pointer;
+}
+
+/* 編集フォーム */
+#customer-detail-edit-form {
+  display: grid;
+  gap: 16px;
+}
+
+/* 編集項目 */
+.customer-detail-edit-field {
+  display: grid;
+  gap: 7px;
+
+  color: #515254;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 編集欄 */
+.customer-detail-edit-field input,
+.customer-detail-edit-field select,
+.customer-detail-edit-field textarea {
+  width: 100%;
+  padding: 12px 13px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 9px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+}
+
+/* 編集欄の補足 */
+.customer-detail-edit-field small {
+  color: #818685;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+/* 編集画面下部 */
+.customer-detail-edit-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  margin-top: 6px;
+}
+
+/* キャンセルと保存 */
+.customer-detail-edit-cancel,
+.customer-detail-edit-save {
+  min-height: 45px;
+
+  border-radius: 999px;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* キャンセル */
+.customer-detail-edit-cancel {
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+
+  color: #515254;
+}
+
+/* 保存 */
+.customer-detail-edit-save {
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+
+  color: #ffffff;
+}
+
+/* 顧客詳細画面のタブレット・スマホ表示 */
+@media (max-width: 768px) {
+  /* 画面全体が横へはみ出さないようにする */
+  body.customer-detail-mode {
+    overflow-x: hidden;
+  }
+
+  /* 顧客詳細画面を端末の横幅に収める */
+  body.customer-detail-mode .app-container {
+    width: 100%;
+    max-width: none;
+    padding: 12px;
+  }
+
+  /* グリッド内の内容が親要素を押し広げないようにする */
+  #customer-detail-view,
+  .customer-detail-shell,
+  .customer-detail-panel,
+  .customer-detail-section-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* 顧客詳細画面内の間隔 */
+  .customer-detail-shell {
+    gap: 10px;
+  }
+
+  /* 上部プロフィールカード */
+  .customer-detail-hero-card {
+    grid-template-columns:
+      112px minmax(0, 1fr);
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+    padding: 14px;
+  }
+
+  /* 顧客写真 */
+  .customer-detail-main-photo {
+    width: 112px;
+    height: 122px;
+  }
+
+  /* 顧客写真内の頭文字 */
+  .customer-detail-main-photo-initial {
+    font-size: 38px;
+  }
+
+  /* 名前周辺が画面を押し広げないようにする */
+  .customer-detail-hero-information,
+  .customer-detail-name-row {
+    min-width: 0;
+  }
+
+  /* 顧客名と編集ボタン */
+  .customer-detail-name-row {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* 顧客名 */
+  .customer-detail-name-row h2 {
+    min-width: 0;
+
+    font-size: 23px;
+
+    overflow-wrap: anywhere;
+  }
+
+  /* 上部の編集ボタン */
+  .customer-detail-edit-button {
+    flex-shrink: 0;
+
+    padding: 7px 9px;
+  }
+
+  /* スマホでは編集ボタンをアイコンだけにする */
+  .customer-detail-edit-button span {
+    display: none;
+  }
+
+  /* 3つのタブ */
+  .customer-detail-tabs {
+    top: 4px;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* タブの文字サイズ */
+  .customer-detail-tab-button {
+    min-width: 0;
+    padding-right: 5px;
+    padding-left: 5px;
+
+    font-size: 13px;
+  }
+
+  /* 各情報カード */
+  .customer-detail-section-card {
+    padding: 14px;
+
+    overflow: hidden;
+  }
+
+  /* カードタイトル部分 */
+  .customer-detail-section-header {
+    min-width: 0;
+    gap: 10px;
+  }
+
+  /* カードタイトル */
+  .customer-detail-section-header h3 {
+    min-width: 0;
+  }
+
+  /* 小さな編集ボタン */
+  .customer-detail-section-edit {
+    flex-shrink: 0;
+
+    padding-right: 11px;
+    padding-left: 11px;
+  }
+
+  /* 基本情報 */
+  .customer-detail-basic-list > div {
+    grid-template-columns:
+      110px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  /* 基本情報の内容 */
+  .customer-detail-basic-list dd {
+    min-width: 0;
+
+    overflow-wrap: anywhere;
+  }
+
+  /* 来店サマリー */
+  .customer-detail-summary-grid {
+    min-width: 0;
+  }
+
+  /* サマリー1項目 */
+  .customer-detail-summary-grid > div {
+    min-width: 0;
+    min-height: 100px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  /* サマリーの数値 */
+  .customer-detail-summary-grid dd {
+    min-width: 0;
+
+    font-size: 18px;
+
+    overflow-wrap: anywhere;
+  }
+
+  /* 写真一覧だけはカード内で横スクロールできるようにする */
+  .customer-detail-gallery-list {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    overscroll-behavior-inline: contain;
+  }
+
+  /* スマホでは写真を少し小さくする */
+  .customer-detail-gallery-item {
+    flex: 0 0 104px;
+
+    width: 104px;
+    height: 104px;
+  }
+
+  /* 下部の2ボタン */
+  .customer-detail-bottom-actions {
+    grid-template-columns:
+      minmax(0, 0.85fr)
+      minmax(0, 1.15fr);
+    gap: 8px;
+
+    width: 100%;
+    min-width: 0;
+    padding: 8px;
+  }
+
+  /* 下部ボタンを割り当てられた幅に収める */
+  .customer-detail-bottom-edit,
+  .customer-detail-register-button {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 6px;
+
+    font-size: clamp(10px, 2.8vw, 12px);
+    white-space: nowrap;
+  }
+
+  /* 下部ボタンのアイコン */
+  .customer-detail-bottom-edit svg,
+  .customer-detail-register-button svg {
+    width: 16px;
+    height: 16px;
+
+    flex-shrink: 0;
+  }
+
+  /* タイムライン */
+  .customer-detail-timeline-item {
+    grid-template-columns:
+      66px minmax(0, 1fr);
+    gap: 12px;
+
+    min-width: 0;
+  }
+
+  /* タイムラインの日付 */
+  .customer-detail-timeline-date {
+    padding-right: 11px;
+  }
+
+  /* タイムラインカード */
+  .customer-detail-timeline-card {
+    min-width: 0;
+  }
+
+  /* タイムラインカード上部 */
+  .customer-detail-timeline-card-header {
+    gap: 7px;
+  }
+
+  /* 会計金額 */
+  .customer-detail-timeline-card-header strong {
+    width: 100%;
+  }
+
+  /* 来店メモ */
+  .customer-detail-timeline-memo {
+    overflow-wrap: anywhere;
+  }
+
+  /* 売上画面は縦1列にする */
+  .customer-detail-sales-grid {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  /* 売上グラフ */
+  .customer-detail-sales-chart {
+    width: 100%;
+    min-width: 0;
+    gap: 4px;
+  }
+
+  /* グラフ上の金額 */
+  .customer-detail-sales-bar-item small {
+    font-size: 7px;
+    white-space: nowrap;
+  }
+
+  /* 売上の棒 */
+  .customer-detail-sales-bar {
+    right: 12%;
+    left: 12%;
+  }
+
+  /* 編集画面をスマホでは下から表示する */
+  .customer-detail-edit-dialog {
+    align-items: end;
+
+    padding: 0;
+  }
+
+  /* 編集画面本体 */
+  .customer-detail-edit-content {
+    width: 100%;
+    max-height: 90dvh;
+
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .customer-detail-hero-card {
+    grid-template-columns:
+      105px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .customer-detail-main-photo {
+    width: 105px;
+    height: 118px;
+  }
+
+  .customer-detail-name-row h2 {
+    font-size: 21px;
+  }
+
+  .customer-detail-id {
+    font-size: 13px;
+  }
+
+  .customer-detail-last-visit {
+    gap: 5px;
+
+    font-size: 11px;
+  }
+
+  .customer-detail-last-visit strong {
+    font-size: 13px;
+  }
+
+  .customer-detail-basic-list > div {
+    grid-template-columns:
+      minmax(0, 1fr);
+    gap: 5px;
+  }
+
+  .customer-detail-bottom-edit,
+  .customer-detail-register-button {
+    padding: 9px 8px;
+
+    font-size: 11px;
+  }
+}
+
+
+/* ==================================================
+   15. レスポンシブ設定
    画面幅に応じてレイアウトを切り替える
 ================================================== */
 

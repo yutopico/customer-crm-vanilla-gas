@@ -59,6 +59,58 @@ const customerSearchConditionChoiceTitle = document.querySelector("#customer-sea
 const customerSearchConditionChoiceOptions = document.querySelector("#customer-search-condition-choice-options");
 const customerSearchConditionChoiceCloseButton = document.querySelector(".customer-search-condition-choice-close");
 
+// 顧客詳細画面に使用する要素を取得する
+const customerDetailBackButton = document.querySelector(".customer-detail-back-button");
+const customerDetailTabButtons = document.querySelectorAll("[data-customer-detail-tab]");
+const customerDetailPanels = document.querySelectorAll("[data-customer-detail-panel]");
+const customerDetailMainPhoto = document.querySelector("#customer-detail-main-photo");
+const customerDetailAvatar = document.querySelector("#customer-detail-avatar");
+const customerDetailPhotoStatus = document.querySelector("#customer-detail-photo-status");
+const customerDetailName = document.querySelector("#customer-detail-name");
+const customerDetailId = document.querySelector("#customer-detail-id");
+const customerDetailLastVisit = document.querySelector("#customer-detail-last-visit");
+const customerDetailLastVisitRelative = document.querySelector("#customer-detail-last-visit-relative");
+const customerDetailBasicId = document.querySelector("#customer-detail-basic-id");
+const customerDetailBirthday = document.querySelector("#customer-detail-birthday");
+const customerDetailAge = document.querySelector("#customer-detail-age");
+const customerDetailStaff = document.querySelector("#customer-detail-staff");
+const customerDetailRegistrationDate = document.querySelector("#customer-detail-registration-date");
+const customerDetailVisitCount = document.querySelector("#customer-detail-visit-count");
+const customerDetailFirstVisit = document.querySelector("#customer-detail-first-visit");
+const customerDetailTotalSales = document.querySelector("#customer-detail-total-sales");
+const customerDetailSummaryAverage = document.querySelector("#customer-detail-summary-average");
+const customerDetailAverageSpend = document.querySelector("#customer-detail-average-spend");
+const customerDetailDaysSinceVisit = document.querySelector("#customer-detail-days-since-visit");
+const customerDetailSummaryLastVisit = document.querySelector("#customer-detail-summary-last-visit");
+const customerDetailFeatureList = document.querySelector("#customer-detail-feature-list");
+const customerDetailLatestMemo = document.querySelector("#customer-detail-latest-memo");
+const customerDetailGalleryList = document.querySelector("#customer-detail-gallery-list");
+const customerDetailTimelineList = document.querySelector("#customer-detail-timeline-list");
+const customerDetailTimelineLoading = document.querySelector("#customer-detail-timeline-loading");
+const customerDetailTimelineLoadMoreButton = document.querySelector("#customer-detail-timeline-load-more");
+const customerDetailSalesChart = document.querySelector("#customer-detail-sales-chart");
+const customerDetailRecentVisitCount = document.querySelector("#customer-detail-recent-visit-count");
+const customerDetailAverageInterval = document.querySelector("#customer-detail-average-interval");
+const customerDetailSalesFirstVisit = document.querySelector("#customer-detail-sales-first-visit");
+const customerDetailSalesLastVisit = document.querySelector("#customer-detail-sales-last-visit");
+const customerDetailSalesTotal = document.querySelector("#customer-detail-sales-total");
+const customerDetailSalesAverage = document.querySelector("#customer-detail-sales-average");
+const customerDetailSalesVisitCount = document.querySelector("#customer-detail-sales-visit-count");
+const customerDetailHighestSpend = document.querySelector("#customer-detail-highest-spend");
+const customerDetailFavoriteWeekday = document.querySelector("#customer-detail-favorite-weekday");
+const customerDetailWeekdayList = document.querySelector("#customer-detail-weekday-list");
+const customerDetailTendencyList = document.querySelector("#customer-detail-tendency-list");
+const customerDetailEditTriggers = document.querySelectorAll(".customer-detail-edit-trigger");
+const customerDetailRegisterButtons = document.querySelectorAll(".customer-detail-register-button");
+const customerDetailEditDialog = document.querySelector("#customer-detail-edit-dialog");
+const customerDetailEditForm = document.querySelector("#customer-detail-edit-form");
+const customerDetailEditCloseButton = document.querySelector(".customer-detail-edit-close");
+const customerDetailEditCancelButton = document.querySelector(".customer-detail-edit-cancel");
+const customerDetailEditNameInput = document.querySelector("#customer-detail-edit-name");
+const customerDetailEditStaffInput = document.querySelector("#customer-detail-edit-staff");
+const customerDetailEditFeaturesInput = document.querySelector("#customer-detail-edit-features");
+const customerDetailEditMemoInput = document.querySelector("#customer-detail-edit-memo");
+
 // 現在選択しているクイックフィルター
 let activeCustomerQuickFilter = "all";
 
@@ -738,8 +790,10 @@ const updateBottomNavigation = (viewName) => {
 
   // 新規・常連画面では「来店登録」を選択中にする
   const activeNavView =
-    visitRegistrationViews.includes(viewName)
-      ? "visit-registration"
+  visitRegistrationViews.includes(viewName)
+    ? "visit-registration"
+    : viewName === "customer-detail"
+      ? "customer-search"
       : viewName;
 
   bottomNavItems.forEach((navItem) => {
@@ -2618,7 +2672,1608 @@ customerRecentSearchClearButton.addEventListener(
   }
 );
 
-// 顧客カードを開いたときに検索語と閲覧履歴を保存する
+// 顧客詳細画面で使用する補足の仮データ
+const customerDetailSupplementData = {
+  MU00001: {
+    birthDate: "1985-04-20",
+    memo: "とても気さくで話しやすい。\nシャンパンが好き。\n旅行によく行く。",
+    galleryLabels: [
+      "メイン写真",
+      "好きなお酒",
+      "名刺",
+    ],
+    tendencies: [
+      "シャンパンやお酒の話題を好む。",
+      "旅行について話すことが多い。",
+      "友人と一緒に来店することがある。",
+    ],
+  },
+
+  MU00002: {
+    birthDate: "1992-08-12",
+    memo: "笑顔が印象的。\n旅行の話をよくしている。\nスーツでの来店が多い。",
+    galleryLabels: [
+      "メイン写真",
+      "旅行先の写真",
+    ],
+    tendencies: [
+      "旅行の話題を好む。",
+      "スーツで来店することが多い。",
+      "週末に来店することが多い。",
+    ],
+  },
+
+  MU00003: {
+    birthDate: "1988-12-03",
+    memo: "メガネとスーツが特徴。\n赤ワインが好き。\n落ち着いた席を希望する。",
+    galleryLabels: [
+      "メイン写真",
+      "好きなワイン",
+      "名刺",
+    ],
+    tendencies: [
+      "赤ワインを好む。",
+      "落ち着いた席を希望する。",
+      "一人で来店することが多い。",
+    ],
+  },
+
+  ME00001: {
+    birthDate: "",
+    memo: "音楽の話が好き。\nFEELCYCLEへ定期的に通っている。\n長身で覚えやすい。",
+    galleryLabels: [
+      "メイン写真",
+    ],
+    tendencies: [
+      "音楽や運動の話題を好む。",
+      "一人で来店することが多い。",
+      "定期的に来店している。",
+    ],
+  },
+
+  MU00050: {
+    birthDate: "2003-08-26",
+    memo: "学生。\n爽やかな雰囲気。\nボディメイクを継続している。",
+    galleryLabels: [],
+    tendencies: [
+      "運動や食事管理の話題を好む。",
+      "一人で来店することが多い。",
+      "ボディメイクを継続している。",
+    ],
+  },
+
+  MU00012: {
+    birthDate: "1990-01-15",
+    memo: "眼鏡をかけている。\n会社員。\nゴルフの話をよくする。",
+    galleryLabels: [],
+    tendencies: [
+      "ゴルフの話題を好む。",
+      "週末の来店が多い。",
+      "友人と一緒に来店することがある。",
+    ],
+  },
+};
+
+// 来店履歴に使用する画面確認用のメモ
+const customerDetailDefaultVisitMemos = [
+  "友人と一緒に来店。",
+  "いつもの内容で利用。",
+  "おすすめについて質問された。",
+  "一人でゆっくり利用。",
+  "最近の出来事について話していた。",
+  "次回も来店予定とのこと。",
+];
+
+// タイムラインで一度に表示する来店履歴数
+const customerDetailTimelinePageSize = 5;
+
+// 現在表示できる来店履歴数
+let customerDetailTimelineVisibleLimit = customerDetailTimelinePageSize;
+
+// 現在表示している顧客情報
+let activeCustomerDetailData = null;
+
+// タイムラインの読み込み状態
+let isCustomerDetailTimelineLoading = false;
+
+// 金額を円表記へ整える
+const formatCustomerDetailCurrency = (amount) => {
+  return `¥${Number(amount || 0).toLocaleString("ja-JP")}`;
+};
+
+// 日付をスラッシュ区切りへ整える
+const formatCustomerDetailDate = (dateValue) => {
+  if (!dateValue) {
+    return "未登録";
+  }
+
+  return dateValue.replace(/-/g, "/");
+};
+
+// 日付をDate型へ変換する
+const createCustomerDetailDate = (dateValue) => {
+  if (!dateValue) {
+    return null;
+  }
+
+  const normalizedDate = dateValue.replace(/\//g, "-");
+
+  const date = new Date(`${normalizedDate}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date;
+};
+
+// 2つの日付の差を日数で取得する
+const getCustomerDetailDayDifference = (
+  newerDate,
+  olderDate
+) => {
+  const newer = createCustomerDetailDate(newerDate);
+  const older = createCustomerDetailDate(olderDate);
+
+  if (!newer || !older) {
+    return 0;
+  }
+
+  return Math.max(
+    0,
+    Math.floor(
+      (newer.getTime() - older.getTime()) /
+      86400000
+    )
+  );
+};
+
+// 最終来店日から今日までの日数を取得する
+const getCustomerDetailDaysSinceVisit = (lastVisit) => {
+  const today = new Date();
+
+  const todayText =
+    `${today.getFullYear()}-` +
+    `${String(today.getMonth() + 1).padStart(2, "0")}-` +
+    `${String(today.getDate()).padStart(2, "0")}`;
+
+  return getCustomerDetailDayDifference(
+    todayText,
+    lastVisit
+  );
+};
+
+// 誕生日から年齢を取得する
+const getCustomerDetailAge = (birthDate) => {
+  const birthday = createCustomerDetailDate(birthDate);
+
+  if (!birthday) {
+    return null;
+  }
+
+  const today = new Date();
+
+  let age =
+    today.getFullYear() -
+    birthday.getFullYear();
+
+  const hasNotHadBirthday =
+    today.getMonth() < birthday.getMonth() ||
+    (
+      today.getMonth() === birthday.getMonth() &&
+      today.getDate() < birthday.getDate()
+    );
+
+  if (hasNotHadBirthday) {
+    age -= 1;
+  }
+
+  return age;
+};
+
+// 指定された日付から日数を戻す
+const getCustomerDetailPreviousDate = (
+  dateValue,
+  daysBefore
+) => {
+  const date = createCustomerDetailDate(dateValue);
+
+  if (!date) {
+    return "";
+  }
+
+  date.setDate(
+    date.getDate() - daysBefore
+  );
+
+  const year = date.getFullYear();
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+// 今日の日付をinput用の形式で取得する
+const getCustomerDetailTodayInputValue = () => {
+  const today = new Date();
+
+  const year = today.getFullYear();
+
+  const month = String(
+    today.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    today.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+// 来店日の曜日を取得する
+const getCustomerDetailWeekday = (dateValue) => {
+  const date = createCustomerDetailDate(dateValue);
+
+  if (!date) {
+    return "不明";
+  }
+
+  const weekdays = [
+    "日",
+    "月",
+    "火",
+    "水",
+    "木",
+    "金",
+    "土",
+  ];
+
+  return weekdays[date.getDay()];
+};
+
+// 画面確認用の来店履歴を作る
+const createCustomerDetailHistory = (customerData) => {
+  const dayOffsets = [
+    0,
+    8,
+    17,
+    25,
+    36,
+    49,
+    63,
+    79,
+    96,
+    115,
+    137,
+    162,
+  ];
+
+  const amountRates = [
+    1.2,
+    1,
+    0.85,
+    1.1,
+    0.75,
+    1.35,
+    0.95,
+    1.05,
+    0.8,
+    1.15,
+    0.9,
+    1.25,
+  ];
+
+  return dayOffsets.map(
+    (daysBefore, index) => {
+      const amount = Math.max(
+        1000,
+        Math.round(
+          (
+            customerData.averageSpend *
+            amountRates[index]
+          ) /
+          100
+        ) *
+        100
+      );
+
+      return {
+        date: getCustomerDetailPreviousDate(
+          customerData.lastVisit,
+          daysBefore
+        ),
+
+        amount,
+
+        staff: customerData.staff,
+
+        visitNumber: Math.max(
+          1,
+          customerData.visitCount - index
+        ),
+
+        memo:
+          customerDetailDefaultVisitMemos[
+            index %
+            customerDetailDefaultVisitMemos.length
+          ],
+      };
+    }
+  );
+};
+
+// 顧客詳細画面のタブを切り替える
+const setCustomerDetailTab = (tabName) => {
+  customerDetailTabButtons.forEach(
+    (tabButton) => {
+      const isActive =
+        tabButton.dataset.customerDetailTab ===
+        tabName;
+
+      tabButton.classList.toggle(
+        "customer-detail-tab-button--active",
+        isActive
+      );
+
+      tabButton.setAttribute(
+        "aria-selected",
+        String(isActive)
+      );
+
+      tabButton.tabIndex =
+        isActive
+          ? 0
+          : -1;
+    }
+  );
+
+  customerDetailPanels.forEach(
+    (panel) => {
+      panel.hidden =
+        panel.dataset.customerDetailPanel !==
+        tabName;
+    }
+  );
+};
+
+// 顧客の特徴をタグとして表示する
+const renderCustomerDetailFeatures = () => {
+  customerDetailFeatureList.replaceChildren();
+
+  if (
+    !activeCustomerDetailData ||
+    activeCustomerDetailData.features.length === 0
+  ) {
+    const emptyMessage =
+      document.createElement("span");
+
+    emptyMessage.className =
+      "customer-detail-feature-empty";
+
+    emptyMessage.textContent =
+      "特徴は登録されていません。";
+
+    customerDetailFeatureList.appendChild(
+      emptyMessage
+    );
+
+    return;
+  }
+
+  activeCustomerDetailData.features.forEach(
+    (featureName) => {
+      const featureTag =
+        document.createElement("span");
+
+      featureTag.className =
+        "customer-detail-feature-tag";
+
+      featureTag.textContent =
+        featureName;
+
+      customerDetailFeatureList.appendChild(
+        featureTag
+      );
+    }
+  );
+};
+
+// 顧客に登録されている写真・画像を表示する
+const renderCustomerDetailGallery = () => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  const galleryLabels =
+    activeCustomerDetailData.galleryLabels;
+
+  const galleryItems =
+    galleryLabels.map((galleryLabel) => {
+      return `
+        <div class="customer-detail-gallery-item">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect
+              x="3"
+              y="5"
+              width="18"
+              height="15"
+              rx="2"
+            ></rect>
+
+            <circle
+              cx="9"
+              cy="10"
+              r="2"
+            ></circle>
+
+            <path
+              d="m4 18 5-5 4 4 2-2 5 5"
+            ></path>
+          </svg>
+
+          <span>
+            ${galleryLabel}
+          </span>
+        </div>
+      `;
+    }).join("");
+
+  const emptyItem =
+    galleryLabels.length === 0
+      ? `
+        <div class="customer-detail-gallery-item customer-detail-gallery-item--empty">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect
+              x="3"
+              y="5"
+              width="18"
+              height="15"
+              rx="2"
+            ></rect>
+
+            <circle
+              cx="9"
+              cy="10"
+              r="2"
+            ></circle>
+
+            <path
+              d="m4 18 5-5 4 4 2-2 5 5"
+            ></path>
+          </svg>
+
+          <span>
+            画像未登録
+          </span>
+        </div>
+      `
+      : "";
+
+  customerDetailGalleryList.innerHTML = `
+    ${emptyItem}
+    ${galleryItems}
+
+    <button
+      class="customer-detail-gallery-item customer-detail-gallery-item--empty customer-detail-gallery-add"
+      type="button"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+      </svg>
+
+      <span>
+        追加
+      </span>
+    </button>
+  `;
+};
+
+// 来店履歴をタイムラインとして表示する
+const renderCustomerDetailTimeline = () => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  const visibleHistory =
+    activeCustomerDetailData.history.slice(
+      0,
+      customerDetailTimelineVisibleLimit
+    );
+
+  customerDetailTimelineList.innerHTML =
+    visibleHistory.map((history) => {
+      const date =
+        createCustomerDetailDate(
+          history.date
+        );
+
+      const year =
+        date
+          ? date.getFullYear()
+          : "";
+
+      const monthDay =
+        date
+          ? `${String(
+              date.getMonth() + 1
+            ).padStart(2, "0")}/${String(
+              date.getDate()
+            ).padStart(2, "0")}`
+          : "未登録";
+
+      const daysAgo =
+        getCustomerDetailDaysSinceVisit(
+          history.date
+        );
+
+      return `
+        <article class="customer-detail-timeline-item">
+          <div class="customer-detail-timeline-date">
+            <span>
+              ${year}
+            </span>
+
+            <strong>
+              ${monthDay}
+            </strong>
+
+            <small>
+              ${daysAgo}日前
+            </small>
+          </div>
+
+          <div class="customer-detail-timeline-card">
+            <div class="customer-detail-timeline-card-header">
+              <strong>
+                ${formatCustomerDetailCurrency(history.amount)}
+              </strong>
+
+              <span class="customer-detail-timeline-staff">
+                担当：${history.staff}
+              </span>
+
+              <span class="customer-detail-timeline-count">
+                来店回数：${history.visitNumber}回目
+              </span>
+            </div>
+
+            <p class="customer-detail-timeline-memo">
+              ${history.memo}
+            </p>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+  const remainingCount =
+    activeCustomerDetailData.history.length -
+    customerDetailTimelineVisibleLimit;
+
+  customerDetailTimelineLoadMoreButton.hidden =
+    remainingCount <= 0;
+
+  if (remainingCount > 0) {
+    const nextLoadCount = Math.min(
+      customerDetailTimelinePageSize,
+      remainingCount
+    );
+
+    customerDetailTimelineLoadMoreButton.textContent =
+      `さらに${nextLoadCount}件読み込む`;
+  }
+};
+
+// 直近6か月の売上グラフを表示する
+const renderCustomerDetailSalesChart = () => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  const lastVisitDate =
+    createCustomerDetailDate(
+      activeCustomerDetailData.lastVisit
+    ) ||
+    new Date();
+
+  const months = [];
+
+  for (
+    let monthIndex = 5;
+    monthIndex >= 0;
+    monthIndex -= 1
+  ) {
+    const monthDate =
+      new Date(
+        lastVisitDate.getFullYear(),
+        lastVisitDate.getMonth() -
+        monthIndex,
+        1
+      );
+
+    months.push({
+      year: monthDate.getFullYear(),
+      month: monthDate.getMonth() + 1,
+      total: 0,
+    });
+  }
+
+  activeCustomerDetailData.history.forEach(
+    (history) => {
+      const historyDate =
+        createCustomerDetailDate(
+          history.date
+        );
+
+      if (!historyDate) {
+        return;
+      }
+
+      const matchingMonth =
+        months.find((monthData) => {
+          return (
+            monthData.year ===
+              historyDate.getFullYear() &&
+            monthData.month ===
+              historyDate.getMonth() + 1
+          );
+        });
+
+      if (matchingMonth) {
+        matchingMonth.total +=
+          history.amount;
+      }
+    }
+  );
+
+  const maximumSales = Math.max(
+    ...months.map((monthData) => {
+      return monthData.total;
+    }),
+    1
+  );
+
+  customerDetailSalesChart.innerHTML =
+    months.map((monthData) => {
+      const barHeight = Math.max(
+        3,
+        Math.round(
+          (
+            monthData.total /
+            maximumSales
+          ) *
+          100
+        )
+      );
+
+      const salesLabel =
+        formatCustomerDetailCurrency(
+          monthData.total
+        );
+
+      return `
+        <div class="customer-detail-sales-bar-item">
+          <small>
+            ${salesLabel}
+          </small>
+
+          <div class="customer-detail-sales-bar-track">
+            <div
+              class="customer-detail-sales-bar"
+              style="--bar-height: ${barHeight}%"
+            ></div>
+          </div>
+
+          <span>
+            ${monthData.month}月
+          </span>
+        </div>
+      `;
+    }).join("");
+};
+
+// 曜日ごとの来店回数を表示する
+const renderCustomerDetailWeekdays = () => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  const weekdays = [
+    "月",
+    "火",
+    "水",
+    "木",
+    "金",
+    "土",
+    "日",
+  ];
+
+  const weekdayCounts = {
+    月: 0,
+    火: 0,
+    水: 0,
+    木: 0,
+    金: 0,
+    土: 0,
+    日: 0,
+  };
+
+  activeCustomerDetailData.history.forEach(
+    (history) => {
+      const weekday =
+        getCustomerDetailWeekday(
+          history.date
+        );
+
+      if (
+        Object.hasOwn(
+          weekdayCounts,
+          weekday
+        )
+      ) {
+        weekdayCounts[weekday] += 1;
+      }
+    }
+  );
+
+  // 実際の最大来店回数を取得する
+const actualMaximumCount = Math.max(
+  ...Object.values(
+    weekdayCounts
+  )
+);
+
+// 棒グラフの0除算を防ぐため、最低値を1にする
+const maximumCount = Math.max(
+  actualMaximumCount,
+  1
+);
+
+// 最大回数と同じ曜日をすべて取得する
+const favoriteWeekdays =
+  weekdays.filter((weekday) => {
+    return (
+      weekdayCounts[weekday] ===
+      actualMaximumCount
+    );
+  });
+
+// 同率の場合は、該当する曜日をすべて表示する
+customerDetailFavoriteWeekday.textContent =
+  actualMaximumCount === 0
+    ? "データなし"
+    : favoriteWeekdays
+        .map((weekday) => {
+          return `${weekday}曜日`;
+        })
+        .join("・");
+
+  customerDetailWeekdayList.innerHTML =
+    weekdays.map((weekday) => {
+      const count =
+        weekdayCounts[weekday];
+
+      const width = Math.round(
+        (
+          count /
+          maximumCount
+        ) *
+        100
+      );
+
+      return `
+        <div class="customer-detail-weekday-item">
+          <span>
+            ${weekday}
+          </span>
+
+          <div class="customer-detail-weekday-track">
+            <div
+              class="customer-detail-weekday-bar"
+              style="--weekday-width: ${width}%"
+            ></div>
+          </div>
+
+          <strong>
+            ${count}回
+          </strong>
+        </div>
+      `;
+    }).join("");
+};
+
+// 売上タブの分析内容を表示する
+const renderCustomerDetailSales = () => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  const history =
+    activeCustomerDetailData.history;
+
+  const recentVisitCount =
+    history.filter((visit) => {
+      const difference =
+        getCustomerDetailDayDifference(
+          activeCustomerDetailData.lastVisit,
+          visit.date
+        );
+
+      return difference <= 90;
+    }).length;
+
+  const intervals = [];
+
+  for (
+    let index = 0;
+    index < history.length - 1;
+    index += 1
+  ) {
+    intervals.push(
+      getCustomerDetailDayDifference(
+        history[index].date,
+        history[index + 1].date
+      )
+    );
+  }
+
+  const averageInterval =
+    intervals.length > 0
+      ? Math.round(
+          intervals.reduce(
+            (total, interval) => {
+              return total + interval;
+            },
+            0
+          ) /
+          intervals.length
+        )
+      : 0;
+
+  const highestSpend = Math.max(
+    ...history.map((visit) => {
+      return visit.amount;
+    }),
+    0
+  );
+
+  customerDetailRecentVisitCount.textContent =
+    `${recentVisitCount}回来店`;
+
+  customerDetailAverageInterval.textContent =
+    averageInterval > 0
+      ? `${averageInterval}日に1回`
+      : "算出できません";
+
+  customerDetailSalesFirstVisit.textContent =
+    formatCustomerDetailDate(
+      activeCustomerDetailData.registrationDate
+    );
+
+  customerDetailSalesLastVisit.textContent =
+    formatCustomerDetailDate(
+      activeCustomerDetailData.lastVisit
+    );
+
+  customerDetailSalesTotal.textContent =
+    formatCustomerDetailCurrency(
+      activeCustomerDetailData.totalSales
+    );
+
+  customerDetailSalesAverage.textContent =
+    formatCustomerDetailCurrency(
+      activeCustomerDetailData.averageSpend
+    );
+
+  customerDetailSalesVisitCount.textContent =
+    `${activeCustomerDetailData.visitCount}回`;
+
+  customerDetailHighestSpend.textContent =
+    formatCustomerDetailCurrency(
+      highestSpend
+    );
+
+  customerDetailTendencyList.innerHTML =
+    activeCustomerDetailData.tendencies
+      .map((tendency) => {
+        return `
+          <li>
+            ${tendency}
+          </li>
+        `;
+      }).join("");
+
+  renderCustomerDetailSalesChart();
+  renderCustomerDetailWeekdays();
+};
+
+// 顧客詳細画面全体へ情報を表示する
+const renderCustomerDetailScreen = () => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  const customerData =
+    activeCustomerDetailData;
+
+  customerDetailAvatar.textContent =
+    customerData.initial;
+
+  customerDetailMainPhoto.classList.toggle(
+    "customer-detail-main-photo--empty",
+    !customerData.hasPhoto
+  );
+
+  customerDetailPhotoStatus.textContent =
+    customerData.hasPhoto
+      ? "写真登録済み"
+      : "写真未登録";
+
+  customerDetailName.textContent =
+    customerData.name;
+
+  customerDetailId.textContent =
+    customerData.id;
+
+  customerDetailLastVisit.textContent =
+    formatCustomerDetailDate(
+      customerData.lastVisit
+    );
+
+  customerDetailLastVisitRelative.textContent =
+    `${customerData.daysSinceVisit}日前`;
+
+  customerDetailBasicId.textContent =
+    customerData.id;
+
+  customerDetailBirthday.textContent =
+    customerData.birthDate
+      ? formatCustomerDetailDate(
+          customerData.birthDate
+        )
+      : "未登録";
+
+  customerDetailAge.textContent =
+    customerData.age === null
+      ? ""
+      : `${customerData.age}歳`;
+
+  customerDetailStaff.textContent =
+    customerData.staff;
+
+  customerDetailRegistrationDate.textContent =
+    formatCustomerDetailDate(
+      customerData.registrationDate
+    );
+
+  customerDetailVisitCount.textContent =
+    `${customerData.visitCount}回`;
+
+  customerDetailFirstVisit.textContent =
+    `初回来店：${formatCustomerDetailDate(
+      customerData.registrationDate
+    )}`;
+
+  customerDetailTotalSales.textContent =
+    formatCustomerDetailCurrency(
+      customerData.totalSales
+    );
+
+  customerDetailSummaryAverage.textContent =
+    `平均単価：${formatCustomerDetailCurrency(
+      customerData.averageSpend
+    )}`;
+
+  customerDetailAverageSpend.textContent =
+    formatCustomerDetailCurrency(
+      customerData.averageSpend
+    );
+
+  customerDetailDaysSinceVisit.textContent =
+    `${customerData.daysSinceVisit}日`;
+
+  customerDetailSummaryLastVisit.textContent =
+    formatCustomerDetailDate(
+      customerData.lastVisit
+    );
+
+  customerDetailLatestMemo.textContent =
+    customerData.memo;
+
+  renderCustomerDetailFeatures();
+  renderCustomerDetailGallery();
+  renderCustomerDetailTimeline();
+  renderCustomerDetailSales();
+};
+
+// 選択した顧客情報を詳細画面用にまとめる
+const renderCustomerDetail = (
+  requestedCustomerId
+) => {
+  const resultCard =
+    Array.from(
+      customerSearchResultCards
+    ).find((card) => {
+      return (
+        card.dataset.customerId ===
+        requestedCustomerId
+      );
+    }) ||
+    customerSearchResultCards[0];
+
+  if (!resultCard) {
+    return;
+  }
+
+  const customerId =
+    resultCard.dataset.customerId ||
+    "";
+
+  const supplementData =
+    customerDetailSupplementData[
+      customerId
+    ] || {
+      birthDate: "",
+      memo:
+        "メモは登録されていません。",
+      galleryLabels: [],
+      tendencies: [
+        "現在、好みや傾向は登録されていません。",
+      ],
+    };
+
+  const name =
+    resultCard.querySelector(
+      ".customer-search-result-name-row strong"
+    )?.textContent.trim() ||
+    "名前未登録";
+
+  const initial =
+    resultCard.querySelector(
+      ".customer-search-result-avatar"
+    )?.textContent.trim() ||
+    name.slice(0, 1);
+
+  const featureText =
+    resultCard.querySelector(
+      ".customer-search-result-features"
+    )?.textContent.trim() ||
+    "";
+
+  const features =
+    featureText
+      .split("・")
+      .map((featureName) => {
+        return featureName.trim();
+      })
+      .filter(Boolean);
+
+  const visitCount = Number(
+    resultCard.dataset.visitCount ||
+    0
+  );
+
+  const totalSales = Number(
+    resultCard.dataset.totalSales ||
+    0
+  );
+
+  const averageSpend =
+    visitCount > 0
+      ? Math.round(
+          totalSales /
+          visitCount
+        )
+      : 0;
+
+  activeCustomerDetailData = {
+    id: customerId,
+    name,
+    initial,
+
+    birthDate:
+      supplementData.birthDate,
+
+    age:
+      getCustomerDetailAge(
+        supplementData.birthDate
+      ),
+
+    registrationDate:
+      resultCard.dataset.registrationDate ||
+      "",
+
+    lastVisit:
+      resultCard.dataset.lastVisit ||
+      "",
+
+    visitCount,
+    totalSales,
+    averageSpend,
+
+    daysSinceVisit:
+      getCustomerDetailDaysSinceVisit(
+        resultCard.dataset.lastVisit ||
+        ""
+      ),
+
+    staff:
+      resultCard.dataset.staffMember ||
+      "未登録",
+
+    hasPhoto:
+      resultCard.dataset.hasPhoto ===
+      "true",
+
+    features,
+
+    memo:
+      resultCard.dataset.detailMemo ||
+      supplementData.memo,
+
+    galleryLabels:
+      supplementData.galleryLabels,
+
+    tendencies:
+      supplementData.tendencies,
+
+    history: [],
+
+    resultCard,
+  };
+
+  activeCustomerDetailData.history =
+    createCustomerDetailHistory(
+      activeCustomerDetailData
+    );
+
+  customerDetailTimelineVisibleLimit =
+    customerDetailTimelinePageSize;
+
+  setCustomerDetailTab(
+    "overview"
+  );
+
+  renderCustomerDetailScreen();
+
+  sessionStorage.setItem(
+    "currentCustomerDetailId",
+    customerId
+  );
+};
+
+// 顧客詳細画面のタブを押したとき
+customerDetailTabButtons.forEach(
+  (tabButton) => {
+    tabButton.addEventListener(
+      "click",
+      () => {
+        setCustomerDetailTab(
+          tabButton.dataset.customerDetailTab ||
+          "overview"
+        );
+      }
+    );
+  }
+);
+
+// タイムラインをさらに表示する
+customerDetailTimelineLoadMoreButton.addEventListener(
+  "click",
+  () => {
+    if (
+      isCustomerDetailTimelineLoading ||
+      !activeCustomerDetailData
+    ) {
+      return;
+    }
+
+    isCustomerDetailTimelineLoading =
+      true;
+
+    customerDetailTimelineLoadMoreButton.hidden =
+      true;
+
+    customerDetailTimelineLoading.hidden =
+      false;
+
+    window.setTimeout(
+      () => {
+        customerDetailTimelineVisibleLimit +=
+          customerDetailTimelinePageSize;
+
+        isCustomerDetailTimelineLoading =
+          false;
+
+        customerDetailTimelineLoading.hidden =
+          true;
+
+        renderCustomerDetailTimeline();
+      },
+      400
+    );
+  }
+);
+
+// 顧客情報の編集画面を開く
+const openCustomerDetailEditDialog = () => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  customerDetailEditNameInput.value =
+    activeCustomerDetailData.name;
+
+  customerDetailEditStaffInput.value =
+    activeCustomerDetailData.staff;
+
+  customerDetailEditFeaturesInput.value =
+    activeCustomerDetailData.features.join(
+      ", "
+    );
+
+  customerDetailEditMemoInput.value =
+    activeCustomerDetailData.memo;
+
+  customerDetailEditDialog.hidden =
+    false;
+
+  document.body.classList.add(
+    "customer-search-panel-open"
+  );
+
+  customerDetailEditNameInput.focus();
+};
+
+// 顧客情報の編集画面を閉じる
+const closeCustomerDetailEditDialog = () => {
+  customerDetailEditDialog.hidden =
+    true;
+
+  document.body.classList.remove(
+    "customer-search-panel-open"
+  );
+};
+
+// 各編集ボタンから編集画面を開く
+customerDetailEditTriggers.forEach(
+  (editButton) => {
+    editButton.addEventListener(
+      "click",
+      openCustomerDetailEditDialog
+    );
+  }
+);
+
+// ×ボタンで編集画面を閉じる
+customerDetailEditCloseButton.addEventListener(
+  "click",
+  closeCustomerDetailEditDialog
+);
+
+// キャンセルボタンで編集画面を閉じる
+customerDetailEditCancelButton.addEventListener(
+  "click",
+  closeCustomerDetailEditDialog
+);
+
+// 編集画面の背景を押したときに閉じる
+customerDetailEditDialog.addEventListener(
+  "click",
+  (event) => {
+    if (
+      event.target ===
+      customerDetailEditDialog
+    ) {
+      closeCustomerDetailEditDialog();
+    }
+  }
+);
+
+// Escapeキーで編集画面を閉じる
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key === "Escape" &&
+      !customerDetailEditDialog.hidden
+    ) {
+      closeCustomerDetailEditDialog();
+    }
+  }
+);
+
+// 編集内容を顧客詳細画面と検索結果へ反映する
+customerDetailEditForm.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+
+    if (!activeCustomerDetailData) {
+      return;
+    }
+
+    const updatedName =
+      customerDetailEditNameInput.value.trim();
+
+    const updatedFeatures =
+      customerDetailEditFeaturesInput.value
+        .split(",")
+        .map((featureName) => {
+          return featureName.trim();
+        })
+        .filter(Boolean);
+
+    const updatedMemo =
+      customerDetailEditMemoInput.value.trim();
+
+    activeCustomerDetailData.name =
+      updatedName;
+
+    activeCustomerDetailData.initial =
+      updatedName.slice(0, 1) ||
+      "客";
+
+    activeCustomerDetailData.staff =
+      customerDetailEditStaffInput.value;
+
+    activeCustomerDetailData.features =
+      updatedFeatures;
+
+    activeCustomerDetailData.memo =
+      updatedMemo ||
+      "メモは登録されていません。";
+
+    const resultCard =
+      activeCustomerDetailData.resultCard;
+
+    // 検索結果カードのデータも更新する
+    resultCard.dataset.customerName =
+      activeCustomerDetailData.name;
+
+    resultCard.dataset.staffMember =
+      activeCustomerDetailData.staff;
+
+    resultCard.dataset.hasFeatures =
+      String(
+        updatedFeatures.length > 0
+      );
+
+    resultCard.dataset.hasMemo =
+      String(updatedMemo !== "");
+
+    resultCard.dataset.detailMemo =
+      activeCustomerDetailData.memo;
+
+    const resultName =
+      resultCard.querySelector(
+        ".customer-search-result-name-row strong"
+      );
+
+    const resultAvatar =
+      resultCard.querySelector(
+        ".customer-search-result-avatar"
+      );
+
+    const resultFeatures =
+      resultCard.querySelector(
+        ".customer-search-result-features"
+      );
+
+    if (resultName) {
+      resultName.textContent =
+        activeCustomerDetailData.name;
+    }
+
+    if (resultAvatar) {
+      resultAvatar.textContent =
+        activeCustomerDetailData.initial;
+    }
+
+    if (resultFeatures) {
+      resultFeatures.textContent =
+        updatedFeatures.length > 0
+          ? updatedFeatures.join("・")
+          : "特徴未登録";
+    }
+
+    resultCard.dataset.searchText = [
+      activeCustomerDetailData.name,
+      activeCustomerDetailData.id,
+      ...updatedFeatures,
+      activeCustomerDetailData.memo,
+      activeCustomerDetailData.staff,
+    ].join(" ");
+
+    renderCustomerDetailScreen();
+    closeCustomerDetailEditDialog();
+  }
+);
+
+// 顧客一覧へ戻る
+customerDetailBackButton.addEventListener(
+  "click",
+  () => {
+    showView(
+      "customer-search",
+      "auto"
+    );
+  }
+);
+
+// 詳細画面で開いている顧客を選択済みにして来店登録画面を開く
+const openCustomerVisitRegistration = () => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  const birthDate =
+    createCustomerDetailDate(
+      activeCustomerDetailData.birthDate
+    );
+
+  // 既存の顧客選択処理へ渡す仮の検索結果を作る
+  const temporaryResultItem =
+    document.createElement("article");
+
+  temporaryResultItem.dataset.customerName =
+    activeCustomerDetailData.name;
+
+  temporaryResultItem.dataset.customerId =
+    activeCustomerDetailData.id;
+
+  temporaryResultItem.dataset.customerInitial =
+    activeCustomerDetailData.initial;
+
+  temporaryResultItem.dataset.lastVisit =
+    formatCustomerDetailDate(
+      activeCustomerDetailData.lastVisit
+    );
+
+  temporaryResultItem.dataset.visitCount =
+    String(
+      activeCustomerDetailData.visitCount
+    );
+
+  temporaryResultItem.dataset.totalSales =
+    String(
+      activeCustomerDetailData.totalSales
+    );
+
+  temporaryResultItem.dataset.averageSpend =
+    String(
+      activeCustomerDetailData.averageSpend
+    );
+
+  temporaryResultItem.dataset.features =
+    activeCustomerDetailData.features.join(
+      ","
+    );
+
+  temporaryResultItem.dataset.recentMemo =
+    activeCustomerDetailData.memo;
+
+  temporaryResultItem.dataset.birthdayStatus =
+    birthDate
+      ? "known"
+      : "unknown";
+
+  temporaryResultItem.dataset.birthYear =
+    birthDate
+      ? String(
+          birthDate.getFullYear()
+        )
+      : "";
+
+  temporaryResultItem.dataset.birthMonth =
+    birthDate
+      ? String(
+          birthDate.getMonth() + 1
+        )
+      : "";
+
+  temporaryResultItem.dataset.birthDay =
+    birthDate
+      ? String(
+          birthDate.getDate()
+        )
+      : "";
+
+  // 常連顧客の来店登録画面へ移動する
+  showView(
+    "regular-customer",
+    "auto"
+  );
+
+  window.requestAnimationFrame(
+    () => {
+      // 顧客名・ID・誕生日・特徴などを自動入力する
+      showSelectedRegularCustomer(
+        temporaryResultItem
+      );
+
+      // 今回の来店日には今日の日付を入れる
+      regularVisitDateInput.value =
+        getCustomerDetailTodayInputValue();
+
+      // 既存の担当スタッフを初期選択する
+      regularStaffMemberInput.value =
+        activeCustomerDetailData.staff;
+
+      // 会計金額と今回の来店メモは新規入力にする
+      regularPaymentAmountInput.value =
+        "";
+
+      regularCustomerMemo.value =
+        "";
+
+      // 選択中の顧客を検索欄にも表示する
+      regularCustomerSearchInput.value =
+        `${activeCustomerDetailData.name} ${activeCustomerDetailData.id}`;
+    }
+  );
+};
+
+// 各「来店を登録する」ボタンを動かす
+customerDetailRegisterButtons.forEach(
+  (registerButton) => {
+    registerButton.addEventListener(
+      "click",
+      openCustomerVisitRegistration
+    );
+  }
+);
+
+// 写真・画像の追加ボタンは現在のフロント版では案内を表示する
+customerDetailGalleryList.addEventListener(
+  "click",
+  (event) => {
+    const addButton =
+      event.target.closest(
+        ".customer-detail-gallery-add"
+      );
+
+    if (!addButton) {
+      return;
+    }
+
+    window.alert(
+      "写真・画像の保存機能は、GoogleスプレッドシートとGASの接続時に実装します。"
+    );
+  }
+);
+
+// 顧客カードから顧客詳細画面を開く
 customerSearchResultOpenButtons.forEach((openButton) => {
   openButton.addEventListener(
     "click",
@@ -2641,6 +4296,14 @@ customerSearchResultOpenButtons.forEach((openButton) => {
       ) {
         applyCustomerSearchSort();
       }
+
+      renderCustomerDetail(
+        customerId
+      );
+
+      showView(
+        "customer-detail"
+      );
     }
   );
 });
@@ -2709,6 +4372,12 @@ const showView = (viewName, scrollBehavior = "smooth") => {
   if (!nextView) {
     return;
   }
+
+  // 顧客詳細画面では共通ヘッダーと下部ナビを隠す
+  document.body.classList.toggle(
+    "customer-detail-mode",
+    viewName === "customer-detail"
+  );
 
   // すべての画面をいったん非表示にする
   appViews.forEach((view) => {
@@ -2856,6 +4525,19 @@ viewButtons.forEach((button) => {
 
 // ページを更新したとき、最後に表示していた画面を復元する
 const savedView = sessionStorage.getItem("currentView") || "home";
+
+// 顧客詳細画面の場合は、最後に開いていた顧客も復元する
+if (savedView === "customer-detail") {
+  const savedCustomerDetailId =
+    sessionStorage.getItem(
+      "currentCustomerDetailId"
+    ) ||
+    "MU00001";
+
+  renderCustomerDetail(
+    savedCustomerDetailId
+  );
+}
 
 // 保存されていた画面を、アニメーションなしで表示する
 showView(savedView, "auto");
