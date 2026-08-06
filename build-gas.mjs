@@ -18,6 +18,7 @@ const [
   indexHtml,
   stylesheet,
   javascript,
+  menuVisualBuffer,
 ] = await Promise.all([
   readFile(
     resolve(
@@ -35,12 +36,22 @@ const [
     "utf8"
   ),
 
-  readFile(
+    readFile(
     resolve(
       projectRoot,
       "script.js"
     ),
     "utf8"
+  ),
+
+  // GASでも画像を表示できるよう、
+  // メニュー画像をバイナリデータとして読み込む
+  readFile(
+    resolve(
+      projectRoot,
+      "images",
+      "menu-visual.jpg"
+    )
   ),
 ]);
 
@@ -73,6 +84,28 @@ if (
   );
 }
 
+// メニュー画像を、CSSへ直接埋め込める形式に変換する
+const menuVisualDataUrl =
+  `data:image/jpeg;base64,${
+    menuVisualBuffer.toString(
+      "base64"
+    )
+  }`;
+
+// ローカル画像のURLを、GAS用の画像データへ置き換える
+const gasStylesheet =
+  stylesheet.replace(
+    /url\((["']?)\.\/images\/menu-visual\.jpg\1\)/i,
+    `url("${menuVisualDataUrl}")`
+  );
+
+// 対象の画像URLが見つからなかった場合は処理を止める
+if (gasStylesheet === stylesheet) {
+  throw new Error(
+    "style.css内のmenu-visual.jpgを見つけられませんでした。"
+  );
+}
+
 // GAS側のファイルへ書き出す
 await Promise.all([
   writeFile(
@@ -91,7 +124,7 @@ await Promise.all([
       "gas",
       "Stylesheet.html"
     ),
-    `<style>\n${stylesheet}\n</style>\n`,
+    `<style>\n${gasStylesheet}\n</style>\n`,
     "utf8"
   ),
 
