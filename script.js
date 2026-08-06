@@ -3431,8 +3431,12 @@ const renderCustomerDetailGallery = () => {
     return;
   }
 
+  // 写真が未登録の場合は、
+  // 補足用の仮画像データを使用しない
   const galleryLabels =
-    activeCustomerDetailData.galleryLabels;
+    activeCustomerDetailData.hasPhoto
+      ? activeCustomerDetailData.galleryLabels
+      : [];
 
   const galleryItems =
     galleryLabels.map((galleryLabel) => {
@@ -3473,47 +3477,7 @@ const renderCustomerDetailGallery = () => {
       `;
     }).join("");
 
-  const emptyItem =
-    galleryLabels.length === 0
-      ? `
-        <div class="customer-detail-gallery-item customer-detail-gallery-item--empty">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <rect
-              x="3"
-              y="5"
-              width="18"
-              height="15"
-              rx="2"
-            ></rect>
-
-            <circle
-              cx="9"
-              cy="10"
-              r="2"
-            ></circle>
-
-            <path
-              d="m4 18 5-5 4 4 2-2 5 5"
-            ></path>
-          </svg>
-
-          <span>
-            画像未登録
-          </span>
-        </div>
-      `
-      : "";
-
   customerDetailGalleryList.innerHTML = `
-    ${emptyItem}
     ${galleryItems}
 
     <button
@@ -3987,12 +3951,19 @@ const renderCustomerDetailScreen = () => {
     customerData.id;
 
   customerDetailLastVisit.textContent =
-    formatCustomerDetailDate(
-      customerData.lastVisit
-    );
+    customerData.lastVisit
+      ? formatCustomerDetailDate(
+          customerData.lastVisit
+        )
+      : "未登録";
 
   customerDetailLastVisitRelative.textContent =
-    `${customerData.daysSinceVisit}日前`;
+    customerData.lastVisit
+      ? `${customerData.daysSinceVisit}日前`
+      : "";
+
+  customerDetailLastVisitRelative.hidden =
+    !customerData.lastVisit;
 
   customerDetailBasicId.textContent =
     customerData.id;
@@ -4041,12 +4012,16 @@ const renderCustomerDetailScreen = () => {
     );
 
   customerDetailDaysSinceVisit.textContent =
-    `${customerData.daysSinceVisit}日`;
+    customerData.lastVisit
+      ? `${customerData.daysSinceVisit}日`
+      : "未登録";
 
   customerDetailSummaryLastVisit.textContent =
-    formatCustomerDetailDate(
-      customerData.lastVisit
-    );
+    customerData.lastVisit
+      ? formatCustomerDetailDate(
+          customerData.lastVisit
+        )
+      : "未登録";
 
   customerDetailLatestMemo.textContent =
     customerData.memo;
