@@ -851,54 +851,15 @@
                         </div>
 
                         <!-- 最近追加した顧客カードを並べる領域 -->
-                        <div class="customer-list customer-list--recent">
-
-                            <!-- 1人目の顧客カード -->
-                            <button class="customer-card" type="button">
-
-                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                                <span class="customer-avatar" aria-hidden="true">
-                                    浅
-                                </span>
-
-                                <!-- 顧客名と登録情報 -->
-                                <span class="customer-card-info">
-                                    <span class="customer-name">浅田 けん</span>
-                                    <span class="customer-meta">2026/07/30 登録</span>
-                                </span>
-                            </button>
-
-                            <!-- 2人目の顧客カード -->
-                            <button class="customer-card" type="button">
-
-                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                                <span class="customer-avatar" aria-hidden="true">
-                                    田
-                                </span>
-
-                                <!-- 顧客名と登録情報 -->
-                                <span class="customer-card-info">
-                                    <span class="customer-name">田中 翔</span>
-                                    <span class="customer-meta">2026/07/29 登録</span>
-                                </span>
-                            </button>
-
-                            <!-- 3人目の顧客カード -->
-                            <button class="customer-card" type="button">
-
-                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                                <span class="customer-avatar" aria-hidden="true">
-                                    山
-                                </span>
-
-                                <!-- 顧客名と登録情報 -->
-                                <span class="customer-card-info">
-                                    <span class="customer-name">山本 大輔</span>
-                                    <span class="customer-meta">2026/07/27 登録</span>
-                                </span>
-                            </button>
+                        <div
+                            class="customer-list customer-list--recent"
+                            id="home-recently-added-list"
+                            aria-live="polite"
+                        >
+                            <p class="customer-list-empty-message">
+                                顧客データを読み込んでいます。
+                            </p>
                         </div>
-
                     </section>
 
                     <!-- 最近見たお客様を表示する領域 -->
@@ -946,52 +907,14 @@
                         </div>
 
                         <!-- 最近見た顧客カードを並べる領域 -->
-                        <div class="customer-list customer-list--viewed">
-
-                            <!-- 1人目の顧客カード -->
-                            <button class="customer-card" type="button">
-
-                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                                <span class="customer-avatar" aria-hidden="true">
-                                    浅
-                                </span>
-
-                                <!-- 顧客名と閲覧情報 -->
-                                <span class="customer-card-info">
-                                    <span class="customer-name">浅田 けん</span>
-                                    <span class="customer-meta">2026/07/30 11:03 閲覧</span>
-                                </span>
-                            </button>
-
-                            <!-- 2人目の顧客カード -->
-                            <button class="customer-card" type="button">
-
-                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                                <span class="customer-avatar" aria-hidden="true">
-                                    田
-                                </span>
-
-                                <!-- 顧客名と閲覧情報 -->
-                                <span class="customer-card-info">
-                                    <span class="customer-name">田中 翔</span>
-                                    <span class="customer-meta">2026/07/29 22:15 閲覧</span>
-                                </span>
-                            </button>
-
-                            <!-- 3人目の顧客カード -->
-                            <button class="customer-card" type="button">
-
-                                <!-- 顧客写真が未登録の場合に表示する仮アイコン -->
-                                <span class="customer-avatar" aria-hidden="true">
-                                    R
-                                </span>
-
-                                <!-- 顧客名と閲覧情報 -->
-                                <span class="customer-card-info">
-                                    <span class="customer-name">Ren</span>
-                                    <span class="customer-meta">2026/07/28 19:42 閲覧</span>
-                                </span>
-                            </button>
+                        <div
+                            class="customer-list customer-list--viewed"
+                            id="home-recently-viewed-list"
+                            aria-live="polite"
+                        >
+                            <p class="customer-list-empty-message">
+                                閲覧履歴を読み込んでいます。
+                            </p>
                         </div>
                     </section>
                 </div>
@@ -1579,12 +1502,8 @@
                                     required
                                 >
 
-                                <!-- 入力時に表示するスタッフ候補 -->
-                                <datalist id="staff-member-options">
-                                    <option value="スタッフA"></option>
-                                    <option value="スタッフB"></option>
-                                    <option value="スタッフC"></option>
-                                </datalist>
+                                <!-- 実データから担当スタッフ候補を表示する -->
+                                <datalist id="staff-member-options"></datalist>
                             </div>
 
                             <p
@@ -2718,79 +2637,10 @@
                                 </button>
                             </div>
 
-                            <ul class="customer-recent-search-list">
-                                <li class="customer-recent-search-item">
-                                    <button
-                                        class="customer-recent-search-button"
-                                        type="button"
-                                        data-search-value="浅田けん"
-                                    >
-                                        浅田けん
-                                    </button>
-
-                                    <button
-                                        class="customer-recent-search-remove"
-                                        type="button"
-                                        aria-label="浅田けんを検索履歴から削除"
-                                    >
-                                        ×
-                                    </button>
-                                </li>
-
-                                <li class="customer-recent-search-item">
-                                    <button
-                                        class="customer-recent-search-button"
-                                        type="button"
-                                        data-search-value="田中翔"
-                                    >
-                                        田中翔
-                                    </button>
-
-                                    <button
-                                        class="customer-recent-search-remove"
-                                        type="button"
-                                        aria-label="田中翔を検索履歴から削除"
-                                    >
-                                        ×
-                                    </button>
-                                </li>
-
-                                <li class="customer-recent-search-item">
-                                    <button
-                                        class="customer-recent-search-button"
-                                        type="button"
-                                        data-search-value="Ren"
-                                    >
-                                        Ren
-                                    </button>
-
-                                    <button
-                                        class="customer-recent-search-remove"
-                                        type="button"
-                                        aria-label="Renを検索履歴から削除"
-                                    >
-                                        ×
-                                    </button>
-                                </li>
-
-                                <li class="customer-recent-search-item">
-                                    <button
-                                        class="customer-recent-search-button"
-                                        type="button"
-                                        data-search-value="筋肉質"
-                                    >
-                                        筋肉質
-                                    </button>
-
-                                    <button
-                                        class="customer-recent-search-remove"
-                                        type="button"
-                                        aria-label="筋肉質を検索履歴から削除"
-                                    >
-                                        ×
-                                    </button>
-                                </li>
-                            </ul>
+                            <ul
+                                class="customer-recent-search-list"
+                                aria-live="polite"
+                            ></ul>
                         </section>
 
                         <!-- 検索結果 -->
@@ -5551,19 +5401,8 @@
                                     担当スタッフ
                                 </span>
 
-                                <select id="customer-detail-edit-staff">
-                                    <option value="よっしー">
-                                        よっしー
-                                    </option>
-
-                                    <option value="ずーみん">
-                                        ずーみん
-                                    </option>
-
-                                    <option value="はるちゃん">
-                                        はるちゃん
-                                    </option>
-                                </select>
+                                <!-- 実データから担当スタッフ候補を表示する -->
+                                <select id="customer-detail-edit-staff"></select>
                             </label>
 
                             <label class="customer-detail-edit-field">

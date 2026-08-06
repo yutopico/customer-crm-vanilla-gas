@@ -77,6 +77,17 @@ const homeCustomerListButtons =
     "[data-home-customer-list-action]"
   );
 
+// ホーム画面の最近追加・最近見た顧客の表示先を取得する
+const homeRecentlyAddedList =
+  document.querySelector(
+    "#home-recently-added-list"
+  );
+
+const homeRecentlyViewedList =
+  document.querySelector(
+    "#home-recently-viewed-list"
+  );
+
 // やることカードの人数表示先を取得する
 const homeTodoPhotoCount =
   document.querySelector(
@@ -639,15 +650,8 @@ const customerRecentlyViewedLimit = 20;
 const customerRecentSearchSection = document.querySelector(".customer-recent-search-section");
 const customerRecentSearchList = document.querySelector(".customer-recent-search-list");
 const customerRecentSearchClearButton = document.querySelector(".customer-recent-search-clear");
-const customerRecentSearchStorageKey = "customerCrmRecentSearches";
+const customerRecentSearchStorageKey ="customerCrmRecentSearchesV2";
 const customerRecentSearchLimit = 8;
-
-// HTMLに最初から用意されている検索履歴を取得する
-const defaultCustomerRecentSearches = Array.from(
-  document.querySelectorAll(".customer-recent-search-button")
-).map((searchButton) => {
-  return searchButton.dataset.searchValue || searchButton.textContent.trim();
-}).filter(Boolean).slice(0, customerRecentSearchLimit);
 
 // 常連顧客の検索に使用する要素を取得する
 const regularCustomerSearchInput = document.querySelector("#regular-customer-search");
@@ -946,15 +950,7 @@ const staffMemberOptions =
 
 // 保存時に使用する名前
 const staffMemberStorageKey =
-  "customerCrmStaffMembers";
-
-// HTMLに最初から用意されているスタッフ名を取得する
-const defaultStaffMembers =
-  Array.from(
-    staffMemberOptions.options
-  ).map((option) => {
-    return option.value;
-  });
+  "customerCrmStaffMembersV2";
 
 // ブラウザに保存されているスタッフ名を取得する
 const getSavedStaffMembers = () => {
@@ -979,32 +975,131 @@ const getSavedStaffMembers = () => {
   }
 };
 
-// datalistへスタッフ候補を表示する
-const renderStaffMemberOptions = () => {
-  const savedStaffMembers =
-    getSavedStaffMembers();
+// 顧客・来店履歴・入力済みデータから
+// 担当スタッフ候補を作る
+const renderStaffMemberOptions =
+  () => {
+    const savedStaffMembers =
+      getSavedStaffMembers();
 
-  // 初期候補と保存済み候補をまとめ、重複をなくす
-  const staffMembers = [
-    ...new Set([
-      ...defaultStaffMembers,
-      ...savedStaffMembers
-    ])
-  ];
+    // 顧客マスタに登録されている担当スタッフ
+    const customerStaffMembers =
+      Array.from(
+        customerSearchResultCards
+      )
+        .map((customerCard) => {
+          return (
+            customerCard.dataset
+              .staffMember ||
+            ""
+          ).trim();
+        })
+        .filter((staffName) => {
+          return (
+            staffName !== "" &&
+            staffName !== "未登録"
+          );
+        });
 
-  staffMemberOptions.textContent = "";
+    // 来店履歴に登録されている担当スタッフ
+    const visitStaffMembers =
+      spreadsheetVisitHistories
+        .map((visitHistory) => {
+          return (
+            visitHistory.staffMember ||
+            ""
+          ).trim();
+        })
+        .filter((staffName) => {
+          return (
+            staffName !== "" &&
+            staffName !== "未登録"
+          );
+        });
 
-  staffMembers.forEach((staffName) => {
-    const option =
-      document.createElement("option");
+    // すべての候補をまとめて重複をなくす
+    const staffMembers = [
+      ...new Set([
+        ...customerStaffMembers,
+        ...visitStaffMembers,
+        ...savedStaffMembers,
+      ]),
+    ].sort((firstName, secondName) => {
+      return firstName.localeCompare(
+        secondName,
+        "ja"
+      );
+    });
 
-    option.value = staffName;
+    // 新規・常連来店フォームの入力候補
+    staffMemberOptions.replaceChildren();
 
-    staffMemberOptions.appendChild(
-      option
-    );
-  });
-};
+    staffMembers.forEach((staffName) => {
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        staffName;
+
+      staffMemberOptions.appendChild(
+        option
+      );
+    });
+
+    // 顧客編集画面の選択肢
+    const currentEditStaff =
+      customerDetailEditStaffInput.value;
+
+    customerDetailEditStaffInput.replaceChildren();
+
+    staffMembers.forEach((staffName) => {
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        staffName;
+
+      option.textContent =
+        staffName;
+
+      customerDetailEditStaffInput.appendChild(
+        option
+      );
+    });
+
+    if (
+      currentEditStaff &&
+      staffMembers.includes(
+        currentEditStaff
+      )
+    ) {
+      customerDetailEditStaffInput.value =
+        currentEditStaff;
+    }
+
+    // 顧客検索の担当スタッフ条件
+    customerSearchConditionSettings[
+      "staff-member"
+    ].options = [
+      {
+        value: "all",
+        label: "すべて",
+      },
+
+      ...staffMembers.map(
+        (staffName) => {
+          return {
+            value: staffName,
+            label: staffName,
+          };
+        }
+      ),
+    ];
+  };
 
 // 入力されたスタッフ名を保存する
 const saveStaffMemberName = (inputElement = staffMemberInput) => {
@@ -1042,9 +1137,6 @@ const saveStaffMemberName = (inputElement = staffMemberInput) => {
 
   renderStaffMemberOptions();
 };
-
-// ページを開いたときに保存済み候補を反映する
-renderStaffMemberOptions();
 
 // 似ている顧客のお知らせを表示する
 const showSimilarCustomerAlert = () => {
@@ -1354,30 +1446,48 @@ const normalizeCustomerSearchText = (value) => {
 };
 
 // 保存されている最近検索を取得する
-const getCustomerRecentSearches = () => {
-  const savedData = localStorage.getItem(customerRecentSearchStorageKey);
+const getCustomerRecentSearches =
+  () => {
+    const savedData =
+      localStorage.getItem(
+        customerRecentSearchStorageKey
+      );
 
-  // まだ保存データがない場合はHTMLの仮データを使用する
-  if (savedData === null) {
-    return [...defaultCustomerRecentSearches];
-  }
-
-  try {
-    const recentSearches = JSON.parse(savedData);
-
-    if (!Array.isArray(recentSearches)) {
-      return [...defaultCustomerRecentSearches];
+    // まだ検索履歴がない場合は空の一覧を返す
+    if (savedData === null) {
+      return [];
     }
 
-    return recentSearches
-      .filter((searchValue) => {
-        return typeof searchValue === "string" && searchValue.trim() !== "";
-      })
-      .slice(0, customerRecentSearchLimit);
-  } catch {
-    return [...defaultCustomerRecentSearches];
-  }
-};
+    try {
+      const recentSearches =
+        JSON.parse(
+          savedData
+        );
+
+      if (
+        !Array.isArray(
+          recentSearches
+        )
+      ) {
+        return [];
+      }
+
+      return recentSearches
+        .filter((searchValue) => {
+          return (
+            typeof searchValue ===
+              "string" &&
+            searchValue.trim() !== ""
+          );
+        })
+        .slice(
+          0,
+          customerRecentSearchLimit
+        );
+    } catch {
+      return [];
+    }
+  };
 
 // 最近検索をブラウザへ保存する
 const saveCustomerRecentSearches = (recentSearches) => {
@@ -1707,51 +1817,375 @@ const resetCustomerSearchConditions = () => {
   customerSearchInput.focus();
 };
 
-// 保存されている最近見た顧客IDを取得する
-const getCustomerRecentlyViewedIds = () => {
-  const savedData = localStorage.getItem(customerRecentlyViewedStorageKey);
+// 保存されている最近見た顧客情報を取得する
+const getCustomerRecentlyViewedEntries =
+  () => {
+    const savedData =
+      localStorage.getItem(
+        customerRecentlyViewedStorageKey
+      );
 
-  if (!savedData) {
-    return [];
-  }
+    if (!savedData) {
+      return [];
+    }
 
-  try {
-    const customerIds = JSON.parse(savedData);
+    try {
+      const savedEntries =
+        JSON.parse(
+          savedData
+        );
 
-    return Array.isArray(customerIds)
-      ? customerIds
-      : [];
-  } catch {
-    return [];
-  }
-};
+      if (
+        !Array.isArray(
+          savedEntries
+        )
+      ) {
+        return [];
+      }
+
+      return savedEntries
+        .map((savedEntry) => {
+          // 以前保存した顧客IDだけのデータにも対応する
+          if (
+            typeof savedEntry ===
+            "string"
+          ) {
+            return {
+              customerId:
+                savedEntry,
+
+              viewedAt:
+                "",
+            };
+          }
+
+          if (
+            !savedEntry ||
+            typeof savedEntry !==
+              "object"
+          ) {
+            return null;
+          }
+
+          return {
+            customerId:
+              String(
+                savedEntry.customerId ||
+                ""
+              ),
+
+            viewedAt:
+              typeof savedEntry
+                .viewedAt ===
+                "string"
+                ? savedEntry.viewedAt
+                : "",
+          };
+        })
+        .filter((savedEntry) => {
+          return (
+            savedEntry &&
+            savedEntry.customerId
+          );
+        });
+    } catch {
+      return [];
+    }
+  };
+
+// 並び替えで使用する顧客IDだけを取得する
+const getCustomerRecentlyViewedIds =
+  () => {
+    return getCustomerRecentlyViewedEntries()
+      .map((savedEntry) => {
+        return savedEntry.customerId;
+      });
+  };
 
 // 顧客を最近見た履歴の先頭へ保存する
-const saveCustomerRecentlyViewedCustomer = (customerId) => {
+const saveCustomerRecentlyViewedCustomer = (
+  customerId
+) => {
   if (!customerId) {
     return;
   }
 
-  const recentlyViewedIds = getCustomerRecentlyViewedIds();
+  const recentlyViewedEntries =
+    getCustomerRecentlyViewedEntries();
 
-  const updatedRecentlyViewedIds = recentlyViewedIds.filter(
-    (savedCustomerId) => {
-      return savedCustomerId !== customerId;
-    }
-  );
+  const updatedEntries =
+    recentlyViewedEntries.filter(
+      (savedEntry) => {
+        return (
+          savedEntry.customerId !==
+          customerId
+        );
+      }
+    );
 
-  updatedRecentlyViewedIds.unshift(customerId);
+  updatedEntries.unshift({
+    customerId,
+
+    viewedAt:
+      new Date().toISOString(),
+  });
 
   localStorage.setItem(
     customerRecentlyViewedStorageKey,
     JSON.stringify(
-      updatedRecentlyViewedIds.slice(
+      updatedEntries.slice(
         0,
         customerRecentlyViewedLimit
       )
     )
   );
+
+  // 閲覧直後にホームの一覧も更新する
+  renderHomeRecentCustomers();
 };
+
+// 閲覧日時をホーム画面用の表示へ整える
+const formatHomeRecentlyViewedDate = (
+  viewedAt
+) => {
+  if (!viewedAt) {
+    return "閲覧履歴あり";
+  }
+
+  const viewedDate =
+    new Date(
+      viewedAt
+    );
+
+  if (
+    Number.isNaN(
+      viewedDate.getTime()
+    )
+  ) {
+    return "閲覧履歴あり";
+  }
+
+  const year =
+    viewedDate.getFullYear();
+
+  const month =
+    String(
+      viewedDate.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    );
+
+  const day =
+    String(
+      viewedDate.getDate()
+    ).padStart(
+      2,
+      "0"
+    );
+
+  const hours =
+    String(
+      viewedDate.getHours()
+    ).padStart(
+      2,
+      "0"
+    );
+
+  const minutes =
+    String(
+      viewedDate.getMinutes()
+    ).padStart(
+      2,
+      "0"
+    );
+
+  return (
+    `${year}/${month}/${day} ` +
+    `${hours}:${minutes} 閲覧`
+  );
+};
+
+// ホーム画面用の顧客カードを作る
+const createHomeCustomerCardHtml = (
+  customerCard,
+  metaText
+) => {
+  const customerId =
+    customerCard.dataset
+      .customerId ||
+    "";
+
+  const customerName =
+    customerCard.dataset
+      .customerName ||
+    "名前未登録";
+
+  const customerInitial =
+    customerCard.querySelector(
+      ".customer-search-result-avatar"
+    )?.textContent.trim() ||
+    customerName.slice(
+      0,
+      1
+    ) ||
+    "?";
+
+  return `
+    <button
+      class="customer-card"
+      type="button"
+      data-home-customer-id="${escapeCustomerSearchHtml(
+        customerId
+      )}"
+      aria-label="${escapeCustomerSearchHtml(
+        customerName
+      )}さんの顧客詳細を開く"
+    >
+      <span
+        class="customer-avatar"
+        aria-hidden="true"
+      >
+        ${escapeCustomerSearchHtml(
+          customerInitial
+        )}
+      </span>
+
+      <span class="customer-card-info">
+        <span class="customer-name">
+          ${escapeCustomerSearchHtml(
+            customerName
+          )}
+        </span>
+
+        <span class="customer-meta">
+          ${escapeCustomerSearchHtml(
+            metaText
+          )}
+        </span>
+      </span>
+    </button>
+  `;
+};
+
+// 最近追加・最近見た顧客をホーム画面へ表示する
+const renderHomeRecentCustomers =
+  () => {
+    if (
+      !homeRecentlyAddedList ||
+      !homeRecentlyViewedList
+    ) {
+      return;
+    }
+
+    const customerCards =
+      Array.from(
+        customerSearchResultCards
+      );
+
+    const recentlyAddedCustomers =
+      [...customerCards]
+        .sort(
+          (
+            firstCustomer,
+            secondCustomer
+          ) => {
+            return (
+              getCustomerSearchDateNumber(
+                secondCustomer.dataset
+                  .registrationDate
+              ) -
+              getCustomerSearchDateNumber(
+                firstCustomer.dataset
+                  .registrationDate
+              )
+            );
+          }
+        )
+        .slice(
+          0,
+          3
+        );
+
+    homeRecentlyAddedList.innerHTML =
+      recentlyAddedCustomers.length > 0
+        ? recentlyAddedCustomers
+            .map((customerCard) => {
+              const registrationDate =
+                customerCard.dataset
+                  .registrationDate ||
+                "";
+
+              const metaText =
+                registrationDate
+                  ? `${formatCustomerSearchDate(
+                      registrationDate
+                    )} 登録`
+                  : "登録日未登録";
+
+              return createHomeCustomerCardHtml(
+                customerCard,
+                metaText
+              );
+            })
+            .join("")
+        : `
+          <p class="customer-list-empty-message">
+            まだ顧客が登録されていません。
+          </p>
+        `;
+
+    const customerCardMap =
+      new Map(
+        customerCards.map(
+          (customerCard) => {
+            return [
+              customerCard.dataset
+                .customerId,
+              customerCard,
+            ];
+          }
+        )
+      );
+
+    const recentlyViewedCustomers =
+      getCustomerRecentlyViewedEntries()
+        .map((savedEntry) => {
+          return {
+            ...savedEntry,
+
+            customerCard:
+              customerCardMap.get(
+                savedEntry.customerId
+              ),
+          };
+        })
+        .filter((savedEntry) => {
+          return savedEntry.customerCard;
+        })
+        .slice(
+          0,
+          3
+        );
+
+    homeRecentlyViewedList.innerHTML =
+      recentlyViewedCustomers.length > 0
+        ? recentlyViewedCustomers
+            .map((savedEntry) => {
+              return createHomeCustomerCardHtml(
+                savedEntry.customerCard,
+                formatHomeRecentlyViewedDate(
+                  savedEntry.viewedAt
+                )
+              );
+            })
+            .join("")
+        : `
+          <p class="customer-list-empty-message">
+            最近見たお客様はいません。
+          </p>
+        `;
+  };
 
 // 日付を並び替えに使用できる数値へ変換する
 const getCustomerSearchDateNumber = (dateValue) => {
@@ -3022,6 +3456,9 @@ let customerDetailTimelineVisibleLimit = customerDetailTimelinePageSize;
 // 現在表示している顧客情報
 let activeCustomerDetailData = null;
 
+// スプレッドシートから取得した来店履歴
+let spreadsheetVisitHistories = [];
+
 // タイムラインの読み込み状態
 let isCustomerDetailTimelineLoading = false;
 
@@ -3186,9 +3623,65 @@ const getCustomerDetailWeekday = (dateValue) => {
   return weekdays[date.getDay()];
 };
 
-// 来店履歴は、来店履歴シートとの接続後に取得する
-const createCustomerDetailHistory = () => {
-  return [];
+// 指定した顧客の来店履歴を、詳細画面用の形式へ変換する
+const createCustomerDetailHistory = (
+  customerId
+) => {
+  const customerHistories =
+    spreadsheetVisitHistories
+      .filter((visitHistory) => {
+        return (
+          visitHistory.customerId ===
+          customerId
+        );
+      })
+      .sort(
+        (firstVisit, secondVisit) => {
+          return (
+            secondVisit.visitDate ||
+            ""
+          ).localeCompare(
+            firstVisit.visitDate ||
+            ""
+          );
+        }
+      );
+
+  return customerHistories.map(
+    (visitHistory, index) => {
+      return {
+        visitId:
+          visitHistory.visitId ||
+          "",
+
+        date:
+          visitHistory.visitDate ||
+          "",
+
+        amount:
+          Number(
+            visitHistory.paymentAmount ||
+            0
+          ),
+
+        staff:
+          visitHistory.staffMember ||
+          "未登録",
+
+        memo:
+          visitHistory.visitMemo ||
+          "メモなし",
+
+        registeredAt:
+          visitHistory.registeredAt ||
+          "",
+
+        visitNumber:
+          customerHistories.length -
+          index,
+      };
+    }
+  );
 };
 
 // 顧客詳細画面のタブを切り替える
@@ -3723,6 +4216,18 @@ const renderCustomerDetailSales = () => {
       : "算出できません";
 
   customerDetailSalesFirstVisit.textContent =
+    activeCustomerDetailData.firstVisit
+      ? formatCustomerDetailDate(
+          activeCustomerDetailData.firstVisit
+        )
+      : "未登録";
+
+  customerDetailSalesLastVisit.textContent =
+    activeCustomerDetailData.lastVisit
+      ? formatCustomerDetailDate(
+          activeCustomerDetailData.lastVisit
+        )
+      : "未登録";
     formatCustomerDetailDate(
       activeCustomerDetailData.registrationDate
     );
@@ -3834,6 +4339,11 @@ const renderCustomerDetailScreen = () => {
     `${customerData.visitCount}回`;
 
   customerDetailFirstVisit.textContent =
+    customerData.firstVisit
+      ? `初回来店：${formatCustomerDetailDate(
+          customerData.firstVisit
+        )}`
+      : "初回来店：未登録";
     `初回来店：${formatCustomerDetailDate(
       customerData.registrationDate
     )}`;
@@ -3968,6 +4478,10 @@ const renderCustomerDetail = (
         .registrationDate ||
       "",
 
+    firstVisit:
+      resultCard.dataset.firstVisit ||
+      "",
+
     lastVisit:
       resultCard.dataset.lastVisit ||
       "",
@@ -3998,12 +4512,14 @@ const renderCustomerDetail = (
         .detailMemo ||
       "メモは登録されていません。",
 
-    // 写真と来店履歴は、
-    // 対応するシートとの接続後に取得する
+    // 写真は、写真管理機能との接続後に取得する
     galleryLabels: [],
     tendencies: [],
+
     history:
-      createCustomerDetailHistory(),
+      createCustomerDetailHistory(
+        customerId
+      ),
 
     resultCard,
   };
@@ -5324,12 +5840,6 @@ const getSummaryDaysSinceVisit = (
 
 // ホーム画面に必要な最新データをまとめる
 const getHomeDashboardData = () => {
-  const monthData =
-    getActiveSummaryMonthData();
-
-  const periodData =
-    monthData.periods.month;
-
   const customerCards =
     Array.from(
       customerSearchResultCards
@@ -5342,8 +5852,114 @@ const getHomeDashboardData = () => {
   const currentYear =
     currentDate.getFullYear();
 
+  const currentMonthIndex =
+    currentDate.getMonth();
+
   const currentMonth =
-    currentDate.getMonth() + 1;
+    currentMonthIndex + 1;
+
+  const previousMonthDate =
+    new Date(
+      currentYear,
+      currentMonthIndex - 1,
+      1
+    );
+
+  // 指定した来店履歴が対象年月に含まれるか確認する
+  const isVisitInMonth = (
+    visitHistory,
+    targetYear,
+    targetMonthIndex
+  ) => {
+    const visitDate =
+      createCustomerDetailDate(
+        visitHistory.visitDate
+      );
+
+    if (!visitDate) {
+      return false;
+    }
+
+    return (
+      visitDate.getFullYear() ===
+        targetYear &&
+      visitDate.getMonth() ===
+        targetMonthIndex
+    );
+  };
+
+  const currentMonthVisits =
+    spreadsheetVisitHistories.filter(
+      (visitHistory) => {
+        return isVisitInMonth(
+          visitHistory,
+          currentYear,
+          currentMonthIndex
+        );
+      }
+    );
+
+  const previousMonthVisits =
+    spreadsheetVisitHistories.filter(
+      (visitHistory) => {
+        return isVisitInMonth(
+          visitHistory,
+          previousMonthDate.getFullYear(),
+          previousMonthDate.getMonth()
+        );
+      }
+    );
+
+  const currentMonthSales =
+    currentMonthVisits.reduce(
+      (total, visitHistory) => {
+        return (
+          total +
+          Number(
+            visitHistory.paymentAmount ||
+            0
+          )
+        );
+      },
+      0
+    );
+
+  const previousMonthSales =
+    previousMonthVisits.reduce(
+      (total, visitHistory) => {
+        return (
+          total +
+          Number(
+            visitHistory.paymentAmount ||
+            0
+          )
+        );
+      },
+      0
+    );
+
+  let salesRate =
+    "0%";
+
+  if (previousMonthSales > 0) {
+    const rate =
+      (
+        (
+          currentMonthSales -
+          previousMonthSales
+        ) /
+        previousMonthSales
+      ) *
+      100;
+
+    salesRate =
+      `${rate >= 0 ? "+" : ""}${rate.toFixed(
+        1
+      )}%`;
+  } else if (currentMonthSales > 0) {
+    salesRate =
+      "算出できません";
+  }
 
   // 登録されている顧客数を数える
   const customerCount =
@@ -5374,8 +5990,8 @@ const getHomeDashboardData = () => {
         return (
           registrationDate.getFullYear() ===
             currentYear &&
-          registrationDate.getMonth() + 1 ===
-            currentMonth
+          registrationDate.getMonth() ===
+            currentMonthIndex
         );
       }
     ).length;
@@ -5406,12 +6022,20 @@ const getHomeDashboardData = () => {
 
   // 30日以上来店していない顧客を数える
   const noVisitCount =
-    monthData.noVisitCustomers.filter(
-      (customer) => {
+    customerCards.filter(
+      (customerCard) => {
+        const lastVisit =
+          customerCard.dataset.lastVisit ||
+          "";
+
+        if (!lastVisit) {
+          return false;
+        }
+
         return (
           getSummaryDaysSinceVisit(
-            customer.lastVisit,
-            monthData.referenceDate
+            lastVisit,
+            getCustomerDetailTodayInputValue()
           ) >= 30
         );
       }
@@ -5435,22 +6059,32 @@ const getHomeDashboardData = () => {
   return {
     customerCount,
     currentMonthRegistrationCount,
-    
-    monthNumber: monthData.monthNumber,
 
-    sales: periodData.sales,
-    salesRate: periodData.salesRate,
-    visits: periodData.visits,
+    monthNumber:
+      currentMonth,
+
+    sales:
+      currentMonthSales,
+
+    salesRate,
+
+    visits:
+      currentMonthVisits.length,
+
     newCustomers:
-      periodData.newCustomers,
-    averageSpend:
-      periodData.averageSpend,
+      currentMonthRegistrationCount,
 
-    // 誕生日通知で表示する対象月
+    averageSpend:
+      currentMonthVisits.length > 0
+        ? Math.round(
+            currentMonthSales /
+            currentMonthVisits.length
+          )
+        : 0,
+
     birthdayMonth:
       currentMonth,
 
-    // 今月が誕生日のお客様の人数
     birthdays:
       currentMonthBirthdayCount,
 
@@ -5507,11 +6141,17 @@ const renderHomeDashboard = () => {
       homeData.currentMonthRegistrationCount
     );
 
+  const salesComparisonText =
+    homeData.salesRate ===
+    "算出できません"
+      ? "前月の売上がないため比較できません"
+      : `前月比${homeData.salesRate}です`;
+
   // 現在のデータからサマリー文章を作る
   const summaryItems = [
     `${homeData.monthNumber}月の売上は${formatSummaryCurrency(
       homeData.sales
-    )}で、前月比${homeData.salesRate}です。`,
+    )}で、${salesComparisonText}。`,
 
     `新規顧客は${homeData.newCustomers}名、来店回数は${homeData.visits}回です。`,
 
@@ -7086,6 +7726,58 @@ homeCustomerListButtons.forEach(
   }
 );
 
+// ホーム画面の顧客カードから顧客詳細を開く
+[
+  homeRecentlyAddedList,
+  homeRecentlyViewedList,
+].forEach((customerList) => {
+  customerList.addEventListener(
+    "click",
+    (event) => {
+      const customerButton =
+        event.target.closest(
+          "[data-home-customer-id]"
+        );
+
+      if (
+        !customerButton ||
+        !customerList.contains(
+          customerButton
+        )
+      ) {
+        return;
+      }
+
+      const customerId =
+        customerButton.dataset
+          .homeCustomerId ||
+        "";
+
+      if (!customerId) {
+        return;
+      }
+
+      saveCustomerRecentlyViewedCustomer(
+        customerId
+      );
+
+      const didRenderCustomer =
+        renderCustomerDetail(
+          customerId
+        );
+
+      if (!didRenderCustomer) {
+        return;
+      }
+
+      showView(
+        "customer-detail",
+        "auto"
+      );
+    }
+  );
+});
+
 // メニューボタンをクリックしたときにパネルの表示を切り替える
 menuButton.addEventListener("click", () => {
   // メニューボタンの画面上の位置と大きさを取得する
@@ -7316,6 +8008,40 @@ const createSpreadsheetCustomerCardHtml =
           )
         : [];
 
+    const history =
+      createCustomerDetailHistory(
+        customerId
+      );
+
+    const visitCount =
+      history.length;
+
+    const firstVisit =
+      visitCount > 0
+        ? history[
+            visitCount - 1
+          ].date
+        : "";
+
+    const lastVisit =
+      visitCount > 0
+        ? history[0].date
+        : "";
+
+    const totalSales =
+      history.reduce(
+        (total, visitHistory) => {
+          return (
+            total +
+            Number(
+              visitHistory.amount ||
+              0
+            )
+          );
+        },
+        0
+      );
+
     const featureText =
       features.length > 0
         ? features.join("・")
@@ -7401,9 +8127,14 @@ const createSpreadsheetCustomerCardHtml =
         data-registration-date="${escapeCustomerSearchHtml(
           registrationDate
         )}"
-        data-last-visit=""
-        data-visit-count="0"
-        data-total-sales="0"
+        data-first-visit="${escapeCustomerSearchHtml(
+          firstVisit
+        )}"
+        data-last-visit="${escapeCustomerSearchHtml(
+          lastVisit
+        )}"
+        data-visit-count="${visitCount}"
+        data-total-sales="${totalSales}"
         data-birthday-status="${
           hasBirthday
             ? "known"
@@ -7489,7 +8220,9 @@ const createSpreadsheetCustomerCardHtml =
               </small>
 
               <strong>
-                未登録
+                ${formatCustomerSearchDate(
+                  lastVisit
+                )}
               </strong>
             </span>
 
@@ -7499,7 +8232,7 @@ const createSpreadsheetCustomerCardHtml =
               </small>
 
               <strong>
-                0回
+                ${visitCount}回
               </strong>
             </span>
 
@@ -7509,7 +8242,9 @@ const createSpreadsheetCustomerCardHtml =
               </small>
 
               <strong>
-                ¥0
+                ¥${totalSales.toLocaleString(
+                  "ja-JP"
+                )}
               </strong>
             </span>
           </span>
@@ -7547,12 +8282,18 @@ const renderSpreadsheetCustomers = (
         ".customer-search-result-card"
       );
 
+  // 実データから担当スタッフ候補を更新する
+  renderStaffMemberOptions();
+
   // 現在選択中の並び順と検索条件を反映する
   applyCustomerSearchSort();
   updateCustomerSearchResults();
 
   // ホーム画面の顧客数・誕生日・未登録項目も更新する
   renderHomeDashboard();
+
+  // 最近追加・最近見た顧客も実データへ更新する
+  renderHomeRecentCustomers();
 };
 
 // 保存されていた画面を復元する
@@ -7598,8 +8339,8 @@ const restoreSavedView = () => {
   );
 };
 
-// GASを通してスプレッドシートから顧客一覧を取得する
-const loadCustomersFromSpreadsheet =
+// GASを通して初期表示データを取得する
+const loadInitialAppDataFromSpreadsheet =
   () => {
     // PCでindex.htmlを直接開いた場合は、
     // GASを使用せず通常画面を表示する
@@ -7607,7 +8348,7 @@ const loadCustomersFromSpreadsheet =
       !window.google?.script?.run
     ) {
       console.info(
-        "ローカル表示のため、顧客データの取得を省略しました。"
+        "ローカル表示のため、初期データの取得を省略しました。"
       );
 
       restoreSavedView();
@@ -7617,14 +8358,25 @@ const loadCustomersFromSpreadsheet =
 
     google.script.run
       .withSuccessHandler(
-        (customers) => {
+        (appData) => {
           console.log(
-            "スプレッドシートから取得した顧客データ:",
-            customers
+            "スプレッドシートから取得した初期データ:",
+            appData
           );
 
+          spreadsheetVisitHistories =
+            Array.isArray(
+              appData?.visitHistories
+            )
+              ? appData.visitHistories
+              : [];
+
           renderSpreadsheetCustomers(
-            customers
+            Array.isArray(
+              appData?.customers
+            )
+              ? appData.customers
+              : []
           );
 
           // 顧客カードが作られたあとに、
@@ -7635,7 +8387,7 @@ const loadCustomersFromSpreadsheet =
       .withFailureHandler(
         (error) => {
           console.error(
-            "顧客データの取得に失敗しました:",
+            "初期データの取得に失敗しました:",
             error
           );
 
@@ -7649,11 +8401,11 @@ const loadCustomersFromSpreadsheet =
           );
         }
       )
-      .getCustomers();
+      .getInitialAppData();
   };
 
-// GAS版ではスプレッドシートの顧客データを取得する
-loadCustomersFromSpreadsheet();
+// GAS版ではスプレッドシートの初期データを取得する
+loadInitialAppDataFromSpreadsheet();
 
 // 来店日が未入力の場合、今日の日付を自動で設定する
 const setTodayToVisitDate = () => {

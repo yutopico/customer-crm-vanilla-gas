@@ -1478,6 +1478,16 @@ html.app-loading .app-container {
   overflow: hidden;
 }
 
+/* 最近追加・最近見た顧客がいない場合の案内 */
+.customer-list-empty-message {
+  margin: 0;
+  padding: 28px 16px;
+
+  text-align: center;
+  font-size: 13px;
+  color: #818685;
+}
+
 /* 最近利用した顧客に共通するカードデザイン */
 .customer-card {
   /* カード内で使用できる横幅いっぱいに広げる */
