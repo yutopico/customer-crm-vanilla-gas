@@ -7368,6 +7368,41 @@ viewButtons.forEach((button) => {
   });
 });
 
+// GASを通してスプレッドシートから顧客一覧を取得する
+const loadCustomersFromSpreadsheet =
+  () => {
+    // PCでindex.htmlを直接開いた場合は、
+    // google.script.runが存在しないため処理しない
+    if (
+      !window.google?.script?.run
+    ) {
+      console.info(
+        "ローカル表示のため、顧客データの取得を省略しました。"
+      );
+
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(
+        (customers) => {
+          console.log(
+            "スプレッドシートから取得した顧客データ:",
+            customers
+          );
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "顧客データの取得に失敗しました:",
+            error
+          );
+        }
+      )
+      .getCustomers();
+  };
+
 // ページを更新したとき、最後に表示していた画面を復元する
 const savedView = sessionStorage.getItem("currentView") || "home";
 
@@ -7389,6 +7424,9 @@ showView(savedView, "auto");
 
 // 表示する画面が決まったため、アプリ全体を表示する
 document.documentElement.classList.remove("app-loading");
+
+// GAS版ではスプレッドシートの顧客データを取得する
+loadCustomersFromSpreadsheet();
 
 // 来店日が未入力の場合、今日の日付を自動で設定する
 const setTodayToVisitDate = () => {
