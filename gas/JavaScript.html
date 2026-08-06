@@ -3014,98 +3014,6 @@ customerRecentSearchClearButton.addEventListener(
   }
 );
 
-// 顧客詳細画面で使用する補足の仮データ
-const customerDetailSupplementData = {
-  MU00001: {
-    birthDate: "1985-04-20",
-    memo: "とても気さくで話しやすい。\nシャンパンが好き。\n旅行によく行く。",
-    galleryLabels: [
-      "メイン写真",
-      "好きなお酒",
-      "名刺",
-    ],
-    tendencies: [
-      "シャンパンやお酒の話題を好む。",
-      "旅行について話すことが多い。",
-      "友人と一緒に来店することがある。",
-    ],
-  },
-
-  MU00002: {
-    birthDate: "1992-08-12",
-    memo: "笑顔が印象的。\n旅行の話をよくしている。\nスーツでの来店が多い。",
-    galleryLabels: [
-      "メイン写真",
-      "旅行先の写真",
-    ],
-    tendencies: [
-      "旅行の話題を好む。",
-      "スーツで来店することが多い。",
-      "週末に来店することが多い。",
-    ],
-  },
-
-  MU00003: {
-    birthDate: "1988-12-03",
-    memo: "メガネとスーツが特徴。\n赤ワインが好き。\n落ち着いた席を希望する。",
-    galleryLabels: [
-      "メイン写真",
-      "好きなワイン",
-      "名刺",
-    ],
-    tendencies: [
-      "赤ワインを好む。",
-      "落ち着いた席を希望する。",
-      "一人で来店することが多い。",
-    ],
-  },
-
-  ME00001: {
-    birthDate: "",
-    memo: "音楽の話が好き。\nFEELCYCLEへ定期的に通っている。\n長身で覚えやすい。",
-    galleryLabels: [
-      "メイン写真",
-    ],
-    tendencies: [
-      "音楽や運動の話題を好む。",
-      "一人で来店することが多い。",
-      "定期的に来店している。",
-    ],
-  },
-
-  MU00050: {
-    birthDate: "2003-08-26",
-    memo: "学生。\n爽やかな雰囲気。\nボディメイクを継続している。",
-    galleryLabels: [],
-    tendencies: [
-      "運動や食事管理の話題を好む。",
-      "一人で来店することが多い。",
-      "ボディメイクを継続している。",
-    ],
-  },
-
-  MU00012: {
-    birthDate: "1990-01-15",
-    memo: "眼鏡をかけている。\n会社員。\nゴルフの話をよくする。",
-    galleryLabels: [],
-    tendencies: [
-      "ゴルフの話題を好む。",
-      "週末の来店が多い。",
-      "友人と一緒に来店することがある。",
-    ],
-  },
-};
-
-// 来店履歴に使用する画面確認用のメモ
-const customerDetailDefaultVisitMemos = [
-  "友人と一緒に来店。",
-  "いつもの内容で利用。",
-  "おすすめについて質問された。",
-  "一人でゆっくり利用。",
-  "最近の出来事について話していた。",
-  "次回も来店予定とのこと。",
-];
-
 // タイムラインで一度に表示する来店履歴数
 const customerDetailTimelinePageSize = 5;
 
@@ -3279,75 +3187,9 @@ const getCustomerDetailWeekday = (dateValue) => {
   return weekdays[date.getDay()];
 };
 
-// 画面確認用の来店履歴を作る
-const createCustomerDetailHistory = (customerData) => {
-  const dayOffsets = [
-    0,
-    8,
-    17,
-    25,
-    36,
-    49,
-    63,
-    79,
-    96,
-    115,
-    137,
-    162,
-  ];
-
-  const amountRates = [
-    1.2,
-    1,
-    0.85,
-    1.1,
-    0.75,
-    1.35,
-    0.95,
-    1.05,
-    0.8,
-    1.15,
-    0.9,
-    1.25,
-  ];
-
-  return dayOffsets.map(
-    (daysBefore, index) => {
-      const amount = Math.max(
-        1000,
-        Math.round(
-          (
-            customerData.averageSpend *
-            amountRates[index]
-          ) /
-          100
-        ) *
-        100
-      );
-
-      return {
-        date: getCustomerDetailPreviousDate(
-          customerData.lastVisit,
-          daysBefore
-        ),
-
-        amount,
-
-        staff: customerData.staff,
-
-        visitNumber: Math.max(
-          1,
-          customerData.visitCount - index
-        ),
-
-        memo:
-          customerDetailDefaultVisitMemos[
-            index %
-            customerDetailDefaultVisitMemos.length
-          ],
-      };
-    }
-  );
+// 来店履歴は、来店履歴シートとの接続後に取得する
+const createCustomerDetailHistory = () => {
+  return [];
 };
 
 // 顧客詳細画面のタブを切り替える
@@ -4045,29 +3887,17 @@ const renderCustomerDetail = (
         card.dataset.customerId ===
         requestedCustomerId
       );
-    }) ||
-    customerSearchResultCards[0];
+    });
 
+  // 該当する顧客が取得できていない場合は、
+  // 別の顧客を代わりに表示しない
   if (!resultCard) {
-    return;
+    return false;
   }
 
   const customerId =
     resultCard.dataset.customerId ||
     "";
-
-  const supplementData =
-    customerDetailSupplementData[
-      customerId
-    ] || {
-      birthDate: "",
-      memo:
-        "メモは登録されていません。",
-      galleryLabels: [],
-      tendencies: [
-        "現在、好みや傾向は登録されていません。",
-      ],
-    };
 
   const name =
     resultCard.querySelector(
@@ -4088,22 +3918,27 @@ const renderCustomerDetail = (
     "";
 
   const features =
-    featureText
-      .split("・")
-      .map((featureName) => {
-        return featureName.trim();
-      })
-      .filter(Boolean);
+    resultCard.dataset.hasFeatures ===
+    "true"
+      ? featureText
+          .split("・")
+          .map((featureName) => {
+            return featureName.trim();
+          })
+          .filter(Boolean)
+      : [];
 
-  const visitCount = Number(
-    resultCard.dataset.visitCount ||
-    0
-  );
+  const visitCount =
+    Number(
+      resultCard.dataset.visitCount ||
+      0
+    );
 
-  const totalSales = Number(
-    resultCard.dataset.totalSales ||
-    0
-  );
+  const totalSales =
+    Number(
+      resultCard.dataset.totalSales ||
+      0
+    );
 
   const averageSpend =
     visitCount > 0
@@ -4113,23 +3948,25 @@ const renderCustomerDetail = (
         )
       : 0;
 
+  const birthDate =
+    resultCard.dataset.birthDate ||
+    "";
+
   activeCustomerDetailData = {
     id: customerId,
     name,
     initial,
 
-    birthDate:
-      resultCard.dataset.birthDate ||
-      supplementData.birthDate,
+    birthDate,
 
     age:
       getCustomerDetailAge(
-        resultCard.dataset.birthDate ||
-        supplementData.birthDate
+        birthDate
       ),
 
     registrationDate:
-      resultCard.dataset.registrationDate ||
+      resultCard.dataset
+        .registrationDate ||
       "",
 
     lastVisit:
@@ -4147,7 +3984,8 @@ const renderCustomerDetail = (
       ),
 
     staff:
-      resultCard.dataset.staffMember ||
+      resultCard.dataset
+        .staffMember ||
       "未登録",
 
     hasPhoto:
@@ -4157,24 +3995,19 @@ const renderCustomerDetail = (
     features,
 
     memo:
-      resultCard.dataset.detailMemo ||
-      supplementData.memo,
+      resultCard.dataset
+        .detailMemo ||
+      "メモは登録されていません。",
 
-    galleryLabels:
-      supplementData.galleryLabels,
-
-    tendencies:
-      supplementData.tendencies,
-
-    history: [],
+    // 写真と来店履歴は、
+    // 対応するシートとの接続後に取得する
+    galleryLabels: [],
+    tendencies: [],
+    history:
+      createCustomerDetailHistory(),
 
     resultCard,
   };
-
-  activeCustomerDetailData.history =
-    createCustomerDetailHistory(
-      activeCustomerDetailData
-    );
 
   customerDetailTimelineVisibleLimit =
     customerDetailTimelinePageSize;
@@ -4189,6 +4022,8 @@ const renderCustomerDetail = (
     "currentCustomerDetailId",
     customerId
   );
+
+  return true;
 };
 
 // 顧客詳細画面のタブを押したとき
@@ -7721,17 +7556,62 @@ const renderSpreadsheetCustomers = (
   renderHomeDashboard();
 };
 
+// 保存されていた画面を復元する
+const restoreSavedView = () => {
+  const savedView =
+    sessionStorage.getItem(
+      "currentView"
+    ) ||
+    "home";
+
+  if (
+    savedView ===
+    "customer-detail"
+  ) {
+    const savedCustomerDetailId =
+      sessionStorage.getItem(
+        "currentCustomerDetailId"
+      ) ||
+      "";
+
+    const didRenderCustomer =
+      renderCustomerDetail(
+        savedCustomerDetailId
+      );
+
+    showView(
+      didRenderCustomer
+        ? "customer-detail"
+        : "customer-search",
+      "auto"
+    );
+  } else {
+    showView(
+      savedView,
+      "auto"
+    );
+  }
+
+  // 実データの準備が完了してから、
+  // アプリ全体を表示する
+  document.documentElement.classList.remove(
+    "app-loading"
+  );
+};
+
 // GASを通してスプレッドシートから顧客一覧を取得する
 const loadCustomersFromSpreadsheet =
   () => {
     // PCでindex.htmlを直接開いた場合は、
-    // google.script.runが存在しないため処理しない
+    // GASを使用せず通常画面を表示する
     if (
       !window.google?.script?.run
     ) {
       console.info(
         "ローカル表示のため、顧客データの取得を省略しました。"
       );
+
+      restoreSavedView();
 
       return;
     }
@@ -7747,6 +7627,10 @@ const loadCustomersFromSpreadsheet =
           renderSpreadsheetCustomers(
             customers
           );
+
+          // 顧客カードが作られたあとに、
+          // 保存されていた顧客詳細を表示する
+          restoreSavedView();
         }
       )
       .withFailureHandler(
@@ -7755,32 +7639,19 @@ const loadCustomersFromSpreadsheet =
             "顧客データの取得に失敗しました:",
             error
           );
+
+          showView(
+            "customer-search",
+            "auto"
+          );
+
+          document.documentElement.classList.remove(
+            "app-loading"
+          );
         }
       )
       .getCustomers();
   };
-
-// ページを更新したとき、最後に表示していた画面を復元する
-const savedView = sessionStorage.getItem("currentView") || "home";
-
-// 顧客詳細画面の場合は、最後に開いていた顧客も復元する
-if (savedView === "customer-detail") {
-  const savedCustomerDetailId =
-    sessionStorage.getItem(
-      "currentCustomerDetailId"
-    ) ||
-    "MU00001";
-
-  renderCustomerDetail(
-    savedCustomerDetailId
-  );
-}
-
-// 保存されていた画面を、アニメーションなしで表示する
-showView(savedView, "auto");
-
-// 表示する画面が決まったため、アプリ全体を表示する
-document.documentElement.classList.remove("app-loading");
 
 // GAS版ではスプレッドシートの顧客データを取得する
 loadCustomersFromSpreadsheet();
