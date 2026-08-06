@@ -6336,11 +6336,385 @@ const renderHomeDashboard = () => {
    notifications.length > 0;
 };
 
+// サマリーの集計期間に使用する月数
+const summaryPeriodMonthCounts = {
+  month: 1,
+  "three-months": 3,
+  "six-months": 6,
+  year: 12,
+};
 
-// 主要な数字を表示する
+
+// 選択月をDate型へ変換する
+const createSummarySelectedMonthDate =
+  () => {
+    const [
+      yearText,
+      monthText,
+    ] =
+      activeSummaryMonth.split(
+        "-"
+      );
+
+    const year =
+      Number(
+        yearText
+      );
+
+    const monthIndex =
+      Number(
+        monthText
+      ) - 1;
+
+    if (
+      !Number.isInteger(
+        year
+      ) ||
+      !Number.isInteger(
+        monthIndex
+      )
+    ) {
+      return new Date(
+        2026,
+        6,
+        1
+      );
+    }
+
+    return new Date(
+      year,
+      monthIndex,
+      1
+    );
+  };
+
+
+// 指定した日付が集計期間内か確認する
+const isSummaryDateInRange = (
+  dateValue,
+  startDate,
+  endDate
+) => {
+  const targetDate =
+    createCustomerDetailDate(
+      dateValue
+    );
+
+  if (!targetDate) {
+    return false;
+  }
+
+  return (
+    targetDate >= startDate &&
+    targetDate <= endDate
+  );
+};
+
+
+// 比較用の割合を表示形式へ整える
+const formatSummaryComparisonRate = (
+  currentValue,
+  previousValue
+) => {
+  if (previousValue === 0) {
+    return currentValue === 0
+      ? "0.0%"
+      : "算出不可";
+  }
+
+  const comparisonRate =
+    (
+      (
+        currentValue -
+        previousValue
+      ) /
+      previousValue
+    ) *
+    100;
+
+  return (
+    `${
+      comparisonRate >= 0
+        ? "+"
+        : ""
+    }${
+      comparisonRate.toFixed(
+        1
+      )
+    }%`
+  );
+};
+
+
+// 数値の差を符号つきで整える
+const formatSummaryNumberDifference = (
+  difference,
+  suffix
+) => {
+  return (
+    `${
+      difference >= 0
+        ? "+"
+        : ""
+    }${difference}${suffix}`
+  );
+};
+
+
+// 金額の差を符号つきで整える
+const formatSummaryCurrencyDifference = (
+  difference
+) => {
+  const absoluteDifference =
+    Math.abs(
+      difference
+    );
+
+  return (
+    `${
+      difference >= 0
+        ? "+"
+        : "-"
+    }¥${
+      absoluteDifference.toLocaleString(
+        "ja-JP"
+      )
+    }`
+  );
+};
+
+
+// 選択月・選択期間のKPIを実データから計算する
+const getRealSummaryKpiData =
+  () => {
+    const selectedMonthDate =
+      createSummarySelectedMonthDate();
+
+    const periodMonthCount =
+      summaryPeriodMonthCounts[
+        activeSummaryPeriod
+      ] ||
+      1;
+
+    // 選択している期間
+    const currentStartDate =
+      new Date(
+        selectedMonthDate.getFullYear(),
+        selectedMonthDate.getMonth() -
+          periodMonthCount +
+          1,
+        1
+      );
+
+    const currentEndDate =
+      new Date(
+        selectedMonthDate.getFullYear(),
+        selectedMonthDate.getMonth() +
+          1,
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+
+    // 比較対象となる直前の同じ長さの期間
+    const previousStartDate =
+      new Date(
+        currentStartDate.getFullYear(),
+        currentStartDate.getMonth() -
+          periodMonthCount,
+        1
+      );
+
+    const previousEndDate =
+      new Date(
+        currentStartDate.getFullYear(),
+        currentStartDate.getMonth(),
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+
+    const currentVisits =
+      spreadsheetVisitHistories.filter(
+        (visitHistory) => {
+          return isSummaryDateInRange(
+            visitHistory.visitDate,
+            currentStartDate,
+            currentEndDate
+          );
+        }
+      );
+
+    const previousVisits =
+      spreadsheetVisitHistories.filter(
+        (visitHistory) => {
+          return isSummaryDateInRange(
+            visitHistory.visitDate,
+            previousStartDate,
+            previousEndDate
+          );
+        }
+      );
+
+    const calculateSales = (
+      visitHistories
+    ) => {
+      return visitHistories.reduce(
+        (
+          total,
+          visitHistory
+        ) => {
+          return (
+            total +
+            Number(
+              visitHistory
+                .paymentAmount ||
+              0
+            )
+          );
+        },
+        0
+      );
+    };
+
+    const currentSales =
+      calculateSales(
+        currentVisits
+      );
+
+    const previousSales =
+      calculateSales(
+        previousVisits
+      );
+
+    const currentCustomerCards =
+      Array.from(
+        customerSearchResultCards
+      ).filter((customerCard) => {
+        return isSummaryDateInRange(
+          customerCard.dataset
+            .registrationDate ||
+            "",
+          currentStartDate,
+          currentEndDate
+        );
+      });
+
+    const previousCustomerCards =
+      Array.from(
+        customerSearchResultCards
+      ).filter((customerCard) => {
+        return isSummaryDateInRange(
+          customerCard.dataset
+            .registrationDate ||
+            "",
+          previousStartDate,
+          previousEndDate
+        );
+      });
+
+    const currentVisitCount =
+      currentVisits.length;
+
+    const previousVisitCount =
+      previousVisits.length;
+
+    const currentNewCustomerCount =
+      currentCustomerCards.length;
+
+    const previousNewCustomerCount =
+      previousCustomerCards.length;
+
+    const currentAverageSpend =
+      currentVisitCount > 0
+        ? Math.round(
+            currentSales /
+            currentVisitCount
+          )
+        : 0;
+
+    const previousAverageSpend =
+      previousVisitCount > 0
+        ? Math.round(
+            previousSales /
+            previousVisitCount
+          )
+        : 0;
+
+    return {
+      sales:
+        currentSales,
+
+      salesRate:
+        formatSummaryComparisonRate(
+          currentSales,
+          previousSales
+        ),
+
+      salesDifference:
+        formatSummaryCurrencyDifference(
+          currentSales -
+          previousSales
+        ),
+
+      visits:
+        currentVisitCount,
+
+      visitDifference:
+        formatSummaryNumberDifference(
+          currentVisitCount -
+          previousVisitCount,
+          "回"
+        ),
+
+      visitRate:
+        formatSummaryComparisonRate(
+          currentVisitCount,
+          previousVisitCount
+        ),
+
+      newCustomers:
+        currentNewCustomerCount,
+
+      newDifference:
+        formatSummaryNumberDifference(
+          currentNewCustomerCount -
+          previousNewCustomerCount,
+          "名"
+        ),
+
+      newRate:
+        formatSummaryComparisonRate(
+          currentNewCustomerCount,
+          previousNewCustomerCount
+        ),
+
+      averageSpend:
+        currentAverageSpend,
+
+      averageDifference:
+        formatSummaryCurrencyDifference(
+          currentAverageSpend -
+          previousAverageSpend
+        ),
+
+      averageRate:
+        formatSummaryComparisonRate(
+          currentAverageSpend,
+          previousAverageSpend
+        ),
+    };
+  };
+
+
+// 主要な数字を実データから表示する
 const renderSummaryKpis = () => {
   const periodData =
-    getActiveSummaryPeriodData();
+    getRealSummaryKpiData();
 
   summarySalesValue.textContent =
     formatSummaryCurrency(
