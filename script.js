@@ -23,6 +23,32 @@ const homeAiSummaryList =
     "#home-ai-summary-list"
   );
 
+// ホーム画面の主要な数字の表示先を取得する
+const homeCustomerCount =
+  document.querySelector(
+    "#home-customer-count"
+  );
+
+const homeSalesLabel =
+  document.querySelector(
+    "#home-sales-label"
+  );
+
+const homeMonthSales =
+  document.querySelector(
+    "#home-month-sales"
+  );
+
+const homeBirthdayCount =
+  document.querySelector(
+    "#home-birthday-count"
+  );
+
+const homeRegistrationCount =
+  document.querySelector(
+    "#home-registration-count"
+  );
+
 // お知らせの件数と一覧の表示先を取得する
 const notificationBadge =
   document.querySelector(
@@ -5482,9 +5508,50 @@ const getHomeDashboardData = () => {
       customerSearchResultCards
     );
 
-  // 現在の月を取得する
+  // 現在の年と月を取得する
+  const currentDate =
+    new Date();
+
+  const currentYear =
+    currentDate.getFullYear();
+
   const currentMonth =
-    new Date().getMonth() + 1;
+    currentDate.getMonth() + 1;
+
+  // 登録されている顧客数を数える
+  const customerCount =
+    customerCards.length;
+
+  // 今月登録された顧客を数える
+  const currentMonthRegistrationCount =
+    customerCards.filter(
+      (customerCard) => {
+        const registrationDateValue =
+          customerCard.dataset
+            .registrationDate ||
+          "";
+
+        const registrationDate =
+          new Date(
+            `${registrationDateValue}T00:00:00`
+          );
+
+        if (
+          Number.isNaN(
+            registrationDate.getTime()
+          )
+        ) {
+          return false;
+        }
+
+        return (
+          registrationDate.getFullYear() ===
+            currentYear &&
+          registrationDate.getMonth() + 1 ===
+            currentMonth
+        );
+      }
+    ).length;
 
   // 今月が誕生日のお客様を数える
   const currentMonthBirthdayCount =
@@ -5539,6 +5606,9 @@ const getHomeDashboardData = () => {
   };
 
   return {
+    customerCount,
+    currentMonthRegistrationCount,
+    
     monthNumber: monthData.monthNumber,
 
     sales: periodData.sales,
@@ -5548,9 +5618,6 @@ const getHomeDashboardData = () => {
       periodData.newCustomers,
     averageSpend:
       periodData.averageSpend,
-
-    birthdayMonth:
-      currentMonth,
 
     // 誕生日通知で表示する対象月
     birthdayMonth:
@@ -5587,6 +5654,31 @@ const getHomeDashboardData = () => {
 const renderHomeDashboard = () => {
   const homeData =
     getHomeDashboardData();
+
+  // ホーム画面の主要な数字を最新データへ更新する
+  homeCustomerCount.textContent =
+    String(
+      homeData.customerCount
+    );
+
+  // 選択中の月と、その月の売上を表示する
+  homeSalesLabel.textContent =
+    `${homeData.monthNumber}月売上`;
+
+  homeMonthSales.textContent =
+    formatSummaryCurrency(
+      homeData.sales
+    );
+
+  homeBirthdayCount.textContent =
+    String(
+      homeData.birthdays
+    );
+
+  homeRegistrationCount.textContent =
+    String(
+      homeData.currentMonthRegistrationCount
+    );
 
   // 現在のデータからサマリー文章を作る
   const summaryItems = [

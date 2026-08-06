@@ -483,7 +483,8 @@
                                 <span>顧客数</span>
                             </dt>
                             <dd class="stat-value">
-                                128<span class="stat-unit">名</span>
+                                <span id="home-customer-count">0</span>
+                                <span class="stat-unit">名</span>
                             </dd>
                             <dd class="stat-description">
                                 登録済みのお客様
@@ -515,10 +516,20 @@
                                         <path d="M12 12v6"></path>
                                     </svg>
                                 </span>
-                                <span>累計売上</span>
+                                <span id="home-sales-label">
+                                    月間売上
+                                </span>
                             </dt>
-                            <dd class="stat-value">¥5,480,000</dd>
-                            <dd class="stat-description">全期間の累計売上</dd>
+                            <dd
+                                class="stat-value"
+                                id="home-month-sales"
+                            >
+                                ¥0
+                            </dd>
+
+                            <dd class="stat-description">
+                                今月の売上
+                            </dd>
                         </div>
 
                         <!-- 今月誕生日を迎える顧客数 -->
@@ -556,7 +567,8 @@
                                 <span>今月誕生日</span>
                             </dt>
                             <dd class="stat-value">
-                                9<span class="stat-unit">名</span>
+                                <span id="home-birthday-count">0</span>
+                                <span class="stat-unit">名</span>
                             </dd>
                             <dd class="stat-description">今月お誕生日のお客様</dd>
                         </div>
@@ -571,7 +583,8 @@
                                 <span>今月登録</span>
                             </dt>
                             <dd class="stat-value">
-                                12<span class="stat-unit">名</span>
+                                <span id="home-registration-count">0</span>
+                                <span class="stat-unit">名</span>
                             </dd>
                             <dd class="stat-description">今月の新規登録</dd>
                         </div>
