@@ -5721,7 +5721,7 @@ const summaryMonthData = {
 
 // 選択した月を保存するときに使用する名前
 const summaryMonthStorageKey =
-  "customerCrmSummaryMonth";
+  "customerCrmSummaryMonthV2";
 
 // 前回選択した月を取得する
 const savedSummaryMonth =
@@ -5729,14 +5729,14 @@ const savedSummaryMonth =
     summaryMonthStorageKey
   );
 
-// 保存されている月が使用可能なら復元する
+// 保存された月が正しい形式なら復元する
 let activeSummaryMonth =
-  Object.prototype.hasOwnProperty.call(
-    summaryMonthData,
-    savedSummaryMonth
+  /^\d{4}-\d{2}$/.test(
+    savedSummaryMonth ||
+    ""
   )
     ? savedSummaryMonth
-    : "2026-07";
+    : "2026-08";
 
 // 現在選択中の集計期間
 let activeSummaryPeriod = "month";
@@ -5751,14 +5751,62 @@ let activeSummaryNoVisitDays = 30;
 let isSummaryNoVisitShowingAll = false;
 
 // 現在選択中の月データを取得する
-const getActiveSummaryMonthData = () => {
-  return (
-    summaryMonthData[
-      activeSummaryMonth
-    ] ||
-    summaryMonthData["2026-07"]
-  );
-};
+const getActiveSummaryMonthData =
+  () => {
+    const selectedMonthData =
+      summaryMonthData[
+        activeSummaryMonth
+      ];
+
+    if (selectedMonthData) {
+      return selectedMonthData;
+    }
+
+    const [
+      yearText,
+      monthText,
+    ] =
+      activeSummaryMonth.split(
+        "-"
+      );
+
+    const year =
+      Number(
+        yearText
+      );
+
+    const monthNumber =
+      Number(
+        monthText
+      );
+
+    const lastDay =
+      new Date(
+        year,
+        monthNumber,
+        0
+      ).getDate();
+
+    // 下部サマリーの実データ化が終わるまでは、
+    // 既存構造を保ちながら選択月だけ正しく反映する
+    return {
+      ...summaryMonthData[
+        "2026-07"
+      ],
+
+      monthNumber,
+
+      referenceDate:
+        `${yearText}-${monthText}-${
+          String(
+            lastDay
+          ).padStart(
+            2,
+            "0"
+          )
+        }`,
+    };
+  };
 
 // 現在選択中の集計期間データを取得する
 const getActiveSummaryPeriodData = () => {
