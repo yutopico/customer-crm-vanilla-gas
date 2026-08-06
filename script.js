@@ -266,8 +266,9 @@ const bottomNavItems = document.querySelectorAll(".bottom-nav-item[data-view]");
 // 顧客検索画面に使用する要素を取得する
 const customerSearchInput = document.querySelector("#customer-search-input");
 const customerSearchClearButton = document.querySelector(".customer-search-clear-button");
-const customerSearchResultCards = document.querySelectorAll(".customer-search-result-card");
-const customerSearchResultOpenButtons = document.querySelectorAll(".customer-search-result-open");
+// 顧客カードはスプレッドシート取得後に入れ替わるため、
+// あとから更新できる変数として管理する
+let customerSearchResultCards =document.querySelectorAll(".customer-search-result-card");
 const customerSearchResultCount = document.querySelector("#customer-search-result-count");
 const customerSearchEmptyState = document.querySelector("#customer-search-empty-state");
 const customerSearchResetButton = document.querySelector(".customer-search-reset-button");
@@ -4142,10 +4143,12 @@ const renderCustomerDetail = (
     initial,
 
     birthDate:
+      resultCard.dataset.birthDate ||
       supplementData.birthDate,
 
     age:
       getCustomerDetailAge(
+        resultCard.dataset.birthDate ||
         supplementData.birthDate
       ),
 
@@ -4614,39 +4617,53 @@ customerDetailGalleryList.addEventListener(
 );
 
 // 顧客カードから顧客詳細画面を開く
-customerSearchResultOpenButtons.forEach((openButton) => {
-  openButton.addEventListener(
-    "click",
-    () => {
-      addCustomerRecentSearch(
-        customerSearchInput.value
+// あとから作られたカードにも対応できるよう、
+// 顧客一覧全体でクリックを受け取る
+customerSearchResultList.addEventListener(
+  "click",
+  (event) => {
+    const openButton =
+      event.target.closest(
+        ".customer-search-result-open"
       );
 
-      const customerId =
-        openButton.dataset.customerId ||
-        "";
-
-      saveCustomerRecentlyViewedCustomer(
-        customerId
-      );
-
-      if (
-        activeCustomerSort ===
-        "recently-viewed"
-      ) {
-        applyCustomerSearchSort();
-      }
-
-      renderCustomerDetail(
-        customerId
-      );
-
-      showView(
-        "customer-detail"
-      );
+    if (
+      !openButton ||
+      !customerSearchResultList.contains(
+        openButton
+      )
+    ) {
+      return;
     }
-  );
-});
+
+    addCustomerRecentSearch(
+      customerSearchInput.value
+    );
+
+    const customerId =
+      openButton.dataset.customerId ||
+      "";
+
+    saveCustomerRecentlyViewedCustomer(
+      customerId
+    );
+
+    if (
+      activeCustomerSort ===
+      "recently-viewed"
+    ) {
+      applyCustomerSearchSort();
+    }
+
+    renderCustomerDetail(
+      customerId
+    );
+
+    showView(
+      "customer-detail"
+    );
+  }
+);
 
 // スクロール量に応じてTOPボタンの表示を切り替える
 const updateCustomerSearchScrollTopButton = () => {
@@ -7367,6 +7384,367 @@ viewButtons.forEach((button) => {
   });
 });
 
+// HTMLへ安全に文字を表示するため、
+// 特殊な記号をHTML用の文字へ変換する
+const escapeCustomerSearchHtml = (
+  value
+) => {
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    (character) => {
+      const escapedCharacters = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
+      };
+
+      return escapedCharacters[
+        character
+      ];
+    }
+  );
+};
+
+// YYYY-MM-DDをYYYY/MM/DDの表示へ変換する
+const formatCustomerSearchDate = (
+  dateValue
+) => {
+  if (!dateValue) {
+    return "未登録";
+  }
+
+  const [
+    year,
+    month,
+    day,
+  ] = dateValue.split("-");
+
+  if (
+    !year ||
+    !month ||
+    !day
+  ) {
+    return "未登録";
+  }
+
+  return `${year}/${month}/${day}`;
+};
+
+// 今月登録された顧客かどうかを確認する
+const isCustomerRegisteredThisMonth = (
+  registrationDateValue
+) => {
+  if (!registrationDateValue) {
+    return false;
+  }
+
+  const registrationDate =
+    new Date(
+      `${registrationDateValue}T00:00:00`
+    );
+
+  if (
+    Number.isNaN(
+      registrationDate.getTime()
+    )
+  ) {
+    return false;
+  }
+
+  const currentDate =
+    new Date();
+
+  return (
+    registrationDate.getFullYear() ===
+      currentDate.getFullYear() &&
+    registrationDate.getMonth() ===
+      currentDate.getMonth()
+  );
+};
+
+// スプレッドシートの顧客1名分から、
+// 顧客検索カードのHTMLを作る
+const createSpreadsheetCustomerCardHtml =
+  (customer) => {
+    const customerId =
+      customer.customerId || "";
+
+    const customerName =
+      customer.name ||
+      "名前未登録";
+
+    const registrationDate =
+      customer.registrationDate ||
+      "";
+
+    const birthday =
+      customer.birthday ||
+      "";
+
+    const staffMember =
+      customer.staffMember ||
+      "未登録";
+
+    const photoUrl =
+      customer.photoUrl ||
+      "";
+
+    const memo =
+      customer.memo ||
+      "";
+
+    const features =
+      Array.isArray(
+        customer.features
+      )
+        ? customer.features.filter(
+            Boolean
+          )
+        : [];
+
+    const featureText =
+      features.length > 0
+        ? features.join("・")
+        : "特徴未登録";
+
+    const initial =
+      customerName
+        .trim()
+        .slice(0, 1) ||
+      "?";
+
+    const birthdayParts =
+      birthday.split("-");
+
+    const birthYear =
+      birthdayParts[0] || "";
+
+    const birthMonth =
+      birthdayParts[1]
+        ? String(
+            Number(
+              birthdayParts[1]
+            )
+          )
+        : "";
+
+    const birthDay =
+      birthdayParts[2]
+        ? String(
+            Number(
+              birthdayParts[2]
+            )
+          )
+        : "";
+
+    const hasBirthday =
+      birthday !== "";
+
+    const hasPhoto =
+      photoUrl !== "";
+
+    const hasMemo =
+      memo !== "";
+
+    const hasFeatures =
+      features.length > 0;
+
+    const isNewCustomer =
+      isCustomerRegisteredThisMonth(
+        registrationDate
+      );
+
+    const rankClass =
+      isNewCustomer
+        ? "customer-rank--new"
+        : "customer-rank--regular";
+
+    const rankLabel =
+      isNewCustomer
+        ? "新規"
+        : "登録済";
+
+    const searchText = [
+      customerName,
+      customerId,
+      featureText,
+      memo,
+      staffMember,
+    ].join(" ");
+
+    return `
+      <article
+        class="customer-search-result-card"
+        data-customer-name="${escapeCustomerSearchHtml(
+          customerName
+        )}"
+        data-customer-id="${escapeCustomerSearchHtml(
+          customerId
+        )}"
+        data-search-text="${escapeCustomerSearchHtml(
+          searchText
+        )}"
+        data-registration-date="${escapeCustomerSearchHtml(
+          registrationDate
+        )}"
+        data-last-visit=""
+        data-visit-count="0"
+        data-total-sales="0"
+        data-birthday-status="${
+          hasBirthday
+            ? "known"
+            : "unknown"
+        }"
+        data-birth-date="${escapeCustomerSearchHtml(
+          birthday
+        )}"
+        data-birth-year="${escapeCustomerSearchHtml(
+          birthYear
+        )}"
+        data-birth-month="${escapeCustomerSearchHtml(
+          birthMonth
+        )}"
+        data-birth-day="${escapeCustomerSearchHtml(
+          birthDay
+        )}"
+        data-has-photo="${String(
+          hasPhoto
+        )}"
+        data-has-memo="${String(
+          hasMemo
+        )}"
+        data-has-features="${String(
+          hasFeatures
+        )}"
+        data-staff-member="${escapeCustomerSearchHtml(
+          staffMember
+        )}"
+        data-detail-memo="${escapeCustomerSearchHtml(
+          memo
+        )}"
+      >
+        <button
+          class="customer-search-result-open"
+          type="button"
+          aria-label="${escapeCustomerSearchHtml(
+            customerName
+          )}さんの顧客詳細を開く"
+          data-customer-id="${escapeCustomerSearchHtml(
+            customerId
+          )}"
+        >
+          <span
+            class="customer-search-result-avatar"
+            aria-hidden="true"
+          >
+            ${escapeCustomerSearchHtml(
+              initial
+            )}
+          </span>
+
+          <span class="customer-search-result-profile">
+            <span class="customer-search-result-name-row">
+              <strong>
+                ${escapeCustomerSearchHtml(
+                  customerName
+                )}
+              </strong>
+
+              <span class="customer-rank ${rankClass}">
+                ${rankLabel}
+              </span>
+            </span>
+
+            <span class="customer-search-result-id">
+              ${escapeCustomerSearchHtml(
+                customerId
+              )}
+            </span>
+
+            <span class="customer-search-result-features">
+              ${escapeCustomerSearchHtml(
+                featureText
+              )}
+            </span>
+          </span>
+
+          <span class="customer-search-result-statistics">
+            <span class="customer-search-result-stat">
+              <small>
+                最終来店
+              </small>
+
+              <strong>
+                未登録
+              </strong>
+            </span>
+
+            <span class="customer-search-result-stat">
+              <small>
+                来店回数
+              </small>
+
+              <strong>
+                0回
+              </strong>
+            </span>
+
+            <span class="customer-search-result-stat">
+              <small>
+                累計売上
+              </small>
+
+              <strong>
+                ¥0
+              </strong>
+            </span>
+          </span>
+
+          <span
+            class="customer-search-result-arrow"
+            aria-hidden="true"
+          >
+            ›
+          </span>
+        </button>
+      </article>
+    `;
+  };
+
+// 取得した顧客を検索結果へ表示する
+const renderSpreadsheetCustomers = (
+  customers
+) => {
+  if (!Array.isArray(customers)) {
+    return;
+  }
+
+  customerSearchResultList.innerHTML =
+    customers
+      .map(
+        createSpreadsheetCustomerCardHtml
+      )
+      .join("");
+
+  // 入れ替え後のカードを再取得する
+  customerSearchResultCards =
+    customerSearchResultList
+      .querySelectorAll(
+        ".customer-search-result-card"
+      );
+
+  // 現在選択中の並び順と検索条件を反映する
+  applyCustomerSearchSort();
+  updateCustomerSearchResults();
+
+  // ホーム画面の顧客数・誕生日・未登録項目も更新する
+  renderHomeDashboard();
+};
+
 // GASを通してスプレッドシートから顧客一覧を取得する
 const loadCustomersFromSpreadsheet =
   () => {
@@ -7387,6 +7765,10 @@ const loadCustomersFromSpreadsheet =
         (customers) => {
           console.log(
             "スプレッドシートから取得した顧客データ:",
+            customers
+          );
+
+          renderSpreadsheetCustomers(
             customers
           );
         }
