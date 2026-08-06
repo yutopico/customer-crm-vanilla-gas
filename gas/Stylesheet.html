@@ -1,11 +1,9766 @@
 <style>
-  body {
-    background-color: #e1d2c0;
-    color: #515254;
-    font-family: sans-serif;
+/* ==================================================
+   01. 全体設定
+   ページ全体に共通する基本ルール
+================================================== */
+
+/* すべての要素で、paddingとborderを横幅・高さの内側に含めて計算する */
+* {
+  box-sizing: border-box;
+}
+
+/* ページ全体に適用する基本デザイン */
+body {
+  /* ブラウザが最初から持っている外側の余白をなくす */
+  margin: 0;
+
+  /* ページ全体の文字を読みやすいゴシック体にする */
+  font-family: sans-serif;
+
+  /* ページ全体の背景を、温かみのあるミルクティー系ベージュにする */
+  background-color: #e1d2c0;
+
+  /* ページ全体の文字色を、少し青みを含んだ淡いグレーにする */
+  color: #818685;
+
+  /* 固定した下部ナビでページ末尾が隠れないよう余白を作る */
+  padding-bottom: 120px;
+
+  /* ボタンにもページ全体と同じ文字設定を引き継ぐ */
+  button {
+    font: inherit;
+  }
+}
+
+/* スマホ用検索パネルの表示中は背後を固定する */
+body.customer-search-panel-open {
+  overflow: hidden;
+}
+
+
+/* ==================================================
+   02. 共通レイアウト
+   アプリ全体の横幅や余白
+================================================== */
+
+/* アプリ画面全体の横幅と余白を管理する */
+.app-container {
+  /* 使用できる横幅いっぱいに広げる */
+  width: 100%;
+
+  /* 横幅が広いPCでも、画面を広げすぎない */
+  max-width: 1200px;
+
+  /* 左右の余白を自動計算し、画面中央に配置する */
+  margin: 0 auto;
+
+  /* スマホでは画面端との間に16pxの余白を作る */
+  padding: 16px;
+}
+
+/* 画面切り替え */
+/* 通常の画面は非表示にする */
+.app-view {
+  display: none;
+}
+
+/* 現在選択されている画面だけ表示する */
+.app-view--active {
+  display: block;
+}
+
+/* 表示する画面が決まるまでアプリを隠し、読み込み時の点滅を防ぐ */
+html.app-loading .app-container {
+  visibility: hidden;
+}
+
+
+/* ==================================================
+   03. 上部ヘッダー
+   ロゴ・アプリ名・お知らせ・メニュー
+================================================== */
+
+/* アプリ名と操作ボタンを横並びにする上部ヘッダー */
+.top-header {
+  /* ロゴ側とボタン側を横に並べる */
+  display: flex;
+
+  /* 左右の要素を両端へ配置する */
+  justify-content: space-between;
+
+  /* 縦方向の位置を中央にそろえる */
+  align-items: center;
+
+  /* 左右のグループが近づきすぎないよう間隔を作る */
+  gap: 16px;
+
+  /* ヘッダー下部に余白を作る */
+  padding: 8px 0 20px;
+
+  /* ヘッダーと次の内容を区切る薄い線 */
+  border-bottom: 1px solid #c9bdaf;
+}
+
+/* ロゴ・アプリ名・説明文を横並びにする */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  /* 横幅が狭い場合に文字が画面を押し広げないようにする */
+  min-width: 0;
+}
+
+/* アプリの円形ロゴ */
+.brand-logo {
+  /* ロゴの大きさ */
+  width: 52px;
+  height: 52px;
+
+  /* 円形の外枠を作る */
+  border: 10px solid #aeb6a5;
+  border-radius: 50%;
+
+  /* オレンジ色の丸を配置する基準にする */
+  position: relative;
+
+  /* 画面が狭くてもロゴがつぶれないようにする */
+  flex-shrink: 0;
+}
+
+/* ロゴ右下のオレンジ色の丸 */
+.brand-logo::after {
+  /* 疑似要素を表示するために必要な設定 */
+  content: "";
+
+  width: 12px;
+  height: 12px;
+
+  background-color: #f19a52;
+  border-radius: 50%;
+
+  /* 円形ロゴの右下へ配置する */
+  position: absolute;
+  right: -8px;
+  bottom: -4px;
+
+  /* 背景との間に縁を作る */
+  border: 3px solid #e1d2c0;
+}
+
+/* アプリ名 */
+.brand-text h1 {
+  margin: 0;
+
+  /* 画面幅に合わせて文字サイズを変化させる */
+  font-size: clamp(24px, 4vw, 32px);
+
+  color: #515254;
+  letter-spacing: 0.08em;
+}
+
+/* アプリ名の下に表示する説明文 */
+.brand-text p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #818685;
+}
+
+/* お知らせボタンとメニューボタンを横並びにする */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  /* 画面が狭くてもボタンがつぶれないようにする */
+  flex-shrink: 0;
+}
+
+/* ヘッダー右側の操作ボタン */
+.icon-button {
+  /* ブラウザ標準のボタンデザインを消す */
+  border: none;
+  background-color: transparent;
+
+  /* アイコンと文字を縦に並べる */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  padding: 6px;
+  color: #515254;
+
+  /* マウスを乗せたときにクリックできることを示す */
+  cursor: pointer;
+}
+
+/* マウス操作時にブラウザ標準の黒い枠を表示しない */
+.icon-button:focus {
+  outline: none;
+}
+
+/* キーボード操作時はセージ色の枠で選択位置を示す */
+.icon-button:focus-visible {
+  outline: 2px solid #7d9680;
+  outline-offset: 3px;
+  border-radius: 12px;
+
+  /* 選択中であることをやさしく補強する */
+  background-color: rgb(241 232 220 / 55%);
+}
+
+/* マウスを乗せたときに操作できることを伝える */
+.icon-button:hover {
+  background-color: rgb(241 232 220 / 45%);
+  border-radius: 12px;
+}
+
+/* お知らせボタンのSVGベルアイコン */
+.header-action-icon {
+  /* アイコンの大きさ */
+  width: 24px;
+  height: 24px;
+
+  /* SVG内の塗りつぶしを消して線画にする */
+  fill: none;
+
+  /* 親要素の文字色を線の色として使用する */
+  stroke: currentColor;
+
+  /* アプリになじむ細めの線 */
+  stroke-width: 1.8;
+
+  /* 線の端と角を丸くしてやさしい印象にする */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  /* SVG下部に余計な隙間ができるのを防ぐ */
+  display: block;
+
+  /* ベルだけ上に見えるため、少し下へ移動する */
+  transform: translateY(3px);
+}
+
+/* ヘッダー操作ボタンのアイコン部分 */
+.icon-button-icon {
+  /* バッジを重ねる基準にする */
+  position: relative;
+
+  /* SVGを中央に置く */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+}
+
+/* 通知件数バッジ */
+.notification-badge {
+  /* ベル右上に重ねて配置する */
+  position: absolute;
+  top: -6px;
+  right: -4px;
+
+  /* 数字を中央に置く */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+
+  /* 見た目 */
+  background-color: #f19a52;
+  color: #ffffff;
+  border: 2px solid #e1d2c0;
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+
+  z-index: 1;
+}
+
+/* お知らせボタンと通知パネルをまとめる領域 */
+.notification-area {
+  /* 通知パネルを配置する基準にする */
+  position: relative;
+}
+
+/* ベルの下に表示する通知パネル */
+.notification-panel {
+  /* 通常は非表示にする */
+  display: none;
+
+  /* 通常のレイアウトから切り離してベルの下に浮かせる */
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+
+  /* スマホ画面からはみ出さない範囲で横幅を確保する */
+  width: min(360px, calc(100vw - 32px));
+
+  padding: 16px;
+
+  background-color: #f1e8dc;
+  border: 1px solid #c9bdaf;
+  border-radius: 20px;
+
+  /* 背景からふんわり浮かせる */
+  box-shadow: 0 16px 40px rgb(81 82 84 / 18%);
+
+  /* ほかの要素より手前に表示する */
+  z-index: 100;
+}
+
+/* デザイン確認中は通知パネルを表示する */
+.notification-panel--open {
+  display: block;
+}
+
+/* 通知パネル上部のタイトルと件数を横並びにする */
+.notification-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding-bottom: 12px;
+  border-bottom: 1px solid #c9bdaf;
+}
+
+/* 通知パネルのタイトル */
+.notification-panel-title {
+  margin: 0;
+  font-size: 20px;
+  color: #515254;
+}
+
+/* 通知件数 */
+.notification-panel-count {
+  padding: 4px 9px;
+
+  background-color: #e3e8e4;
+  border-radius: 999px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 通知一覧 */
+.notification-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 通知1件分のボタン */
+.notification-item {
+  /* ブラウザ標準のボタンデザインを消す */
+  width: 100%;
+  border: none;
+  background-color: transparent;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  padding: 14px 4px;
+
+  color: #515254;
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+/* 通知と通知の間に区切り線を入れる */
+.notification-item:not(:last-child) {
+  border-bottom: 1px solid #d6cabd;
+}
+
+/* 未確認通知を表すオレンジ色の丸 */
+.notification-item-dot {
+  width: 8px;
+  height: 8px;
+
+  margin-top: 6px;
+
+  background-color: #f5b187;
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+/* 通知のタイトルと説明文を縦に並べる */
+.notification-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+/* 通知タイトル */
+.notification-item-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* 通知の補足説明 */
+.notification-item-description {
+  color: #818685;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* メニューボタンとメニューパネルをまとめる領域 */
+.menu-area {
+  /* メニューパネルを配置する基準にする */
+  position: relative;
+}
+
+/* メニューボタンの下に表示するパネル */
+.menu-panel {
+  /* 画面全体を覆う */
+  position: fixed;
+  inset: 0;
+
+  /* 以前の小型パネル用の横幅を解除する */
+  width: auto;
+  height: 100dvh;
+  padding: 0;
+
+  background-color: #f1e8dc;
+
+  /* 小型パネル用の見た目を解除する */
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+
+  /* 下部ナビなどより手前に表示する */
+  z-index: 1000;
+
+  /* パネル全体から内容がはみ出さないようにする */
+  overflow: hidden;
+
+  /* メニューボタンの中心を、開くアニメーションの起点にする */
+  --menu-origin-x: 100%;
+  --menu-origin-y: 0;
+
+  /* 閉じているときは起点部分まで小さくする */
+  clip-path: circle(
+    0 at var(--menu-origin-x) var(--menu-origin-y)
+  );
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  /*閉じるときの動き円が収束してから透明・非表示にする*/
+  transition:
+    clip-path 0.6s cubic-bezier(0.76, 0, 0.24, 1),
+    opacity 0.2s ease 0.35s,
+    visibility 0s linear 0.6s;
+
+  /* clip-pathのアニメーションを滑らかにする */
+  will-change: clip-path;
+}
+
+/* JavaScriptでこのクラスが付いたときに表示する */
+.menu-panel--open {
+  /* メニューボタンの位置から画面全体へ円を広げる */
+  clip-path: circle(
+    150vmax at var(--menu-origin-x) var(--menu-origin-y)
+  );
+
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  /*
+    開くときは即座に表示して、
+    ボタン位置から画面全体へ広げる
+  */
+  transition:
+    clip-path 0.6s cubic-bezier(0.76, 0, 0.24, 1),
+    opacity 0.2s ease,
+    visibility 0s;
+}
+
+/* 全画面メニューを左のビジュアルと右のメニューに分ける */
+.menu-panel-layout {
+  display: grid;
+  grid-template-columns: 58% 42%;
+
+  width: 100%;
+  height: 100%;
+}
+
+/* 左側のビジュアルエリア */
+.menu-panel-visual {
+  min-width: 0;
+  min-height: 0;
+
+  background-color: #7d9680;
+}
+
+/* 全画面メニュー左側のビジュアル */
+.menu-panel-visual-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 16px;
+
+  width: 100%;
+  height: 100%;
+  padding: 48px;
+
+  /*写真の上に暗いグラデーションを重ねて、白い文字を読みやすくする*/
+  background:
+    linear-gradient(
+      180deg,
+      rgb(125 150 128 / 8%) 0%,
+      rgb(81 82 84 / 18%) 48%,
+      rgb(81 82 84 / 72%) 100%
+    ),
+    url("./images/menu-visual.jpg") center 44% / cover no-repeat;
+
+  color: #ffffff;
+}
+
+/* 左側に表示する英字ラベル */
+.menu-panel-visual-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+/* 左側に表示するメッセージ */
+.menu-panel-visual-text {
+  max-width: 560px;
+
+  font-size: clamp(24px, 3vw, 42px);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* 右側のメニューエリア */
+.menu-panel-content {
+  display: grid;
+  grid-template-rows: auto 1fr;
+
+  min-width: 0;
+  height: 100%;
+  padding: 40px 48px;
+
+  background-color: #f1e8dc;
+
+  /* メニュー項目が増えても右側だけスクロールできるようにする */
+  overflow-y: auto;
+}
+
+/* メニュータイトルと閉じるボタンを横並びにする */
+.menu-panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  padding-bottom: 20px;
+  border-bottom: 1px solid #c9bdaf;
+}
+
+/* 全画面メニューを閉じるボタン */
+.menu-close-button {
+  border: 1px solid #818685;
+  background-color: transparent;
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 18px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* 閉じるボタンへマウスを乗せたとき */
+.menu-close-button:hover {
+  background-color: #e3e8e4;
+  border-color: #7d9680;
+}
+
+/* 閉じるボタンをキーボードで選択したとき */
+.menu-close-button:focus-visible {
+  outline: 2px solid #7d9680;
+  outline-offset: 3px;
+}
+
+/* メニューパネルのタイトル */
+.menu-panel-title {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 42px);
+  color: #515254;
+  letter-spacing: 0.05em;
+}
+
+/* メニュー項目を縦に並べる */
+.menu-list {
+  display: flex;
+  flex-direction: column;
+
+  /* 右側エリアの中央付近にメニューを配置する */
+  align-self: center;
+
+  width: 100%;
+  max-width: 520px;
+  margin: 32px auto;
+}
+
+/* メニュー1件分のボタン */
+.menu-item {
+  /* ブラウザ標準のボタンデザインを消す */
+  width: 100%;
+  border: none;
+  background-color: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 20px 6px;
+
+  color: #515254;
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+
+  /* ホバー時の変化をなめらかにする */
+  transition:
+    background-color 0.2s ease,
+    padding 0.2s ease;
+}
+
+/* メニュー項目の間に区切り線を入れる */
+.menu-item:not(:last-child) {
+  border-bottom: 1px solid #d6cabd;
+}
+
+/* マウスを乗せた項目だけ少し明るくする */
+.menu-item:hover {
+  background-color: rgb(255 255 255 / 35%);
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+/* キーボード操作時に選択位置を見えるようにする */
+.menu-item:focus-visible {
+  outline: 2px solid #7d9680;
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+/* メニュー名と説明文を縦に並べる */
+.menu-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+/* メニュー名 */
+.menu-item-title {
+  font-size: clamp(16px, 1.5vw, 20px);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* メニューの補足説明 */
+.menu-item-description {
+  color: #818685;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* メニュー右側の矢印 */
+.menu-item-arrow {
+  color: #7d9680;
+  font-size: 22px;
+  line-height: 1;
+
+  flex-shrink: 0;
+}
+
+/* メニューボタンのSVGアイコン */
+.header-menu-icon {
+  width: 24px;
+  height: 24px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+
+  display: block;
+
+  /* お知らせボタンとの高さを微調整する */
+  transform: translateY(3px);
+}
+
+/* ボタン内の最初のspanをアイコンとして扱う */
+.icon-button > span:first-child {
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* アイコンの下に表示する文字 */
+.action-label {
+  font-size: 12px;
+}
+
+
+/* ==================================================
+   04. 挨拶・AIサマリー
+   ホーム画面上部の情報エリア
+================================================== */
+
+/* 挨拶とAIサマリーを配置するホーム上部エリア */
+.home-overview {
+  /* 複数の領域を行と列で配置できるGridを使用する */
+  display: grid;
+
+  /*
+    PCでは2列にする。
+    情報量が多いAIカードを少し広くする。
+  */
+  grid-template-columns: 0.9fr 1.1fr;
+
+  /* 2つの領域の間に余白を作る */
+  gap: 24px;
+
+  /* 上部ヘッダーと次の内容との間に余白を作る */
+  padding: 32px 0;
+}
+
+/* 利用者への挨拶を表示する領域 */
+.welcome-message {
+  /* 挨拶を縦方向の中央付近に配置する */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  /* 文字が端に寄りすぎないよう内側に余白を作る */
+  padding: 24px 8px;
+}
+
+/* 挨拶の見出し */
+.welcome-message h2 {
+  /* ブラウザ標準の余白をなくす */
+  margin: 0;
+
+  /* 画面幅に応じて文字サイズを変化させる */
+  font-size: clamp(28px, 5vw, 44px);
+
+  color: #515254;
+  letter-spacing: 0.04em;
+}
+
+/* 挨拶の補足文章 */
+.welcome-message p {
+  margin: 12px 0 0;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #818685;
+}
+
+/* AIによる分析結果を表示するカード */
+.ai-summary-card {
+  /* 背景より明るい色でカードを目立たせる */
+  background-color: #f1e8dc;
+
+  /* カードの角を丸くする */
+  border-radius: 24px;
+
+  /* カード内部に余白を作る */
+  padding: 24px;
+
+  /* 背景から少し浮いて見えるよう、薄い影を付ける */
+  box-shadow: 0 8px 24px rgba(63, 69, 67, 0.08);
+}
+
+/* AIサマリーのタイトルとNEWラベルを横並びにする */
+.ai-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* AIサマリーの見出し */
+.ai-summary-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #515254;
+}
+
+/* 新しい情報であることを示すラベル */
+.new-label {
+  background-color: #f19a52;
+  color: #ffffff;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+}
+
+/* AIが分析した内容を並べるリスト */
+.ai-summary-list {
+  margin: 20px 0 0;
+  padding-left: 20px;
+
+  color: #555c59;
+  line-height: 1.7;
+}
+
+/* 2件目以降の項目の上に余白を作る */
+.ai-summary-list li + li {
+  margin-top: 10px;
+}
+
+
+/* ==================================================
+   05. 主要メニュー
+   新規顧客登録・常連顧客更新・顧客検索・サマリー
+================================================== */
+
+/* スマホとタブレットでは主要メニューを2列にする */
+.action-grid {
+  display: grid;
+
+  /* 同じ幅の列を2つ作る */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  /* カード同士の間隔 */
+  gap: 12px;
+}
+
+/* 4つの主要メニューに共通するカードデザイン */
+.action-card {
+  /* ブラウザ標準のボタンデザインを整える */
+  border: 1px solid rgba(63, 69, 67, 0.12);
+  background-color: #f1e8dc;
+
+  /* カードらしい丸みを付ける */
+  border-radius: 20px;
+
+  /* カード内部に余白を作る */
+  padding: 20px;
+
+  /* 4枚の高さをそろえる */
+  min-height: 170px;
+
+  /* タイトルと説明文を縦に並べる */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0;
+
+  /* ボタン内の文字を左揃えにする */
+  text-align: left;
+
+  /* ページ全体の文字色に合わせる */
+  color: #515254;
+
+  /* マウスを乗せたとき、操作できることを示す */
+  cursor: pointer;
+
+  /* ホバー時の動きをなめらかにする */
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* 主要メニューのアイコンと機能名 */
+.action-card-header {
+  /* アイコンと機能名を横に並べる */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* アイコンと機能名の間に余白を作る */
+  gap: 12px;
+
+  /* カード内の横幅いっぱいに広げる */
+  width: 100%;
+}
+
+
+/* マウスを乗せたカードを少し浮かせる */
+.action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(63, 69, 67, 0.1);
+}
+
+
+/* キーボード操作で選択されたカードを見やすくする */
+.action-card:focus-visible {
+  outline: 3px solid rgba(241, 154, 82, 0.4);
+  outline-offset: 3px;
+}
+
+
+/* カード内の機能名 */
+.action-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.4;
+  color: #515254;
+}
+
+
+/* カード内の補足説明 */
+.action-card-description {
+  /* アイコンとタイトルのまとまりから28px離す */
+  margin-top: 28px;
+
+  /* カード内の横幅いっぱいに広げる */
+  width: 100%;
+
+  /* 説明文をカードの中央へ配置する */
+  text-align: center;
+
+  font-size: 13px;
+  line-height: 1.5;
+  color: #818685;
+}
+
+/* 新規顧客登録カード */
+.action-card--new {
+  background-color: #f5b187;
+}
+
+/* 常連顧客更新カード */
+.action-card--regular {
+  background-color: #7d9680;
+}
+
+/* セージグリーン上でも読みやすい明るめの説明文 */
+.action-card--regular .action-card-description {
+  color: #e3e8e4;
+}
+
+/* 主要メニュー内のアイコンを表示する円形エリア */
+.action-card-icon {
+  /* アイコン背景の大きさ */
+  width: 52px;
+  height: 52px;
+
+  /* アイコンを円の中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 白に近い半透明の背景で、カード色となじませる */
+  background-color: rgba(255, 255, 255, 0.72);
+
+  /* 円形にする */
+  border-radius: 50%;
+
+  /* タイトルと同じ色をアイコンに使用する */
+  color: #818685;
+
+  /* タイトルと横並びなので下余白は付けない */
+  margin-bottom: 0;
+}
+
+
+/* SVGアイコン自体の大きさ */
+.action-card-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+
+/* ==================================================
+   06. 集計エリア
+   顧客数・累計売上・今月誕生日・今月登録
+================================================== */
+
+/* 顧客数や売上など、主要な数値をまとめるカード */
+.stats-summary {
+  /* 主要メニューとの間に余白を作る */
+  margin-top: 24px;
+
+  /* カード内部に余白を作る */
+  padding: 20px;
+
+  /* 背景より明るい色でカードとして見せる */
+  background-color: #f1e8dc;
+
+  /* カードの角を丸くする */
+  border-radius: 16px;
+}
+
+/* スマホとタブレットでは集計項目を2列にする */
+.stats-grid {
+  display: grid;
+
+  /* 同じ幅の列を2つ作る */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  /* dl要素が持つブラウザ標準の余白をなくす */
+  margin: 0;
+}
+
+/* 4つの集計項目に共通するデザイン */
+.stat-item {
+  /* 各項目の内側に余白を作る */
+  padding: 16px;
+
+  /* アイコン・文字・数値を中央揃えにする */
+  text-align: center;
+}
+
+/* スマホとタブレットでは左側と右側の項目を区切る */
+.stat-item:nth-child(odd) {
+  border-right: 1px solid rgba(129, 134, 133, 0.2);
+}
+
+/* スマホとタブレットでは上段と下段の項目を区切る */
+.stat-item:nth-child(-n + 2) {
+  border-bottom: 1px solid rgba(129, 134, 133, 0.2);
+}
+
+/* 集計項目内のブラウザ標準の余白をなくす */
+.stat-label,
+.stat-value,
+.stat-description {
+  margin: 0;
+}
+
+/* 集計項目のアイコンと項目名 */
+.stat-label {
+  /* アイコンと項目名を横に並べる */
+  display: flex;
+
+  /* アイコンと項目名を中央へ配置する */
+  justify-content: center;
+  align-items: center;
+
+  /* アイコンと項目名の間に余白を作る */
+  gap: 8px;
+
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  color: #818685;
+}
+
+/* 集計結果の数値 */
+.stat-value {
+  /* 項目名との間に余白を作る */
+  margin-top: 8px;
+
+  /* 画面幅に応じて数値の大きさを変化させる */
+  font-size: clamp(22px, 4vw, 30px);
+
+  font-weight: bold;
+  line-height: 1.2;
+  color: #515254;
+
+  /* 数字の横幅をそろえて読みやすくする */
+  font-variant-numeric: tabular-nums;
+
+  /* 大きな金額でもカードから飛び出しにくくする */
+  overflow-wrap: anywhere;
+}
+
+/* 「名」など、数値の横に表示する単位 */
+.stat-unit {
+  /* 数値と単位の間に余白を作る */
+  margin-left: 4px;
+
+  /* 数値より小さく表示する */
+  font-size: 0.5em;
+
+  color: #818685;
+}
+
+/* 数値の下に表示する補足説明 */
+.stat-description {
+  /* 数値との間に余白を作る */
+  margin-top: 8px;
+
+  font-size: 12px;
+  line-height: 1.5;
+  color: #818685;
+}
+
+/* 集計項目に表示する共通アイコン */
+.stat-icon {
+  /* アイコンを配置する領域の大きさ */
+  width: 28px;
+  height: 28px;
+
+  /* アイコンを領域の中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 横並びなので外側の余白は付けない */
+  margin: 0;
+
+  /* 画面が狭くてもアイコンがつぶれないようにする */
+  flex-shrink: 0;
+
+  /* 基本のアイコン色をセージグリーンにする */
+  color: #7d9680;
+}
+
+/* 集計項目内のSVGアイコン自体の大きさ */
+.stat-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* 今月誕生日のアイコン */
+.stat-icon--birthday {
+  /* ケーキアイコンだけ淡いオレンジにする */
+  color: #f5b187;
+}
+
+/* 今月登録に表示するNEWアイコン */
+.stat-icon--new {
+  /* NEWの文字幅に合わせて横幅を変化させる */
+  width: auto;
+  min-width: 38px;
+  height: 22px;
+
+  /* NEWの文字の左右に余白を作る */
+  padding: 0 7px;
+
+  /* NEWの文字を中央に配置する */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* NEWアイコンの外枠を作る */
+  border: 1.5px solid #7d9680;
+  border-radius: 5px;
+
+  background-color: transparent;
+  color: #7d9680;
+
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+
+/* ==================================================
+   07. 共通セクション見出し
+   やることリストなど、各情報エリアの見出し
+================================================== */
+
+/* セクション名と一覧表示ボタンを横並びにする */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 16px;
+}
+
+/* セクションのアイコンと名前 */
+.section-title {
+  /* ブラウザ標準の見出し余白をなくす */
+  margin: 0;
+
+  /* アイコンと名前を横に並べる */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 18px;
+  color: #515254;
+}
+
+/* セクション名の横に表示するアイコン */
+.section-title-icon {
+  /* アイコンを表示する領域の大きさ */
+  width: 26px;
+  height: 26px;
+
+  /* アイコンを中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 画面が狭くてもアイコンをつぶさない */
+  flex-shrink: 0;
+
+  color: #7d9680;
+}
+
+/* セクション見出し内のSVGサイズ */
+.section-title-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* 一覧画面へ移動するボタン */
+.section-link {
+  /* ブラウザ標準のボタンデザインをなくす */
+  border: none;
+  background-color: transparent;
+
+  /* 文字と矢印を横に並べる */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 0;
+
+  font-size: 12px;
+  color: #818685;
+
+  cursor: pointer;
+}
+
+/* 一覧表示ボタンへマウスを乗せたとき */
+.section-link:hover {
+  color: #515254;
+}
+
+/* やることリスト全体 */
+.todo-section {
+  /* 集計エリアとの間に余白を作る */
+  margin-top: 28px;
+}
+
+
+/* ==================================================
+   08. やることリスト
+   写真・誕生日・メモ・特徴の未登録項目
+================================================== */
+
+/* スマホとタブレットでは、やることカードを2列にする */
+.todo-grid {
+  display: grid;
+
+  /* 同じ幅の列を2つ作る */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  /* カード同士の間隔を作る */
+  gap: 12px;
+
+  /* セクション見出しとの間に余白を作る */
+  margin-top: 16px;
+}
+
+/* 4つのやることカードに共通するデザイン */
+.todo-card {
+  /* 矢印をカード右下へ配置する基準にする */
+  position: relative;
+
+  /* ブラウザ標準のボタンデザインを整える */
+  border: 1px solid rgba(63, 69, 67, 0.12);
+  background-color: #f1e8dc;
+
+  /* カードの角を丸くする */
+  border-radius: 18px;
+
+  /* カード内部に余白を作る */
+  padding: 18px;
+
+  /* カードの高さをそろえる */
+  min-height: 150px;
+
+  /* アイコンや文字を縦に並べる */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  /* ボタン内の文字を左揃えにする */
+  text-align: left;
+
+  color: #515254;
+
+  /* 操作できることを示す */
+  cursor: pointer;
+
+  /* ホバー時の動きをなめらかにする */
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* やることカード内のアイコンを表示する円形エリア */
+.todo-card-icon {
+  /* アイコン背景の大きさ */
+  width: 40px;
+  height: 40px;
+
+  /* アイコンを円の中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 淡いオレンジの背景を付ける */
+  background-color: rgba(245, 177, 135, 0.2);
+
+  /* 円形にする */
+  border-radius: 50%;
+
+  /* すべてのアイコンを淡いオレンジで統一する */
+  color: #f5b187;
+
+  /* アイコンはタイトルと横並びなので下余白を付けない */
+  margin: 0;
+
+  /* 画面が狭くてもアイコンがつぶれないようにする */
+  flex-shrink: 0;
+}
+
+/* やることカード内のSVGアイコン自体の大きさ */
+.todo-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* やることカード内の項目名 */
+.todo-card-title {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.4;
+  color: #515254;
+}
+
+/* 対応が必要なお客様の人数 */
+.todo-card-value {
+  /* アイコンと項目名のグループとの間に余白を作る */
+  margin-top: 12px;
+
+  /* 数値をカードの中央に配置する */
+  text-align: center;
+
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #515254;
+
+  /* 数字の横幅をそろえて読みやすくする */
+  font-variant-numeric: tabular-nums;
+}
+
+/* 人数の横に表示する「名」 */
+.todo-card-unit {
+  /* 数値との間に少し余白を作る */
+  margin-left: 3px;
+
+  /* 数値より小さく表示する */
+  font-size: 0.5em;
+
+  color: #818685;
+}
+
+/* カード下部に表示する補足説明 */
+.todo-card-description {
+  /* 数値との間に広めの余白を作る */
+  margin-top: 18px;
+
+  /* 右端と矢印に近づきすぎないよう余白を作る */
+  padding-right: 28px;
+
+  /* 説明文を右揃えにする */
+  text-align: right;
+
+  font-size: 12px;
+  line-height: 1.5;
+  color: #818685;
+}
+
+/* カード右下に表示する矢印 */
+.todo-card-arrow {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+
+  font-size: 20px;
+  line-height: 1;
+  color: #818685;
+}
+
+/* やることカードのアイコンと項目名 */
+.todo-card-header {
+  /* アイコンと項目名を横に並べる */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* アイコンと項目名を近づけて、1つのまとまりにする */
+  gap: 8px;
+
+  /* カード内で使用できる横幅いっぱいに広げる */
+  width: 100%;
+}
+
+/* マウスを乗せたカードを少し浮かせる */
+.todo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(63, 69, 67, 0.1);
+}
+
+/* キーボード操作で選択されたカードを見やすくする */
+.todo-card:focus-visible {
+  outline: 3px solid rgba(241, 154, 82, 0.4);
+  outline-offset: 3px;
+}
+
+
+/* ==================================================
+   09. 最近利用した顧客
+   最近追加したお客様・最近見たお客様
+================================================== */
+
+/* スマホとタブレットでは2つの顧客一覧を縦に並べる */
+.recent-customers-grid {
+  display: grid;
+
+  /* 1列で表示する */
+  grid-template-columns: 1fr;
+
+  /* 2つの一覧の間に余白を作る */
+  gap: 28px;
+
+  /* やることリストとの間に余白を作る */
+  margin-top: 28px;
+}
+
+/* 顧客カードを並べる領域 */
+.customer-list {
+  display: grid;
+
+  /* 顧客カード同士を隙間なく並べる */
+  gap: 0;
+
+  /* セクション見出しとの間に余白を作る */
+  margin-top: 16px;
+
+  /* 3人分をまとめる一覧カードの外枠 */
+  border: 1px solid rgba(63, 69, 67, 0.12);
+  background-color: #f1e8dc;
+
+  /* 一覧カードの角を丸くする */
+  border-radius: 16px;
+
+  /* 内部の顧客カードが角丸の外へはみ出さないようにする */
+  overflow: hidden;
+}
+
+/* 最近利用した顧客に共通するカードデザイン */
+.customer-card {
+  /* カード内で使用できる横幅いっぱいに広げる */
+  width: 100%;
+
+  /* 外枠はcustomer-list側でまとめて管理する */
+  border: none;
+  background-color: transparent;
+  border-radius: 0;
+
+  /* カード内部に余白を作る */
+  padding: 16px;
+
+  /* 顧客アイコン・顧客情報・矢印を横に並べる */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  /* ボタン内の文字を左揃えにする */
+  text-align: left;
+
+  color: #515254;
+  cursor: pointer;
+
+  /* ホバー・クリック時の背景色の変化をなめらかにする */
+  transition: background-color 0.2s ease;
+}
+
+  /* 最後の顧客以外の下に区切り線を入れる */
+.customer-card:not(:last-child) {
+  border-bottom: 1px solid rgba(129, 134, 133, 0.28);
+}
+
+/* マウスを乗せた顧客カードの背景を少し明るくする */
+.customer-card:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* クリックしている間、顧客カードの背景色を変える */
+.customer-card:active {
+  background-color: rgba(245, 177, 135, 0.2);
+}
+
+/* キーボード操作で選択されたカードを見やすくする */
+.customer-card:focus-visible {
+  outline: 3px solid rgba(241, 154, 82, 0.4);
+  outline-offset: 3px;
+}
+
+/* 顧客写真が未登録の場合に表示する丸い仮アイコン */
+.customer-avatar {
+  /* 仮アイコンの大きさ */
+  width: 48px;
+  height: 48px;
+
+  /* 文字を円の中央に配置する */
+  display: grid;
+  place-items: center;
+
+  /* 円形にする */
+  border-radius: 50%;
+
+  /* セージグリーン系の背景を付ける */
+  background-color: rgba(125, 150, 128, 0.2);
+  color: #7d9680;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  /* 画面が狭くてもアイコンをつぶさない */
+  flex-shrink: 0;
+}
+
+/* 顧客名と補足情報を縦に並べる */
+.customer-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  /* 矢印を右端へ押し出す */
+  flex: 1;
+
+  /* 長い文字がカードを押し広げないようにする */
+  min-width: 0;
+}
+
+/* 顧客名 */
+.customer-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #515254;
+}
+
+/* 登録日や閲覧時刻などの補足情報 */
+.customer-meta {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #818685;
+}
+
+/* ==================================================
+   10. 下部ナビゲーション
+   ホーム・来店登録・顧客検索・サマリー
+================================================== */
+
+/* 主要画面へ移動する下部ナビゲーション */
+.bottom-navigation {
+  /* 画面をスクロールしても下部に表示し続ける */
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+
+  /* 画面中央へ配置する */
+  transform: translateX(-50%);
+
+  /* ほかの要素より手前に表示する */
+  z-index: 100;
+
+  /* スマホでは左右に16pxの余白を残す */
+  width: min(calc(100% - 32px), 620px);
+
+  /* 4つの項目を同じ幅で横に並べる */
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  /* ナビゲーション内部に余白を作る */
+  padding: 8px;
+
+  /* 背景を白に近い色にして、ページから浮かせる */
+  background-color: rgba(255, 255, 255, 0.94);
+
+  /* 外枠と角丸を付ける */
+  border: 1px solid rgba(63, 69, 67, 0.1);
+  border-radius: 24px;
+
+  /* やわらかい影を付ける */
+  box-shadow: 0 12px 32px rgba(63, 69, 67, 0.16);
+}
+
+/* 4つのナビゲーション項目に共通するデザイン */
+.bottom-nav-item {
+  /* 選択中の上線を配置する基準にする */
+  position: relative;
+
+  /* ブラウザ標準のボタンデザインをなくす */
+  border: none;
+  background-color: transparent;
+
+  /* 項目の角を丸くする */
+  border-radius: 18px;
+
+  /* アイコンと文字を縦に並べる */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  /* 項目の外側に余白を作り、選択背景を小さく見せる */
+  margin: 4px 6px;
+
+  /* ボタン内部に余白を作る */
+  padding: 10px 4px 8px;
+
+  color: #818685;
+  cursor: pointer;
+
+  /*
+    背景色・文字色・大きさの変化を、
+    0.2秒かけて自然に切り替える
+  */
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* ナビゲーション項目へマウスを乗せたとき */
+.bottom-nav-item:hover {
+  background-color: rgba(125, 150, 128, 0.1);
+  color: #515254;
+}
+
+/* ナビゲーション項目をクリックしている間 */
+.bottom-nav-item:active {
+  transform: scale(0.97);
+}
+
+/* キーボード操作で選択された項目を見やすくする */
+.bottom-nav-item:focus-visible {
+  outline: 3px solid rgba(241, 154, 82, 0.4);
+  outline-offset: 2px;
+}
+
+/* 下部ナビゲーション内のアイコン領域 */
+.bottom-nav-icon {
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+}
+
+/* 下部ナビゲーション内のSVGサイズ */
+.bottom-nav-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* アイコンの下に表示する項目名 */
+.bottom-nav-label {
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.2;
+
+  /* 項目名を途中で改行させない */
+  white-space: nowrap;
+}
+
+/* 現在表示している画面のナビゲーション項目 */
+.bottom-nav-item--active {
+  background-color: rgba(125, 150, 128, 0.18);
+  color: #7d9680;
+}
+
+/* 現在表示している項目の上に短い線を表示する */
+.bottom-nav-item--active::before {
+  content: "";
+
+  position: absolute;
+  top: -8px;
+
+  /* 選択中背景の直線部分に近い長さになるよう左右から指定する */
+  left: 16px;
+  right: 16px;
+
+  height: 4px;
+
+  background-color: #7d9680;
+  border-radius: 999px;
+}
+
+
+/* ==================================================
+   新規顧客登録画面
+================================================== */
+
+/* 新規顧客登録画面の上部余白 */
+#new-customer-view {
+  padding-top: 12px;
+}
+
+/* 新規顧客登録フォーム全体 */
+.customer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  width: 100%;
+  max-width: 760px;
+
+  margin: 28px auto 0;
+}
+
+/* --------------------------------------------------
+   フォーム共通部品
+   カード・ラベル・入力欄・補足文・セレクト
+-------------------------------------------------- */
+/* 入力項目をまとめる白いカード */
+.form-card {
+  padding: 24px;
+
+  background-color: #f1e8dc;
+  border: 1px solid rgb(81 82 84 / 10%);
+  border-radius: 20px;
+
+  box-shadow: 0 8px 24px rgb(81 82 84 / 8%);
+}
+
+/* 1つの入力項目 */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 項目名と必須ラベルを横並びにする */
+.form-label-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 入力項目の名前 */
+.form-label {
+  color: #515254;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------
+ 必須を表すラベル 
+-------------------------------------------------- */
+/* 必須項目を表す淡いオレンジのラベル */
+.required-label {
+  padding: 4px 8px;
+
+  /* 淡いオレンジの背景 */
+  background-color: rgb(245 177 135 / 22%);
+
+  /* 丸すぎない、角丸の四角形 */
+  border-radius: 6px;
+
+  color: #e8945f;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* テキスト入力欄 */
+.form-input {
+  width: 100%;
+
+  padding: 15px 16px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 12px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* 入力例として表示する薄い文字 */
+.form-input::placeholder {
+  color: #a5aaa8;
+}
+
+/* 入力欄を選択したとき */
+.form-input:focus {
+  outline: none;
+
+  border-color: #7d9680;
+  box-shadow: 0 0 0 3px rgb(125 150 128 / 16%);
+}
+
+/* --------------------------------------------------
+ エラーメッセージ表示
+-------------------------------------------------- */
+/* 必須項目に問題があるカード */
+.form-card--invalid {
+  border-color: #c97863;
+
+  box-shadow:
+    0 0 0 4px rgb(201 120 99 / 12%);
+}
+
+/* エラーがある入力欄 */
+.form-card--invalid .form-input,
+.form-card--invalid .form-select {
+  border-color: #c97863;
+}
+
+/* オリジナルの必須エラーメッセージ */
+.form-error-message {
+  margin: 10px 0 0;
+
+  color: #c97863;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* hidden中は表示しない */
+.form-error-message[hidden] {
+  display: none;
+}
+
+/* --------------------------------------------------
+似ている顧客のお知らせ
+-------------------------------------------------- */
+/* 類似する顧客が見つかったときの注意モジュール */
+.similar-customer-alert {
+  margin-top: 12px;
+  padding: 18px;
+
+  background-color: rgb(245 177 135 / 16%);
+  border: 1px solid rgb(232 148 95 / 35%);
+  border-radius: 14px;
+}
+
+/* 注意アイコンと見出しを横に並べる */
+.similar-customer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 丸い注意アイコン */
+.similar-customer-icon {
+  width: 24px;
+  height: 24px;
+
+  display: grid;
+  place-items: center;
+
+  background-color: rgb(245 177 135 / 28%);
+  border-radius: 50%;
+
+  color: #e8945f;
+  font-size: 14px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+/* 「似ている顧客がいます」の見出し */
+.similar-customer-header h3 {
+  margin: 0;
+
+  color: #d9824e;
+  font-size: 15px;
+}
+
+/* 見出し下の説明文 */
+.similar-customer-description {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 類似する顧客1件分のカード */
+.similar-customer-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-top: 16px;
+  padding: 16px;
+
+  background-color: rgb(255 255 255 / 60%);
+  border: 1px solid rgb(81 82 84 / 10%);
+  border-radius: 14px;
+}
+
+/* 顧客名と最終来店日を縦に並べる */
+.similar-customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+/* 類似する顧客の名前 */
+.similar-customer-name {
+  color: #515254;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* 類似する顧客の補足情報 */
+.similar-customer-meta {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* 顧客詳細を確認するボタン */
+.similar-customer-button {
+  border: 1px solid #7d9680;
+  background-color: transparent;
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 確認ボタンへマウスを乗せたとき */
+.similar-customer-button:hover {
+  background-color: #7d9680;
+  color: #ffffff;
+}
+
+/* キーボード操作時の選択位置 */
+.similar-customer-button:focus-visible {
+  outline: 3px solid rgb(125 150 128 / 22%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+ 誕生日入力 
+---------------------------------------------------*/
+/* fieldsetが持つブラウザ標準の余白を調整する */
+.birthday-card {
+  margin: 0;
+}
+
+/* 誕生日カードのタイトル */
+.birthday-card-title {
+  margin: 0;
+}
+
+/* 誕生日の見出し行と入力項目の間隔 */
+.birthday-card > .form-label-row {
+  margin-bottom: 16px;
+}
+
+/* 誕生日入力と不明の選択肢 */
+.birthday-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 28px;
+
+  margin-bottom: 18px;
+}
+
+/* ラジオボタンと文字を横に並べる */
+.radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  color: #515254;
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+/* ブラウザ標準のラジオボタンを見えなくする */
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* オリジナルのラジオボタン */
+.radio-mark {
+  width: 22px;
+  height: 22px;
+
+  border: 2px solid #d6cabd;
+  border-radius: 50%;
+
+  background-color: #ffffff;
+
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* 選択中の外枠 */
+.radio-input:checked + .radio-mark {
+  border-color: #f19a52;
+}
+
+/* 選択中に中央の丸を表示する */
+.radio-input:checked + .radio-mark::after {
+  content: "";
+
+  position: absolute;
+  inset: 4px;
+
+  background-color: #f19a52;
+  border-radius: 50%;
+}
+
+/* キーボード操作時の選択位置 */
+.radio-input:focus-visible + .radio-mark {
+  outline: 3px solid rgb(241 154 82 / 22%);
+  outline-offset: 3px;
+}
+
+/* 年・月・日を横並びにする */
+.birthday-selects {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* セレクトボックスと矢印を配置する領域 */
+.birthday-select-field {
+  position: relative;
+  min-width: 0;
+}
+
+/* オリジナルの下向き矢印 */
+.birthday-select-field::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  right: 18px;
+
+  width: 8px;
+  height: 8px;
+
+  border-right: 2px solid #818685;
+  border-bottom: 2px solid #818685;
+
+  transform: translateY(-70%) rotate(45deg);
+
+  /* 矢印がクリックを邪魔しないようにする */
+  pointer-events: none;
+}
+
+/* 年・月・日の入力欄 */
+.form-select {
+  width: 100%;
+
+  /* 右側は矢印用に広く空ける */
+  padding: 15px 48px 15px 16px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 12px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 15px;
+
+  /* ブラウザ標準の矢印を消す */
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* セレクトボックスを選択したとき */
+.form-select:focus {
+  outline: none;
+
+  border-color: #7d9680;
+  box-shadow: 0 0 0 3px rgb(125 150 128 / 16%);
+}
+
+/* 不明を選んだときの入力不可状態 */
+.form-select:disabled {
+  background-color: rgb(255 255 255 / 45%);
+  color: #a5aaa8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* 画面には表示せず、読み上げ機能には伝える文字 */
+.visually-hidden {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+
+  border: 0;
+}
+
+/* --------------------------------------------------
+   特徴入力
+-------------------------------------------------- */
+/* 特徴タグを横並びにする */
+.feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 特徴タグ */
+.feature-chip {
+  min-width: 112px;
+
+  padding: 10px 18px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 10px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 特徴タグへマウスを乗せたとき */
+.feature-chip:hover {
+  border-color: #f5b187;
+  transform: translateY(-1px);
+}
+
+/* 選択されている特徴タグ */
+.feature-chip--selected {
+  background-color: rgb(245 177 135 / 22%);
+  border-color: #f5b187;
+  color: #d9824e;
+  font-weight: 700;
+}
+
+/* キーボード操作時の選択位置 */
+.feature-chip:focus-visible {
+  outline: 3px solid rgb(245 177 135 / 24%);
+  outline-offset: 3px;
+}
+
+/* 特徴入力欄と追加ボタン */
+.feature-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+
+  margin-top: 16px;
+}
+
+/* 特徴を追加するボタン */
+.feature-add-button {
+  min-width: 96px;
+
+  padding: 0 20px;
+
+  background-color: transparent;
+  border: 1px solid #f19a52;
+  border-radius: 12px;
+
+  color: #e8945f;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 追加ボタンへマウスを乗せたとき */
+.feature-add-button:hover {
+  background-color: #f19a52;
+  color: #ffffff;
+}
+
+/* 追加ボタンをキーボードで選択したとき */
+.feature-add-button:focus-visible {
+  outline: 3px solid rgb(245 177 135 / 24%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+   特徴タグの編集
+-------------------------------------------------- */
+
+/* 特徴の見出しと編集ボタン */
+.feature-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 16px;
+}
+
+/* 見出しの余白を親要素側で管理する */
+.feature-card-title {
+  margin: 0;
+}
+
+/* タグ編集モードを開くボタン */
+.feature-edit-button {
+  padding: 7px 12px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 8px;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 編集ボタンへマウスを乗せたとき */
+.feature-edit-button:hover {
+  background-color: #7d9680;
+  color: #ffffff;
+}
+
+/* キーボード操作時の選択位置 */
+.feature-edit-button:focus-visible {
+  outline: 3px solid rgb(125 150 128 / 22%);
+  outline-offset: 3px;
+}
+
+/* 選択件数と削除ボタンを並べる編集バー */
+.feature-editor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-top: 16px;
+  padding: 12px 14px;
+
+  background-color: rgb(125 150 128 / 10%);
+  border-radius: 10px;
+}
+
+/* hidden属性が付いているときは非表示にする */
+.feature-editor-bar[hidden] {
+  display: none;
+}
+
+/* 選択件数 */
+.feature-selected-message {
+  margin: 0;
+
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 選択件数の数字 */
+.feature-selected-count {
+  color: #515254;
+  font-size: 15px;
+}
+
+/* 選択したタグを削除するボタン */
+.feature-delete-button {
+  padding: 8px 12px;
+
+  background-color: transparent;
+  border: 1px solid #c97863;
+  border-radius: 8px;
+
+  color: #c97863;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* 削除ボタンへマウスを乗せたとき */
+.feature-delete-button:hover:not(:disabled) {
+  background-color: #c97863;
+  color: #ffffff;
+}
+
+/* タグが未選択の場合 */
+.feature-delete-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 編集モード中の特徴タグ */
+.feature-card--editing .feature-chip {
+  position: relative;
+
+  /* 左側にチェック欄を置く */
+  padding-left: 44px;
+
+  background-color: #ffffff;
+  border-color: #d6cabd;
+
+  color: #515254;
+  font-weight: 400;
+}
+
+/* 編集モード中のチェック欄 */
+.feature-card--editing .feature-chip::before {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 14px;
+
+  width: 17px;
+  height: 17px;
+
+  background-color: #ffffff;
+  border: 2px solid #d6cabd;
+  border-radius: 5px;
+
+  transform: translateY(-50%);
+}
+
+/* 削除対象として選択したタグ */
+.feature-card--editing .feature-chip--edit-selected {
+  background-color: rgb(245 177 135 / 20%);
+  border-color: #f5b187;
+
+  color: #d9824e;
+  font-weight: 700;
+}
+
+/* 選択したタグのチェック欄 */
+.feature-card--editing .feature-chip--edit-selected::before {
+  background-color: #f5b187;
+  border-color: #f5b187;
+}
+
+/* チェックマーク */
+.feature-card--editing .feature-chip--edit-selected::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 20px;
+
+  width: 4px;
+  height: 8px;
+
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+
+  transform: translateY(-62%) rotate(45deg);
+}
+
+/* 編集中は新しい特徴の追加欄を隠す */
+.feature-card--editing .feature-add-row {
+  display: none;
+}
+
+/* 選択件数と編集方法を縦に並べる */
+.feature-editor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* タグ名の変更方法を伝える補足文 */
+.feature-edit-hint {
+  margin: 0;
+
+  color: #818685;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* タグ内の文字 */
+.feature-chip-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* タグ内の編集アイコン */
+.feature-chip-edit-icon {
+  display: none;
+
+  width: 22px;
+  height: 22px;
+
+  place-items: center;
+
+  background-color: rgb(125 150 128 / 12%);
+  border-radius: 6px;
+
+  color: #7d9680;
+  font-size: 13px;
+  line-height: 1;
+
+  flex-shrink: 0;
+}
+
+/* 編集モード中だけ鉛筆を表示する */
+.feature-card--editing .feature-chip-edit-icon {
+  display: grid;
+}
+
+/* 編集モード中は文字と鉛筆を横に並べる */
+.feature-card--editing .feature-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding-right: 9px;
+}
+
+/* タグ名を直接修正する入力欄 */
+.feature-chip-inline-input {
+  min-width: 112px;
+  max-width: 240px;
+
+  padding: 10px 14px;
+
+  background-color: #ffffff;
+  border: 2px solid #f5b187;
+  border-radius: 10px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  outline: none;
+
+  box-shadow: 0 0 0 3px rgb(245 177 135 / 18%);
+}
+
+/* --------------------------------------------------
+   特徴タグの重複警告
+-------------------------------------------------- */
+
+/* hidden属性が付いている間は警告を表示しない */
+.feature-duplicate-dialog[hidden] {
+  display: none;
+}
+
+/* 画面全体を覆う警告モーダル */
+.feature-duplicate-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 38%);
+  backdrop-filter: blur(3px);
+}
+
+/* 警告内容を表示するカード */
+.feature-duplicate-dialog-content {
+  width: min(100%, 420px);
+  padding: 32px 28px 28px;
+
+  background-color: #f1e8dc;
+  border: 1px solid #d6cabd;
+  border-radius: 24px;
+
+  text-align: center;
+
+  box-shadow: 0 24px 60px rgb(81 82 84 / 28%);
+}
+
+/* 警告アイコン */
+.feature-duplicate-dialog-icon {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+
+  background-color: #f5b187;
+  border-radius: 50%;
+
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* 英字の小さなラベル */
+.feature-duplicate-dialog-label {
+  margin: 0 0 8px;
+
+  color: #f19a52;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 警告タイトル */
+.feature-duplicate-dialog-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+/* 警告の説明文 */
+.feature-duplicate-dialog-message {
+  margin: 12px 0 24px;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* 入力欄へ戻るボタン */
+.feature-duplicate-dialog-button {
+  width: 100%;
+  padding: 13px 20px;
+
+  background-color: #f19a52;
+  border: none;
+  border-radius: 12px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* ボタンへマウスを乗せたとき */
+.feature-duplicate-dialog-button:hover {
+  background-color: #df8641;
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時の選択位置 */
+.feature-duplicate-dialog-button:focus-visible {
+  outline: 3px solid rgb(245 177 135 / 45%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+   特徴タグの削除確認
+-------------------------------------------------- */
+
+/* hidden属性が付いている間は確認画面を表示しない */
+.feature-delete-dialog[hidden] {
+  display: none;
+}
+
+/* 画面全体を覆う削除確認モーダル */
+.feature-delete-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 38%);
+  backdrop-filter: blur(3px);
+}
+
+/* 削除確認の内容を表示するカード */
+.feature-delete-dialog-content {
+  width: min(100%, 420px);
+  padding: 32px 28px 28px;
+
+  background-color: #f1e8dc;
+  border: 1px solid #d6cabd;
+  border-radius: 24px;
+
+  text-align: center;
+
+  box-shadow: 0 24px 60px rgb(81 82 84 / 28%);
+}
+
+/* 削除確認アイコン */
+.feature-delete-dialog-icon {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+
+  background-color: #c97863;
+  border-radius: 50%;
+
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* 英字の小さなラベル */
+.feature-delete-dialog-label {
+  margin: 0 0 8px;
+
+  color: #c97863;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 削除確認タイトル */
+.feature-delete-dialog-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+/* 削除内容の説明文 */
+.feature-delete-dialog-message {
+  margin: 12px 0 24px;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* キャンセルと削除ボタンを横並びにする */
+.feature-delete-dialog-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* 確認画面内のボタン共通設定 */
+.feature-delete-dialog-cancel,
+.feature-delete-dialog-confirm {
+  padding: 13px 16px;
+
+  border-radius: 12px;
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* キャンセルボタン */
+.feature-delete-dialog-cancel {
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+
+  color: #515254;
+}
+
+/* キャンセルボタンへマウスを乗せたとき */
+.feature-delete-dialog-cancel:hover {
+  background-color: #e3e8e4;
+  border-color: #7d9680;
+
+  transform: translateY(-1px);
+}
+
+/* 削除するボタン */
+.feature-delete-dialog-confirm {
+  background-color: #c97863;
+  border: 1px solid #c97863;
+
+  color: #ffffff;
+}
+
+/* 削除するボタンへマウスを乗せたとき */
+.feature-delete-dialog-confirm:hover {
+  background-color: #b76653;
+  border-color: #b76653;
+
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時の選択位置 */
+.feature-delete-dialog-cancel:focus-visible,
+.feature-delete-dialog-confirm:focus-visible {
+  outline: 3px solid rgb(201 120 99 / 30%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+ 会計金額入力
+-------------------------------------------------- */
+
+/* 金額入力欄と「円」を重ねる基準 */
+.payment-amount-field {
+  position: relative;
+}
+
+/* 左側の円記号と入力文字が重ならないようにする */
+.payment-amount-input {
+  padding-right: 16px;
+  padding-left: 44px;
+}
+
+/* 入力欄左側の円記号 */
+.payment-amount-unit {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+
+  color: #818685;
+  font-size: 15px;
+  font-weight: 700;
+
+  transform: translateY(-50%);
+
+  /* 円記号を押しても入力欄を操作できるようにする */
+  pointer-events: none;
+}
+
+/* 会計金額カードがエラーのときは円記号も赤くする */
+.form-card--invalid .payment-amount-unit {
+  color: #c97863;
+}
+
+/* 入力欄の下に表示する補足文 */
+.form-help-text {
+  margin: 8px 0 0;
+
+  color: #818685;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------
+ 新規顧客メモ
+-------------------------------------------------- */
+
+/* 複数行のメモ入力欄 */
+.form-textarea {
+  display: block;
+
+  width: 100%;
+  min-height: 82px;
+  padding: 15px 16px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 12px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.7;
+
+  /* JavaScriptで高さを自動調整するため、手動変更は無効にする */
+  overflow-y: hidden;
+  resize: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* 入力例として表示する薄い文字 */
+.form-textarea::placeholder {
+  color: #a5aaa8;
+}
+
+/* メモ欄を選択したとき */
+.form-textarea:focus {
+  outline: none;
+
+  border-color: #7d9680;
+  box-shadow: 0 0 0 3px rgb(125 150 128 / 16%);
+}
+
+/* --------------------------------------------------
+ 顧客写真
+-------------------------------------------------- */
+
+/* 写真についての補足文 */
+.photo-help-text {
+  margin-top: 8px;
+}
+
+/* 写真プレビュー全体 */
+.photo-preview {
+  width: 100%;
+  min-height: 220px;
+  margin: 20px auto 0;
+  padding: 16px;
+
+  background-color: rgb(241 232 220 / 45%);
+  border: 2px dashed #c9bdaf;
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  /* ドラッグ中の色変化をなめらかにする */
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 写真未選択時の案内を中央へ配置する */
+.photo-preview-placeholder {
+  justify-content: center;
+
+  min-height: 184px;
+}
+
+/* hidden属性が付いている間は案内を表示しない */
+.photo-preview-placeholder[hidden] {
+  display: none;
+}
+
+/* 選択した写真を並べる一覧 */
+.photo-preview-list {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+
+  width: 100%;
+}
+
+/* 写真が1枚もない間は一覧を表示しない */
+.photo-preview-list:empty {
+  display: none;
+}
+
+/* 写真1枚分のプレビュー */
+.photo-preview-item {
+  position: relative;
+
+  aspect-ratio: 1 / 1;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 14px;
+
+  overflow: hidden;
+}
+
+/* プレビュー内の写真 */
+.photo-preview-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* 写真右上の個別削除ボタン */
+.photo-preview-item-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  background-color: rgb(81 82 84 / 76%);
+  border: none;
+  border-radius: 50%;
+
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 個別削除ボタンへマウスを乗せたとき */
+.photo-preview-item-remove:hover {
+  background-color: #c97863;
+
+  transform: scale(1.06);
+}
+
+/* キーボード操作時の選択位置 */
+.photo-preview-item-remove:focus-visible {
+  outline: 3px solid rgb(245 177 135 / 55%);
+  outline-offset: 2px;
+}
+
+/* 写真を枠へ重ねている間の表示 */
+.photo-preview--dragging {
+  background-color: rgb(125 150 128 / 18%);
+  border-color: #7d9680;
+
+  box-shadow:
+    0 0 0 5px rgb(125 150 128 / 14%),
+    0 12px 28px rgb(81 82 84 / 12%);
+
+  transform: scale(1.01);
+}
+
+/* ドラッグ中は案内文を少し濃くする */
+.photo-preview--dragging .photo-preview-placeholder {
+  color: #607862;
+}
+
+/* 写真未選択時の表示 */
+.photo-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  padding: 24px;
+
+  color: #818685;
+  text-align: center;
+}
+
+/* 写真未選択時のアイコン */
+.photo-preview-icon {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+
+  background-color: rgb(245 177 135 / 20%);
+  border-radius: 50%;
+
+  color: #f19a52;
+}
+
+/* SVGアイコンの大きさ */
+.photo-preview-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* 写真未選択時の文章 */
+.photo-preview-placeholder p {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 写真操作ボタンを並べる */
+.photo-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-top: 16px;
+}
+
+/* 写真選択ボタン */
+.photo-select-button {
+  padding: 12px 20px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 12px;
+
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 写真選択ボタンへマウスを乗せたとき */
+.photo-select-button:hover {
+  background-color: #6d856f;
+  border-color: #6d856f;
+
+  transform: translateY(-1px);
+}
+
+/* 写真削除ボタン */
+.photo-remove-button {
+  padding: 12px 20px;
+
+  background-color: transparent;
+  border: 1px solid #c97863;
+  border-radius: 12px;
+
+  color: #c97863;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 写真削除ボタンへマウスを乗せたとき */
+.photo-remove-button:hover {
+  background-color: #c97863;
+  color: #ffffff;
+
+  transform: translateY(-1px);
+}
+
+/* hidden属性がある間は削除ボタンを表示しない */
+.photo-remove-button[hidden] {
+  display: none;
+}
+
+/* キーボード操作時の選択位置 */
+.photo-select-button:focus-visible,
+.photo-remove-button:focus-visible {
+  outline: 3px solid rgb(125 150 128 / 28%);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------
+   新規顧客登録ボタン
+-------------------------------------------------- */
+
+/* 登録ボタン周辺 */
+.form-submit-area {
+  display: grid;
+  justify-items: center;
+
+  padding: 4px 0 20px;
+}
+
+/* 新規顧客の登録ボタン */
+.new-customer-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  min-width: 250px;
+  min-height: 52px;
+  padding: 12px 30px;
+
+  background-color: #f19a52;
+  border: 1px solid #f19a52;
+  border-radius: 999px;
+
+  box-shadow:
+    0 10px 24px rgb(241 154 82 / 24%);
+
+  color: #ffffff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 登録ボタンへマウスを乗せたとき */
+.new-customer-submit-button:hover {
+  background-color: #e98c43;
+  border-color: #e98c43;
+
+  box-shadow:
+    0 14px 30px rgb(241 154 82 / 32%);
+
+  transform: translateY(-2px);
+}
+
+/* 登録ボタンを押している間 */
+.new-customer-submit-button:active {
+  box-shadow:
+    0 6px 16px rgb(241 154 82 / 22%);
+
+  transform: translateY(0);
+}
+
+/* キーボード操作時の選択位置 */
+.new-customer-submit-button:focus-visible {
+  outline: 4px solid rgb(245 177 135 / 38%);
+  outline-offset: 4px;
+}
+
+/* --------------------------------------------------
+   新規顧客の登録確認画面
+-------------------------------------------------- */
+
+/* 確認画面を開いている間は背後を固定する */
+body.confirm-dialog-open {
+  overflow: hidden;
+}
+
+/* 画面全体を覆う背景 */
+.new-customer-confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 52%);
+  backdrop-filter: blur(5px);
+}
+
+/* hidden属性が付いている間は表示しない */
+.new-customer-confirm-dialog[hidden] {
+  display: none;
+}
+
+/* 確認内容を表示するカード */
+.new-customer-confirm-content {
+  width: min(100%, 560px);
+  max-height: calc(100dvh - 48px);
+  padding: 32px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 24px;
+
+  box-shadow:
+    0 24px 70px rgb(81 82 84 / 28%);
+
+  overflow-y: auto;
+}
+
+/* 確認画面上部の英字 */
+.new-customer-confirm-label {
+  margin: 0 0 8px;
+
+  color: #f19a52;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 確認画面のタイトル */
+.new-customer-confirm-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(22px, 5vw, 30px);
+  line-height: 1.4;
+}
+
+/* タイトル下の説明 */
+.new-customer-confirm-message {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 入力内容を表示する領域 */
+.new-customer-confirm-summary {
+  margin-top: 24px;
+}
+
+/* 確認内容を並べる一覧 */
+.new-customer-confirm-list {
+  margin: 0;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 16px;
+
+  overflow: hidden;
+}
+
+/* 確認内容の1項目 */
+.new-customer-confirm-item {
+  display: grid;
+  grid-template-columns:
+    minmax(96px, 125px) minmax(0, 1fr);
+  gap: 16px;
+
+  padding: 15px 18px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* 最後の項目だけ区切り線を消す */
+.new-customer-confirm-item:last-child {
+  border-bottom: none;
+}
+
+/* 確認項目の名前 */
+.new-customer-confirm-item dt {
+  color: #7d9680;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 入力された内容 */
+.new-customer-confirm-item dd {
+  min-width: 0;
+  margin: 0;
+
+  color: #515254;
+  font-size: 14px;
+  line-height: 1.7;
+
+  overflow-wrap: anywhere;
+}
+
+/* 確認画面下部のボタン */
+.new-customer-confirm-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+
+  margin-top: 28px;
+}
+
+/* 戻って修正ボタン */
+.new-customer-confirm-back {
+  min-height: 52px;
+  padding: 12px 18px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #607862;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 登録するボタン */
+.new-customer-confirm-register {
+  min-height: 52px;
+  padding: 12px 18px;
+
+  background-color: #f19a52;
+  border: 1px solid #f19a52;
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 20px rgb(241 154 82 / 22%);
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 確認画面のボタンへマウスを乗せたとき */
+.new-customer-confirm-back:hover,
+.new-customer-confirm-register:hover {
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時の選択位置 */
+.new-customer-confirm-back:focus-visible,
+.new-customer-confirm-register:focus-visible {
+  outline: 4px solid rgb(245 177 135 / 38%);
+  outline-offset: 3px;
+}
+
+/* 登録処理中はボタンを操作できない見た目にする */
+.new-customer-confirm-register:disabled {
+  background-color: #c9bdaf;
+  border-color: #c9bdaf;
+  box-shadow: none;
+
+  cursor: wait;
+  transform: none;
+}
+
+/* 新規顧客の登録完了表示 */
+.new-customer-register-success {
+  display: grid;
+  justify-items: center;
+
+  padding: 20px 0 8px;
+
+  text-align: center;
+}
+
+/* hidden属性がある間は登録完了表示を隠す */
+.new-customer-register-success[hidden] {
+  display: none;
+}
+
+/* 登録完了のチェックアイコン */
+.new-customer-success-icon {
+  display: grid;
+  place-items: center;
+
+  width: 74px;
+  height: 74px;
+
+  background-color: rgb(125 150 128 / 16%);
+  border: 2px solid #7d9680;
+  border-radius: 50%;
+
+  color: #7d9680;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+/* 登録完了の英字ラベル */
+.new-customer-success-label {
+  margin: 20px 0 6px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 登録完了のタイトル */
+.new-customer-success-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(24px, 5vw, 30px);
+}
+
+/* 登録完了の説明 */
+.new-customer-success-message {
+  margin: 12px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 入力画面へ戻るボタン */
+.new-customer-success-back {
+  min-width: 210px;
+  min-height: 52px;
+  margin-top: 28px;
+  padding: 12px 20px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.new-customer-success-back:hover {
+  background-color: #6d856f;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 24%);
+
+  transform: translateY(-1px);
+}
+
+.new-customer-success-back:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 28%);
+  outline-offset: 3px;
+}
+
+
+/* ==================================================
+   11. 来店登録の種類選択画面
+   新規顧客・常連顧客の入口
+================================================== */
+
+/* 来店登録画面全体 */
+#visit-registration-view {
+  padding: 40px 0 32px;
+}
+
+/* 新規顧客・常連顧客カードを並べる領域 */
+.visit-registration-options {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* 来店登録の種類を選択する共通カード */
+.visit-registration-card {
+  position: relative;
+
+  display: grid;
+  grid-template-columns:
+    104px
+    1px
+    minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+
+  width: 100%;
+  min-height: 200px;
+  padding: 32px 76px 32px 32px;
+
+  border: 1px solid rgb(81 82 84 / 10%);
+  border-radius: 30px;
+
+  color: #515254;
+  font: inherit;
+  text-align: left;
+
+  box-shadow:
+    0 14px 30px rgb(81 82 84 / 12%);
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* 新規顧客カード */
+.visit-registration-card--new {
+  background:
+    linear-gradient(
+      135deg,
+      rgb(255 255 255 / 16%),
+      transparent 56%
+    ),
+    #f5b187;
+
+  border-color: rgb(245 177 135 / 72%);
+}
+
+/* 常連顧客カード */
+.visit-registration-card--regular {
+  background:
+    linear-gradient(
+      135deg,
+      rgb(255 255 255 / 24%),
+      transparent 58%
+    ),
+    rgb(125 150 128 / 62%);
+
+  border-color: rgb(125 150 128 / 58%);
+}
+
+/* カード左側のアイコン領域 */
+.visit-registration-card-icon {
+  display: grid;
+  place-items: center;
+
+  width: 92px;
+  height: 92px;
+
+  background-color: rgb(255 255 255 / 38%);
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 50%;
+
+  color: #515254;
+
+  flex-shrink: 0;
+}
+
+/* カード内のSVGアイコン */
+.visit-registration-card-icon svg {
+  width: 54px;
+  height: 54px;
+}
+
+/* アイコンと文字の間に置く点線 */
+.visit-registration-card-divider {
+  width: 1px;
+  height: 92px;
+
+  border-left: 2px dotted rgb(81 82 84 / 24%);
+
+  justify-self: center;
+}
+
+/* カードのタイトルと説明文 */
+.visit-registration-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+
+  min-width: 0;
+}
+
+/* 新規顧客・常連顧客のタイトル */
+.visit-registration-card-title {
+  color: #515254;
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+}
+
+/* カードの補足説明 */
+.visit-registration-card-description {
+  color: rgb(81 82 84 / 82%);
+  font-size: clamp(14px, 2vw, 18px);
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+
+/* カード右側の矢印 */
+.visit-registration-card-arrow {
+  position: absolute;
+  top: 50%;
+  right: 30px;
+
+  color: #515254;
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1;
+
+  transform: translateY(-54%);
+
+  transition: transform 0.2s ease;
+}
+
+/* カードへマウスを乗せたとき */
+.visit-registration-card:hover {
+  border-color: rgb(81 82 84 / 20%);
+
+  box-shadow:
+    0 18px 38px rgb(81 82 84 / 18%);
+
+  transform: translateY(-3px);
+}
+
+/* ホバー中は矢印を少し右へ動かす */
+.visit-registration-card:hover
+.visit-registration-card-arrow {
+  transform:
+    translateX(4px)
+    translateY(-54%);
+}
+
+/* カードをクリックしている間 */
+.visit-registration-card:active {
+  box-shadow:
+    0 10px 22px rgb(81 82 84 / 12%);
+
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時の選択位置 */
+.visit-registration-card:focus-visible {
+  outline: 4px solid rgb(241 154 82 / 34%);
+  outline-offset: 4px;
+}
+
+/* 画面下部のブランド風装飾 */
+.visit-registration-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  width: min(420px, 74%);
+  margin: 52px auto 0;
+}
+
+/* 装飾の左右に置く線 */
+.visit-registration-decoration-line {
+  flex: 1;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgb(125 150 128 / 46%),
+      transparent
+    );
+}
+
+/* 中央の小さなブランドマーク */
+.visit-registration-decoration-mark {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 58px;
+  height: 58px;
+
+  border: 1px solid rgb(125 150 128 / 34%);
+  border-radius: 50%;
+
+  color: transparent;
+  font-size: 0;
+
+  flex-shrink: 0;
+}
+
+/* ブランドマークの大きな円 */
+.visit-registration-decoration-mark::before {
+  content: "";
+
+  width: 24px;
+  height: 24px;
+
+  border: 6px solid #aeb6a5;
+  border-radius: 50%;
+}
+
+/* ブランドマーク右下のオレンジ色の丸 */
+.visit-registration-decoration-mark::after {
+  content: "";
+
+  position: absolute;
+  right: 9px;
+  bottom: 10px;
+
+  width: 9px;
+  height: 9px;
+
+  background-color: #f5b187;
+  border: 2px solid #f1e8dc;
+  border-radius: 50%;
+}
+
+
+/* ==================================================
+   12. 常連顧客更新画面
+   顧客検索・顧客選択・来店情報の追加
+================================================== */
+
+/* 常連顧客更新画面全体 */
+#regular-customer-view {
+  padding-top: 12px;
+}
+
+/* 常連顧客画面の必須ラベル */
+#regular-customer-view .required-label {
+  background-color: rgb(125 150 128 / 18%);
+  color: #6d856f;
+}
+
+/* 顧客検索カード */
+.regular-customer-search-card {
+  width: 100%;
+  max-width: 760px;
+  margin: 28px auto 0;
+}
+
+/* 検索入力欄と虫眼鏡を重ねる領域 */
+.regular-customer-search-field {
+  position: relative;
+}
+
+/* 虫眼鏡用の余白を右側に作る */
+#regular-customer-search {
+  padding-right: 54px;
+}
+
+/* 検索欄の入力内容を消す×ボタン */
+#regular-customer-search::-webkit-search-cancel-button {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+
+  background-color: #f5b187;
+
+  -webkit-mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+
+  mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' stroke='black' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+
+  cursor: pointer;
+}
+
+/* 検索入力欄の虫眼鏡 */
+.regular-customer-search-icon {
+  position: absolute;
+  top: 50%;
+  right: 17px;
+
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+
+  color: #7d9680;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+}
+
+/* 虫眼鏡アイコン */
+.regular-customer-search-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* 検索結果全体 */
+.regular-customer-search-results {
+  margin-top: 12px;
+  padding-top: 20px;
+
+  border-top: 1px solid rgb(129 134 133 / 22%);
+}
+
+/* hidden中は検索結果を表示しない */
+.regular-customer-search-results[hidden] {
+  display: none;
+}
+
+/* 検索結果の見出し */
+.regular-customer-results-title {
+  margin: 0 0 12px;
+
+  color: #515254;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* 検索結果をまとめる一覧 */
+.regular-customer-result-list {
+  display: flex;
+  flex-direction: column;
+
+  background-color: rgb(255 255 255 / 44%);
+  border: 1px solid rgb(81 82 84 / 10%);
+  border-radius: 16px;
+
+  overflow: hidden;
+}
+
+/* 検索結果1件分 */
+.regular-customer-result-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+
+  padding: 18px;
+
+  color: #515254;
+}
+
+/* 検索条件に一致しない顧客を隠す */
+.regular-customer-result-item[hidden] {
+  display: none;
+}
+
+/* 各顧客の間に区切り線を入れる */
+.regular-customer-result-item + .regular-customer-result-item {
+  border-top: 1px solid rgb(129 134 133 / 22%);
+}
+
+/* 顧客アイコンと顧客情報 */
+.regular-customer-result-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  min-width: 0;
+}
+
+/* 顧客写真未登録時の丸い仮アイコン */
+.regular-customer-result-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+
+  background-color: rgb(125 150 128 / 15%);
+  border: 1px solid rgb(125 150 128 / 22%);
+  border-radius: 50%;
+
+  color: #7d9680;
+  font-size: 16px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+/* 顧客名・ID・特徴・最終来店日 */
+.regular-customer-result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+/* 顧客名と顧客ID */
+.regular-customer-result-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+/* 顧客名 */
+.regular-customer-result-heading strong {
+  color: #515254;
+  font-size: 16px;
+}
+
+/* 顧客ID */
+.regular-customer-result-heading span {
+  color: #818685;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 特徴と最終来店日 */
+.regular-customer-result-info p {
+  margin: 0;
+
+  color: #818685;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* 顧客を選択するボタン */
+.regular-customer-select-button {
+  min-height: 42px;
+  padding: 10px 15px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 11px;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 選択ボタンへマウスを乗せたとき */
+.regular-customer-select-button:hover {
+  background-color: #7d9680;
+  color: #ffffff;
+
+  transform: translateY(-1px);
+}
+
+/* 選択ボタンのキーボード操作 */
+.regular-customer-select-button:focus-visible {
+  outline: 3px solid rgb(125 150 128 / 24%);
+  outline-offset: 3px;
+}
+
+/* 該当する顧客がいない場合 */
+.regular-customer-no-results {
+  margin: 0;
+  padding: 24px 16px;
+
+  background-color: rgb(255 255 255 / 45%);
+  border-radius: 14px;
+
+  color: #818685;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* hidden中は該当なし表示を隠す */
+.regular-customer-no-results[hidden] {
+  display: none;
+}
+
+
+/* --------------------------------------------------
+   選択中のお客様
+-------------------------------------------------- */
+
+/* 選択した顧客のプロフィールカード */
+.regular-selected-customer {
+  width: 100%;
+  max-width: 760px;
+  margin: 18px auto 0;
+  padding: 24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgb(255 255 255 / 42%),
+      transparent 68%
+    ),
+    rgb(125 150 128 / 18%);
+
+  border: 1px solid rgb(125 150 128 / 28%);
+  border-radius: 20px;
+
+  box-shadow: 0 8px 24px rgb(81 82 84 / 8%);
+}
+
+/* hidden中は顧客プロフィールを表示しない */
+.regular-selected-customer[hidden] {
+  display: none;
+}
+
+/* 見出しと変更ボタン */
+.regular-selected-customer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* 選択中のお客様の見出し */
+.regular-selected-customer-header h3 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 17px;
+}
+
+/* 顧客を変更するボタン */
+.regular-customer-change-button {
+  padding: 7px 13px;
+
+  background-color: rgb(255 255 255 / 46%);
+  border: 1px solid rgb(125 150 128 / 62%);
+  border-radius: 9px;
+
+  color: #6d856f;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 変更ボタンへマウスを乗せたとき */
+.regular-customer-change-button:hover {
+  background-color: #7d9680;
+  color: #ffffff;
+}
+
+/* 選択した顧客の基本情報 */
+.regular-selected-customer-profile {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  margin-top: 20px;
+}
+
+/* 選択中顧客の丸いアイコン */
+.regular-selected-customer-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 74px;
+  height: 74px;
+
+  background-color: rgb(255 255 255 / 68%);
+  border: 1px solid rgb(125 150 128 / 24%);
+  border-radius: 50%;
+
+  color: #7d9680;
+  font-size: 22px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+/* 顧客名と集計情報 */
+.regular-selected-customer-main {
+  min-width: 0;
+  flex: 1;
+}
+
+/* 顧客名と顧客ID */
+.regular-selected-customer-name-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+/* 選択中の顧客名 */
+.regular-selected-customer-name-row strong {
+  color: #515254;
+  font-size: 22px;
+}
+
+/* 選択中の顧客ID */
+.regular-selected-customer-name-row span {
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 最終来店・来店回数・売上を並べる */
+.regular-selected-customer-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  margin: 18px 0 0;
+}
+
+/* 集計情報1件分 */
+.regular-selected-customer-stats > div {
+  min-width: 0;
+  padding: 0 14px;
+}
+
+/* 最初の項目だけ左余白をなくす */
+.regular-selected-customer-stats > div:first-child {
+  padding-left: 0;
+}
+
+/* 集計項目の間に区切り線 */
+.regular-selected-customer-stats > div + div {
+  border-left: 1px solid rgb(129 134 133 / 24%);
+}
+
+/* 集計項目名 */
+.regular-selected-customer-stats dt {
+  color: #818685;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* 集計結果 */
+.regular-selected-customer-stats dd {
+  margin: 5px 0 0;
+
+  color: #515254;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* 特徴と最近のメモ */
+.regular-selected-customer-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+
+  margin-top: 22px;
+  padding-top: 20px;
+
+  border-top: 1px solid rgb(129 134 133 / 22%);
+}
+
+/* 特徴・最近のメモの見出し */
+.regular-selected-detail h4 {
+  margin: 0 0 10px;
+
+  color: #515254;
+  font-size: 13px;
+}
+
+/* 最近のメモ */
+.regular-selected-detail p {
+  margin: 0;
+
+  color: #515254;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 特徴タグを横並びにする */
+.regular-selected-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+/* JavaScriptで追加する特徴タグ */
+.regular-selected-features > span {
+  padding: 6px 11px;
+
+  background-color: rgb(255 255 255 / 46%);
+  border: 1px solid rgb(125 150 128 / 30%);
+  border-radius: 999px;
+
+  color: #6d856f;
+  font-size: 11px;
+  line-height: 1;
+}
+
+
+/* --------------------------------------------------
+   誕生日・今回の来店情報
+-------------------------------------------------- */
+
+/* 顧客選択後のフォーム */
+.regular-customer-form {
+  margin-top: 16px;
+}
+
+/* hidden中はフォームを表示しない */
+.regular-customer-form[hidden] {
+  display: none;
+}
+
+/* 誕生日を入力する・不明の選択肢 */
+.birthday-status-options {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 26px;
+}
+
+/* ラジオボタンと文字 */
+.birthday-status-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #515254;
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+/* ラジオボタンのアクセント色 */
+.birthday-status-option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+
+  accent-color: #7d9680;
+
+  cursor: pointer;
+}
+
+/* 誕生日が登録済みの場合は入力カードを隠す */
+.regular-birthday-card[hidden] {
+  display: none;
+}
+
+/* 今回の来店情報カード */
+.regular-visit-card > .form-field {
+  gap: 0;
+}
+
+/* 今回来店情報の大見出し */
+.regular-visit-card > .form-field > .form-label-row {
+  margin-bottom: 6px;
+}
+
+/* 来店情報1項目分 */
+.regular-visit-field {
+  padding: 20px 0;
+}
+
+/* 項目同士の区切り線 */
+.regular-visit-field + .regular-visit-field {
+  border-top: 1px solid rgb(129 134 133 / 20%);
+}
+
+/* ラベルと入力欄の間隔 */
+.regular-visit-field > .form-label-row {
+  margin-bottom: 10px;
+}
+
+/* 常連顧客の更新内容確認ボタン */
+.regular-customer-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  min-width: 250px;
+  min-height: 52px;
+  padding: 12px 30px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 999px;
+
+  box-shadow:
+    0 10px 24px rgb(125 150 128 / 24%);
+
+  color: #ffffff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 更新内容確認ボタンへマウスを乗せたとき */
+.regular-customer-submit-button:hover {
+  background-color: #6d856f;
+  border-color: #6d856f;
+
+  box-shadow:
+    0 14px 30px rgb(125 150 128 / 32%);
+
+  transform: translateY(-2px);
+}
+
+/* ボタンを押している間 */
+.regular-customer-submit-button:active {
+  box-shadow:
+    0 6px 16px rgb(125 150 128 / 22%);
+
+  transform: translateY(0);
+}
+
+/* キーボード操作時 */
+.regular-customer-submit-button:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 28%);
+  outline-offset: 4px;
+}
+
+/* --------------------------------------------------
+   常連顧客の更新確認画面
+-------------------------------------------------- */
+
+/* 画面全体を覆う背景 */
+.regular-customer-confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 52%);
+  backdrop-filter: blur(5px);
+}
+
+/* hidden属性が付いている間は表示しない */
+.regular-customer-confirm-dialog[hidden] {
+  display: none;
+}
+
+/* 確認内容を表示するカード */
+.regular-customer-confirm-content {
+  width: min(100%, 560px);
+  max-height: calc(100dvh - 48px);
+  padding: 32px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(125 150 128 / 22%);
+  border-radius: 24px;
+
+  box-shadow:
+    0 24px 70px rgb(81 82 84 / 28%);
+
+  overflow-y: auto;
+}
+
+/* 確認画面上部の英字 */
+.regular-customer-confirm-label {
+  margin: 0 0 8px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 確認画面のタイトル */
+.regular-customer-confirm-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(22px, 5vw, 30px);
+  line-height: 1.4;
+}
+
+/* タイトル下の説明 */
+.regular-customer-confirm-message {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 更新内容を表示する領域 */
+.regular-customer-confirm-summary {
+  margin-top: 24px;
+}
+
+/* 確認画面下部のボタン */
+.regular-customer-confirm-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+
+  margin-top: 28px;
+}
+
+/* 確認画面の共通ボタン */
+.regular-customer-confirm-back,
+.regular-customer-confirm-update {
+  min-height: 52px;
+  padding: 12px 18px;
+
+  border-radius: 14px;
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 戻って修正ボタン */
+.regular-customer-confirm-back {
+  background-color: transparent;
+  border: 1px solid #7d9680;
+
+  color: #607862;
+}
+
+/* 更新するボタン */
+.regular-customer-confirm-update {
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 24%);
+
+  color: #ffffff;
+}
+
+/* ボタンへマウスを乗せたとき */
+.regular-customer-confirm-back:hover,
+.regular-customer-confirm-update:hover {
+  transform: translateY(-1px);
+}
+
+/* キーボード操作時 */
+.regular-customer-confirm-back:focus-visible,
+.regular-customer-confirm-update:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 28%);
+  outline-offset: 3px;
+}
+
+/* 更新処理中はボタンを操作できない見た目にする */
+.regular-customer-confirm-update:disabled {
+  background-color: #c9bdaf;
+  border-color: #c9bdaf;
+  box-shadow: none;
+
+  cursor: wait;
+  transform: none;
+}
+
+/* 常連顧客の更新完了表示 */
+.regular-customer-update-success {
+  display: grid;
+  justify-items: center;
+
+  padding: 20px 0 8px;
+
+  text-align: center;
+}
+
+/* hidden属性がある間は更新完了表示を隠す */
+.regular-customer-update-success[hidden] {
+  display: none;
+}
+
+/* 更新完了のチェックアイコン */
+.regular-customer-success-icon {
+  display: grid;
+  place-items: center;
+
+  width: 74px;
+  height: 74px;
+
+  background-color: rgb(125 150 128 / 16%);
+  border: 2px solid #7d9680;
+  border-radius: 50%;
+
+  color: #7d9680;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+/* 更新完了の英字ラベル */
+.regular-customer-success-label {
+  margin: 20px 0 6px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 更新完了のタイトル */
+.regular-customer-success-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(24px, 5vw, 30px);
+}
+
+/* 更新完了の説明 */
+.regular-customer-success-message {
+  margin: 12px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 検索画面へ戻るボタン */
+.regular-customer-success-back {
+  min-width: 210px;
+  min-height: 52px;
+  margin-top: 28px;
+  padding: 12px 20px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.regular-customer-success-back:hover {
+  background-color: #6d856f;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 24%);
+
+  transform: translateY(-1px);
+}
+
+.regular-customer-success-back:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 28%);
+  outline-offset: 3px;
+}
+
+
+/* ==================================================
+   13. 顧客検索画面
+   顧客一覧・絞り込み・並び替え
+================================================== */
+
+/* 顧客検索画面全体 */
+#customer-search-view {
+  position: relative;
+
+  padding: 40px 0 120px;
+}
+
+/* 検索バーを配置する領域 */
+.customer-search-toolbar {
+  display: grid;
+  gap: 14px;
+
+  width: 100%;
+  margin-top: 0;
+}
+
+/* 虫眼鏡・検索欄・削除ボタンをまとめる */
+.customer-search-input-field {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+
+  min-height: 68px;
+  padding: 0 22px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 30px rgb(81 82 84 / 8%);
+}
+
+/* 検索欄左側の虫眼鏡 */
+.customer-search-input-icon {
+  display: grid;
+  place-items: center;
+
+  width: 28px;
+  height: 28px;
+
+  color: #7d9680;
+}
+
+/* 虫眼鏡SVG */
+.customer-search-input-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 顧客検索入力欄 */
+.customer-search-input {
+  width: 100%;
+  min-width: 0;
+  padding: 18px 0;
+
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  color: #515254;
+  font: inherit;
+  font-size: 16px;
+}
+
+/* 検索欄のプレースホルダー */
+.customer-search-input::placeholder {
+  color: #a5aaa8;
+}
+
+/* ブラウザ標準の検索削除ボタンを隠す */
+.customer-search-input::-webkit-search-cancel-button {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* 独自の検索文字削除ボタン */
+.customer-search-clear-button {
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  background-color: rgb(245 177 135 / 24%);
+  border: none;
+  border-radius: 50%;
+
+  color: #d98557;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+/* hidden属性が付いている間は削除ボタンを隠す */
+.customer-search-clear-button[hidden] {
+  display: none;
+}
+
+/* スマホ用の検索操作はPCでは隠す */
+.customer-search-mobile-actions {
+  display: none;
+}
+
+/* 検索画面の左右レイアウト */
+.customer-search-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 26px;
+
+  margin-top: 32px;
+}
+
+/* 左側メイン領域 */
+.customer-search-main {
+  min-width: 0;
+}
+
+/* クイックフィルター・最近検索の共通領域 */
+.customer-search-section {
+  padding: 24px;
+
+  background-color: rgb(253 250 246 / 66%);
+  border: 1px solid rgb(129 134 133 / 14%);
+  border-radius: 22px;
+}
+
+/* 最近検索との間隔 */
+.customer-recent-search-section {
+  margin-top: 18px;
+}
+
+/* セクションのタイトルとアイコン */
+.customer-search-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* セクションタイトル */
+.customer-search-section-heading h3 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* セクションタイトルのアイコン */
+.customer-search-section-icon {
+  display: grid;
+  place-items: center;
+
+  width: 22px;
+  height: 22px;
+
+  color: #7d9680;
+}
+
+/* セクションタイトルのSVG */
+.customer-search-section-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* セクション見出しと右側操作を横並びにする */
+.customer-search-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* クイックフィルター一覧 */
+.customer-quick-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+/* クイックフィルターボタン */
+.customer-quick-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 42px;
+  padding: 9px 18px;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 22%);
+  border-radius: 999px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* クイックフィルターのアイコン */
+.customer-quick-filter-icon {
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 18px;
+  height: 18px;
+}
+
+/* クイックフィルターのSVG */
+.customer-quick-filter-icon svg {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+/* 選択中のクイックフィルター */
+.customer-quick-filter--active {
+  background-color: #7d9680;
+  border-color: #7d9680;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 20%);
+
+  color: #ffffff;
+}
+
+/* クイックフィルターへマウスを乗せたとき */
+.customer-quick-filter:hover {
+  transform: translateY(-1px);
+}
+
+/* 最近検索をすべて消すボタン */
+.customer-recent-search-clear {
+  padding: 6px 0;
+
+  background-color: transparent;
+  border: none;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 最近検索一覧 */
+.customer-recent-search-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin: 18px 0 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+/* 最近検索1件分 */
+.customer-recent-search-item {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 38px;
+  padding: 0 8px 0 14px;
+
+  background-color: #f1e8dc;
+  border-radius: 999px;
+}
+
+/* 最近検索文字 */
+.customer-recent-search-button {
+  padding: 8px 4px;
+
+  background-color: transparent;
+  border: none;
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+/* 最近検索を個別に消すボタン */
+.customer-recent-search-remove {
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+  padding: 0;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+
+  color: #818685;
+  font: inherit;
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+/* 検索結果全体 */
+.customer-search-results-section {
+  margin-top: 30px;
+}
+
+/* 検索結果見出し */
+.customer-search-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 0 4px 14px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 16%);
+}
+
+/* 検索結果タイトル */
+.customer-search-results-header h3 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 18px;
+}
+
+/* 検索結果件数 */
+.customer-search-result-count {
+  margin: 6px 0 0;
+
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 表示方法切り替え */
+.customer-search-view-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 表示方法切り替えボタン */
+.customer-search-view-button {
+  display: grid;
+  place-items: center;
+
+  width: 38px;
+  height: 38px;
+  padding: 9px;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 10px;
+
+  color: #9a9f9d;
+
+  cursor: pointer;
+}
+
+/* 選択中の表示方法 */
+.customer-search-view-button--active {
+  background-color: rgb(125 150 128 / 14%);
+
+  color: #7d9680;
+}
+
+/* 表示方法ボタン内のSVG */
+.customer-search-view-button svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 検索結果一覧 */
+.customer-search-result-list {
+  display: grid;
+  gap: 14px;
+
+  margin-top: 18px;
+}
+
+/* 検索結果カード */
+.customer-search-result-card {
+  min-width: 0;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 20px;
+
+  box-shadow:
+    0 8px 24px rgb(81 82 84 / 7%);
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 条件に一致しない顧客は隠す */
+.customer-search-result-card[hidden] {
+  display: none;
+}
+
+/* カードへマウスを乗せたとき */
+.customer-search-result-card:hover {
+  border-color: rgb(125 150 128 / 42%);
+
+  box-shadow:
+    0 14px 32px rgb(81 82 84 / 11%);
+
+  transform: translateY(-2px);
+}
+
+/* 顧客詳細へ進むカード全体のボタン */
+.customer-search-result-open {
+  display: grid;
+  grid-template-columns:
+    76px
+    minmax(190px, 1fr)
+    minmax(330px, 1.25fr)
+    22px;
+  align-items: center;
+  gap: 18px;
+
+  width: 100%;
+  padding: 18px;
+
+  background-color: transparent;
+  border: none;
+
+  color: inherit;
+  font: inherit;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+/* 顧客写真の代わりに表示する頭文字 */
+.customer-search-result-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 76px;
+  height: 76px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f1e8dc,
+      #d8dfd3
+    );
+  border: 1px solid rgb(125 150 128 / 16%);
+  border-radius: 18px;
+
+  color: #6d856f;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* 顧客名・ID・特徴 */
+.customer-search-result-profile {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+
+  min-width: 0;
+}
+
+/* 顧客名と会員ランク */
+.customer-search-result-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+/* 顧客名 */
+.customer-search-result-name-row strong {
+  color: #515254;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+/* 会員ランク */
+.customer-rank {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 25px;
+  padding: 4px 9px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* 常連ラベル */
+.customer-rank--regular {
+  background-color: rgb(125 150 128 / 17%);
+
+  color: #6d856f;
+}
+
+/* 新規ラベル */
+.customer-rank--new {
+  background-color: rgb(245 177 135 / 22%);
+
+  color: #d5794c;
+}
+
+/* 顧客ID */
+.customer-search-result-id {
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 特徴 */
+.customer-search-result-features {
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 10px;
+
+  background-color: rgb(125 150 128 / 10%);
+  border-radius: 999px;
+
+  color: #606563;
+  font-size: 12px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 最終来店・来店回数・累計売上 */
+.customer-search-result-statistics {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  min-width: 0;
+}
+
+/* 各数値項目 */
+.customer-search-result-stat {
+  display: grid;
+  gap: 5px;
+
+  min-width: 0;
+  padding: 4px 16px;
+
+  border-left:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* 数値項目の見出し */
+.customer-search-result-stat small {
+  color: #818685;
+  font-size: 11px;
+}
+
+/* 数値 */
+.customer-search-result-stat strong {
+  color: #515254;
+  font-size: 15px;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+/* 詳細へ進む矢印 */
+.customer-search-result-arrow {
+  color: #7d9680;
+  font-size: 32px;
+  font-weight: 300;
+}
+
+/* 顧客が見つからない場合 */
+.customer-search-empty-state {
+  display: grid;
+  justify-items: center;
+
+  margin-top: 18px;
+  padding: 48px 24px;
+
+  background-color: rgb(253 250 246 / 72%);
+  border: 1px dashed rgb(129 134 133 / 30%);
+  border-radius: 22px;
+
+  text-align: center;
+}
+
+/* hidden属性がある間は空表示を隠す */
+.customer-search-empty-state[hidden] {
+  display: none;
+}
+
+/* 顧客が見つからない場合の虫眼鏡アイコン */
+.customer-search-empty-icon {
+  display: grid;
+  place-items: center;
+
+  width: 58px;
+  height: 58px;
+
+  background-color: rgb(245 177 135 / 20%);
+  border: 1px solid rgb(245 177 135 / 36%);
+  border-radius: 50%;
+
+  color: #d98557;
+}
+
+/* 虫眼鏡アイコンのSVG */
+.customer-search-empty-icon svg {
+  display: block;
+
+  width: 29px;
+  height: 29px;
+}
+
+/* 空表示のタイトル */
+.customer-search-empty-state h3 {
+  margin: 16px 0 0;
+
+  color: #515254;
+  font-size: 18px;
+}
+
+/* 空表示の説明 */
+.customer-search-empty-state p {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 条件をリセットするボタン */
+.customer-search-reset-button {
+  min-height: 44px;
+  margin-top: 22px;
+  padding: 10px 20px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 999px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 読み込み中 */
+.customer-search-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin-top: 22px;
+
+  color: #818685;
+  font-size: 13px;
+}
+
+/* hidden属性が付いている間は隠す */
+.customer-search-loading[hidden] {
+  display: none;
+}
+
+/* 読み込み中の円 */
+.customer-search-loading-spinner {
+  width: 22px;
+  height: 22px;
+
+  border: 3px solid rgb(125 150 128 / 18%);
+  border-top-color: #7d9680;
+  border-radius: 50%;
+
+  animation:
+    customer-search-loading-spin 0.8s linear infinite;
+}
+
+/* 読み込み中アニメーション */
+@keyframes customer-search-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* さらに読み込むボタン */
+.customer-search-load-more {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+
+  background-color: transparent;
+  border: 1px solid rgb(125 150 128 / 40%);
+  border-radius: 14px;
+
+  color: #6d856f;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* PC右側のサイドバー */
+.customer-search-sidebar {
+  position: sticky;
+  top: 24px;
+
+  display: grid;
+  gap: 18px;
+}
+
+/* 並び替え・条件カード */
+.customer-search-side-card {
+  padding: 22px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 22px;
+
+  box-shadow:
+    0 10px 28px rgb(81 82 84 / 8%);
+}
+
+/* サイドカードタイトル */
+.customer-search-side-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* サイドカードタイトル文字 */
+.customer-search-side-title h3 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 16px;
+}
+
+/* 検索条件カードのヘッダー */
+.customer-search-side-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+/* 条件リセットボタン */
+.customer-search-condition-reset {
+  padding: 5px 0;
+
+  background-color: transparent;
+  border: none;
+
+  color: #7d9680;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 並び替え一覧 */
+.customer-search-sort-options {
+  display: grid;
+  gap: 4px;
+
+  margin: 18px 0 0;
+  padding: 0;
+
+  border: none;
+}
+
+/* 並び替え1件 */
+.customer-search-sort-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 42px;
+  padding: 8px 6px;
+
+  color: #515254;
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+/* 並び替えラジオボタン */
+.customer-search-sort-option input {
+  width: 18px;
+  height: 18px;
+
+  accent-color: #7d9680;
+}
+
+/* 検索条件一覧 */
+.customer-search-condition-list {
+  display: grid;
+
+  margin-top: 18px;
+
+  border-top:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* 検索条件1件 */
+.customer-search-condition-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  min-height: 50px;
+  padding: 12px 2px;
+
+  background-color: transparent;
+  border: none;
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+/* 検索条件のアイコンと項目名 */
+.customer-search-condition-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 0;
+}
+
+/* 検索条件のアイコン */
+.customer-search-condition-row-icon {
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 20px;
+  height: 20px;
+
+  color: #7d9680;
+}
+
+/* 検索条件のSVG */
+.customer-search-condition-row-icon svg {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+/* 現在の検索条件 */
+.customer-search-condition-value {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* この条件で検索ボタン */
+.customer-search-condition-submit {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 22px;
+  padding: 12px 18px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 22%);
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 一番上へ戻る縦型ボタン */
+.customer-search-scroll-top {
+  position: fixed;
+  right: 20px;
+  bottom: 108px;
+  z-index: 100;
+
+  width: 52px;
+  height: 108px;
+  padding: 0;
+
+  background-color: transparent;
+  border: none;
+
+  color: #d98f68;
+  font: inherit;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+  
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translateY(8px);
+}
+
+/* スクロール後にTOPボタンを表示する */
+.customer-search-scroll-top--visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  transform: translateY(0);
+}
+
+/* 縦向きに配置するTOPの文字 */
+.customer-search-scroll-top-text {
+  position: absolute;
+  top: 50px;
+  left: -7px;
+
+  display: block;
+
+  width: 46px;
+
+  color: currentColor;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  white-space: nowrap;
+
+  transform: rotate(90deg);
+}
+
+/* 縦線と矢印 */
+.customer-search-scroll-top-arrow {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  display: block;
+
+  width: 30px;
+  height: 108px;
+
+  overflow: visible;
+}
+
+/* マウスを乗せたとき */
+.customer-search-scroll-top:hover {
+  color: #c97952;
+
+  transform: translateY(-3px);
+}
+
+/* キーボード操作時の選択表示 */
+.customer-search-scroll-top:focus-visible {
+  outline: 2px solid #7d9680;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* スマホ用パネル全体 */
+.customer-search-mobile-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 2200;
+
+  display: grid;
+  align-items: end;
+
+  padding: 18px;
+
+  background-color: rgb(81 82 84 / 48%);
+  backdrop-filter: blur(5px);
+}
+
+/* hidden属性が付いている間はパネルを隠す */
+.customer-search-mobile-panel[hidden] {
+  display: none;
+}
+
+/* スマホ用パネルのカード */
+.customer-search-mobile-panel-content {
+  width: 100%;
+  max-height: calc(100dvh - 36px);
+  padding: 24px;
+
+  background-color: #fdfaf6;
+  border-radius: 24px;
+
+  box-shadow:
+    0 22px 60px rgb(81 82 84 / 28%);
+
+  overflow-y: auto;
+}
+
+/* スマホ用パネルのヘッダー */
+.customer-search-mobile-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* スマホ用パネルタイトル */
+.customer-search-mobile-panel-header h2 {
+  margin: 0;
+
+  color: #515254;
+  font-size: 22px;
+}
+
+/* パネルを閉じるボタン */
+.customer-search-mobile-panel-close {
+  display: grid;
+  place-items: center;
+
+  width: 38px;
+  height: 38px;
+  padding: 0;
+
+  background-color: rgb(125 150 128 / 12%);
+  border: none;
+  border-radius: 50%;
+
+  color: #607862;
+  font: inherit;
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+/* スマホ用パネルの決定ボタン */
+.customer-search-mobile-panel-submit {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 22px;
+  padding: 12px 18px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* スマホ用詳細条件パネルの下部ボタン */
+.customer-search-mobile-panel-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+/* スマホ用条件リセット */
+.customer-search-mobile-condition-reset {
+  min-height: 50px;
+  padding: 12px 16px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #607862;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 横並び時は決定ボタンの余白を消す */
+.customer-search-mobile-panel-actions
+.customer-search-mobile-panel-submit {
+  margin-top: 0;
+}
+
+/* 詳細条件の選択肢パネル */
+.customer-search-condition-choice-panel {
+  z-index: 2300;
+
+  align-items: center;
+  justify-items: center;
+}
+
+/* 詳細条件の選択肢カード */
+.customer-search-condition-choice-content {
+  width: min(420px, 100%);
+}
+
+/* 詳細条件の選択肢一覧 */
+.customer-search-condition-choice-options {
+  display: grid;
+  gap: 8px;
+
+  margin-top: 18px;
+}
+
+/* 詳細条件の選択肢ボタン */
+.customer-search-condition-choice-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 14px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* 選択中の詳細条件 */
+.customer-search-condition-choice-button--active {
+  background-color: rgb(125 150 128 / 12%);
+  border-color: #7d9680;
+
+  color: #607862;
+  font-weight: 700;
+}
+
+/* 選択中を表す丸 */
+.customer-search-condition-choice-check {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+
+  width: 20px;
+  height: 20px;
+
+  border: 1px solid rgb(125 150 128 / 45%);
+  border-radius: 50%;
+
+  color: transparent;
+  font-size: 12px;
+}
+
+/* 選択中の丸へチェックを表示する */
+.customer-search-condition-choice-button--active
+.customer-search-condition-choice-check {
+  background-color: #7d9680;
+  border-color: #7d9680;
+
+  color: #ffffff;
+}
+
+/* 条件が選択されている行 */
+.customer-search-condition-row--selected
+.customer-search-condition-value {
+  color: #607862;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .customer-search-condition-choice-panel {
+    align-items: end;
   }
 
-  h1 {
-    color: #7d9680;
+  .customer-search-condition-choice-content {
+    width: 100%;
   }
+}
+
+
+/* ==================================================
+   14. 顧客詳細画面
+   概要・タイムライン・売上
+================================================== */
+/* 顧客詳細画面では共通ヘッダーと下部ナビを隠す */
+body.customer-detail-mode {
+  padding-bottom: 0;
+
+  background-color: #e1d2c0;
+}
+
+body.customer-detail-mode .top-header,
+body.customer-detail-mode .bottom-navigation {
+  display: none;
+}
+
+/* 顧客詳細画面だけ中央の横幅を少し狭くする */
+body.customer-detail-mode .app-container {
+  max-width: 880px;
+  padding-top: 18px;
+  padding-bottom: 40px;
+}
+
+/* 検索結果に残っている顧客ランクを表示しない */
+.customer-search-result-card .customer-rank {
+  display: none;
+}
+
+/* 顧客詳細の内側 */
+.customer-detail-shell {
+  display: grid;
+  gap: 14px;
+}
+
+/* 顧客一覧へ戻る行 */
+.customer-detail-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 顧客一覧へ戻るボタン */
+.customer-detail-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  min-height: 40px;
+  padding: 6px 2px;
+
+  background-color: transparent;
+  border: none;
+
+  color: #607862;
+  font: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+/* 戻る矢印 */
+.customer-detail-back-button svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* 写真とプロフィールのカード */
+.customer-detail-hero-card {
+  display: grid;
+  grid-template-columns:
+    142px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+
+  padding: 20px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 15%);
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 24px rgb(81 82 84 / 7%);
+}
+
+/* メイン写真 */
+.customer-detail-main-photo {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 142px;
+  height: 142px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e5e8df,
+      #cfd8c9
+    );
+  border-radius: 13px;
+
+  overflow: hidden;
+}
+
+/* 写真未登録 */
+.customer-detail-main-photo--empty {
+  background:
+    linear-gradient(
+      145deg,
+      #eee8de,
+      #e4ddd2
+    );
+}
+
+/* 写真部分の頭文字 */
+.customer-detail-main-photo-initial {
+  color: #607862;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+/* 写真の登録状態 */
+.customer-detail-photo-status {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+
+  padding: 4px 7px;
+
+  background-color: rgb(255 253 249 / 88%);
+  border-radius: 999px;
+
+  color: #607862;
+  font-size: 9px;
+
+  backdrop-filter: blur(5px);
+}
+
+/* 名前周辺 */
+.customer-detail-hero-information {
+  display: grid;
+  gap: 12px;
+
+  min-width: 0;
+}
+
+/* 名前と編集ボタン */
+.customer-detail-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* 顧客名 */
+.customer-detail-name-row h2 {
+  margin: 0;
+
+  color: #3f4543;
+  font-size: clamp(25px, 5vw, 36px);
+  letter-spacing: 0.06em;
+}
+
+/* 上部編集ボタン */
+.customer-detail-edit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  min-height: 44px;
+  padding: 9px 16px;
+
+  background-color: #f1e8dc;
+  border: 1px solid #c9bdaf;
+  border-radius: 10px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 編集アイコン */
+.customer-detail-edit-button svg {
+  width: 19px;
+  height: 19px;
+
+  color: #607862;
+
+  flex-shrink: 0;
+}
+
+/* 編集ボタンにマウスを乗せたとき */
+.customer-detail-edit-button:hover {
+  background-color: #e3e8e4;
+  border-color: #7d9680;
+
+  color: #607862;
+}
+
+/* 顧客番号 */
+.customer-detail-id {
+  margin: 0;
+
+  color: #606563;
+  font-size: 15px;
+}
+
+/* 最終来店情報 */
+.customer-detail-last-visit {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 最終来店日 */
+.customer-detail-last-visit strong {
+  color: #515254;
+  font-size: 16px;
+}
+
+/* 最終来店からの日数 */
+.customer-detail-last-visit small {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* 3つのタブ */
+.customer-detail-tabs {
+  position: sticky;
+  top: 8px;
+  z-index: 20;
+
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  padding: 3px;
+
+  background-color: rgb(247 243 236 / 94%);
+  border: 1px solid rgb(129 134 133 / 13%);
+  border-radius: 12px;
+
+  backdrop-filter: blur(12px);
+}
+
+/* タブボタン */
+.customer-detail-tab-button {
+  min-height: 43px;
+  padding: 9px 10px;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 9px;
+
+  color: #606563;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 選択中のタブ */
+.customer-detail-tab-button--active {
+  background-color: #7d9680;
+
+  color: #ffffff;
+}
+
+/* タブの中身 */
+.customer-detail-panel {
+  display: grid;
+  gap: 12px;
+}
+
+/* 非表示のタブ */
+.customer-detail-panel[hidden] {
+  display: none;
+}
+
+/* 共通カード */
+.customer-detail-section-card {
+  padding: 18px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 15%);
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 16px rgb(81 82 84 / 5%);
+}
+
+/* カード上部 */
+.customer-detail-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  margin-bottom: 13px;
+}
+
+/* カード見出し */
+.customer-detail-section-header h3 {
+  margin: 0;
+
+  color: #454b49;
+  font-size: 16px;
+}
+
+/* カード右側の小さな文字 */
+.customer-detail-section-header > span {
+  color: #818685;
+  font-size: 11px;
+}
+
+/* 小さな編集ボタン */
+.customer-detail-section-edit {
+  min-height: 32px;
+  padding: 5px 14px;
+
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+  border-radius: 8px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+/* 基本情報一覧 */
+.customer-detail-basic-list {
+  display: grid;
+
+  margin: 0;
+}
+
+/* 基本情報1件 */
+.customer-detail-basic-list > div {
+  display: grid;
+  grid-template-columns:
+    130px minmax(0, 1fr);
+  gap: 18px;
+
+  padding: 11px 4px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 11%);
+}
+
+/* 最後の基本情報 */
+.customer-detail-basic-list > div:last-child {
+  border-bottom: none;
+}
+
+/* 基本情報の項目名 */
+.customer-detail-basic-list dt {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* 基本情報の内容 */
+.customer-detail-basic-list dd {
+  margin: 0;
+
+  color: #454b49;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 年齢 */
+.customer-detail-basic-list dd small {
+  margin-left: 7px;
+
+  color: #818685;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+/* 来店サマリー */
+.customer-detail-summary-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
+  margin: 0;
+}
+
+/* 来店サマリー1件 */
+.customer-detail-summary-grid > div {
+  display: grid;
+  gap: 5px;
+
+  min-height: 108px;
+  padding: 13px;
+
+  background-color: rgb(227 232 228 / 40%);
+  border: 1px solid rgb(125 150 128 / 11%);
+  border-radius: 10px;
+
+  text-align: center;
+}
+
+/* 来店サマリーの見出し */
+.customer-detail-summary-grid dt {
+  color: #818685;
+  font-size: 11px;
+}
+
+/* 来店サマリーの数値 */
+.customer-detail-summary-grid dd {
+  margin: 0;
+
+  color: #607862;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* 来店サマリーの補足 */
+.customer-detail-summary-grid small {
+  color: #818685;
+  font-size: 10px;
+}
+
+/* 特徴一覧 */
+.customer-detail-feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+/* 特徴タグ */
+.customer-detail-feature-tag {
+  padding: 6px 13px;
+
+  background-color: #e3e8e4;
+  border-radius: 999px;
+
+  color: #5f7261;
+  font-size: 12px;
+}
+
+/* 特徴が未登録の場合 */
+.customer-detail-feature-empty {
+  color: #818685;
+  font-size: 13px;
+}
+
+/* 顧客メモ */
+.customer-detail-customer-memo {
+  min-height: 100px;
+  margin: 0;
+  padding: 14px;
+
+  background-color: #f8f5ee;
+  border: 1px solid #e4ddd2;
+  border-radius: 10px;
+
+  color: #515254;
+  font-size: 13px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+
+/* 写真一覧 */
+.customer-detail-gallery-list {
+  display: flex;
+  gap: 9px;
+
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* 写真1件 */
+.customer-detail-gallery-item {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 7px;
+  flex: 0 0 118px;
+
+  height: 104px;
+  padding: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e7e9e3,
+      #d5ddcf
+    );
+  border: 1px solid rgb(129 134 133 / 13%);
+  border-radius: 10px;
+
+  color: #607862;
+  text-align: center;
+}
+
+/* 写真アイコン */
+.customer-detail-gallery-item svg {
+  width: 25px;
+  height: 25px;
+}
+
+/* 写真名 */
+.customer-detail-gallery-item span {
+  font-size: 10px;
+}
+
+/* 写真未登録 */
+.customer-detail-gallery-item--empty {
+  background-color: #f5f1ea;
+  background-image: none;
+  border-style: dashed;
+
+  color: #818685;
+}
+
+/* 画面下部の2ボタン */
+.customer-detail-bottom-actions {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 0.8fr)
+    minmax(0, 1.2fr);
+  gap: 10px;
+
+  margin-top: 2px;
+  padding: 12px;
+
+  background-color: rgb(255 253 249 / 92%);
+  border: 1px solid rgb(129 134 133 / 13%);
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 22px rgb(81 82 84 / 7%);
+}
+
+/* 下部の編集ボタンと来店登録ボタン */
+.customer-detail-bottom-edit,
+.customer-detail-register-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 46px;
+  padding: 10px 14px;
+
+  border-radius: 999px;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 下部編集ボタン */
+.customer-detail-bottom-edit {
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+
+  color: #515254;
+}
+
+/* 来店登録ボタン */
+.customer-detail-register-button {
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+
+  color: #ffffff;
+}
+
+/* 下部ボタンのアイコン */
+.customer-detail-bottom-edit svg,
+.customer-detail-register-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* タイムライン上部 */
+.customer-detail-timeline-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 4px 2px;
+}
+
+/* 来店履歴の文字 */
+.customer-detail-timeline-toolbar > span {
+  color: #515254;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* タイムライン上部の登録ボタン */
+.customer-detail-timeline-register {
+  min-height: 38px;
+  padding: 7px 14px;
+
+  background-color: transparent;
+  border-color: #7d9680;
+  border-radius: 9px;
+
+  color: #607862;
+}
+
+/* タイムライン一覧 */
+.customer-detail-timeline-list {
+  display: grid;
+}
+
+/* タイムライン1件 */
+.customer-detail-timeline-item {
+  display: grid;
+  grid-template-columns:
+    92px minmax(0, 1fr);
+  gap: 20px;
+}
+
+/* 左側の日付 */
+.customer-detail-timeline-date {
+  position: relative;
+
+  display: grid;
+  align-content: start;
+  justify-items: end;
+  gap: 2px;
+
+  padding: 17px 16px 28px 0;
+
+  border-right:
+    1px solid rgb(125 150 128 / 35%);
+}
+
+/* タイムラインの丸 */
+.customer-detail-timeline-date::after {
+  content: "";
+
+  position: absolute;
+  top: 28px;
+  right: -5px;
+
+  width: 9px;
+  height: 9px;
+
+  background-color: #7d9680;
+  border: 2px solid #f5f1ea;
+  border-radius: 50%;
+}
+
+/* 年 */
+.customer-detail-timeline-date span {
+  color: #818685;
+  font-size: 10px;
+}
+
+/* 月日 */
+.customer-detail-timeline-date strong {
+  color: #515254;
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+/* 何日前 */
+.customer-detail-timeline-date small {
+  color: #818685;
+  font-size: 9px;
+}
+
+/* 右側の来店カード */
+.customer-detail-timeline-card {
+  display: grid;
+  gap: 10px;
+
+  margin-bottom: 10px;
+  padding: 15px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 15%);
+  border-radius: 12px;
+
+  box-shadow:
+    0 5px 15px rgb(81 82 84 / 5%);
+}
+
+/* 会計金額・担当・来店回数 */
+.customer-detail-timeline-card-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+/* 会計金額 */
+.customer-detail-timeline-card-header strong {
+  margin-right: auto;
+
+  color: #454b49;
+  font-size: 19px;
+}
+
+/* 担当スタッフ */
+.customer-detail-timeline-staff {
+  color: #607862;
+  font-size: 11px;
+}
+
+/* 何回目の来店か */
+.customer-detail-timeline-count {
+  padding: 3px 7px;
+
+  background-color: rgb(245 177 135 / 13%);
+  border: 1px solid rgb(245 177 135 / 44%);
+  border-radius: 5px;
+
+  color: #d78151;
+  font-size: 9px;
+}
+
+/* タイムラインのメモ */
+.customer-detail-timeline-memo {
+  margin: 0;
+
+  color: #515254;
+  font-size: 12px;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+/* 読み込み中 */
+.customer-detail-timeline-loading {
+  margin: 8px 0;
+
+  color: #818685;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* さらに読み込むボタン */
+.customer-detail-timeline-load-more {
+  width: 100%;
+  min-height: 42px;
+
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+  border-radius: 9px;
+
+  color: #606563;
+  font: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+/* 売上画面の2列配置 */
+.customer-detail-sales-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* 売上グラフ */
+.customer-detail-sales-chart {
+  display: grid;
+  grid-template-columns:
+    repeat(6, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px;
+
+  min-height: 210px;
+  padding: 18px 6px 0;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 18%);
+}
+
+/* グラフ1か月分 */
+.customer-detail-sales-bar-item {
+  display: grid;
+  grid-template-rows:
+    20px 150px 20px;
+  align-items: end;
+  gap: 5px;
+
+  min-width: 0;
+
+  text-align: center;
+}
+
+/* 売上金額 */
+.customer-detail-sales-bar-item small {
+  color: #818685;
+  font-size: 8px;
+}
+
+/* 棒グラフの領域 */
+.customer-detail-sales-bar-track {
+  position: relative;
+
+  width: 100%;
+  height: 150px;
+}
+
+/* 売上の棒 */
+.customer-detail-sales-bar {
+  position: absolute;
+  right: 16%;
+  bottom: 0;
+  left: 16%;
+
+  height: var(--bar-height);
+
+  min-height: 4px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #91a791,
+      #718a73
+    );
+  border-radius: 5px 5px 0 0;
+}
+
+/* 月 */
+.customer-detail-sales-bar-item span {
+  color: #606563;
+  font-size: 10px;
+}
+
+/* 分析一覧 */
+.customer-detail-analysis-list {
+  display: grid;
+  gap: 0;
+
+  margin: 0;
+}
+
+/* 分析1項目 */
+.customer-detail-analysis-list > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 11px 2px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 11%);
+}
+
+/* 最後の分析項目 */
+.customer-detail-analysis-list > div:last-child {
+  border-bottom: none;
+}
+
+/* 分析項目名 */
+.customer-detail-analysis-list dt {
+  color: #818685;
+  font-size: 11px;
+}
+
+/* 分析数値 */
+.customer-detail-analysis-list dd {
+  margin: 0;
+
+  color: #515254;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* 最も多い曜日 */
+.customer-detail-weekday-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+
+  margin-bottom: 15px;
+}
+
+/* 曜日名 */
+.customer-detail-weekday-summary strong {
+  color: #607862;
+  font-size: 23px;
+}
+
+/* 補足文 */
+.customer-detail-weekday-summary span {
+  color: #818685;
+  font-size: 12px;
+}
+
+/* 曜日ごとの回数 */
+.customer-detail-weekday-list {
+  display: grid;
+  gap: 8px;
+}
+
+/* 曜日1件 */
+.customer-detail-weekday-item {
+  display: grid;
+  grid-template-columns:
+    34px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 曜日名と回数 */
+.customer-detail-weekday-item span,
+.customer-detail-weekday-item strong {
+  color: #606563;
+  font-size: 11px;
+}
+
+/* 曜日バーの背景 */
+.customer-detail-weekday-track {
+  height: 7px;
+
+  background-color: #ece8e1;
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+/* 曜日バー */
+.customer-detail-weekday-bar {
+  width: var(--weekday-width);
+  height: 100%;
+
+  background-color: #7d9680;
+  border-radius: inherit;
+}
+
+/* 好みと傾向 */
+.customer-detail-tendency-list {
+  display: grid;
+  gap: 7px;
+
+  margin: 0;
+  padding-left: 20px;
+
+  color: #515254;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 編集モーダルを閉じている状態 */
+.customer-detail-edit-dialog[hidden] {
+  display: none;
+}
+
+/* 編集モーダル */
+.customer-detail-edit-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background-color: rgb(81 82 84 / 32%);
+  backdrop-filter: blur(4px);
+}
+
+/* 編集内容 */
+.customer-detail-edit-content {
+  width: min(100%, 600px);
+  max-height: calc(100dvh - 40px);
+  padding: 22px;
+
+  background-color: #fffdf9;
+  border-radius: 18px;
+
+  box-shadow:
+    0 24px 70px rgb(81 82 84 / 24%);
+
+  overflow-y: auto;
+}
+
+/* 編集画面上部 */
+.customer-detail-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+/* 編集画面タイトル */
+.customer-detail-edit-header h2 {
+  margin: 0;
+
+  color: #454b49;
+  font-size: 21px;
+}
+
+/* 編集画面を閉じるボタン */
+.customer-detail-edit-close {
+  width: 38px;
+  height: 38px;
+
+  background-color: transparent;
+  border: none;
+
+  color: #515254;
+  font-size: 24px;
+
+  cursor: pointer;
+}
+
+/* 編集フォーム */
+#customer-detail-edit-form {
+  display: grid;
+  gap: 16px;
+}
+
+/* 編集項目 */
+.customer-detail-edit-field {
+  display: grid;
+  gap: 7px;
+
+  color: #515254;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 編集欄 */
+.customer-detail-edit-field input,
+.customer-detail-edit-field select,
+.customer-detail-edit-field textarea {
+  width: 100%;
+  padding: 12px 13px;
+
+  background-color: #ffffff;
+  border: 1px solid #d6cabd;
+  border-radius: 9px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 14px;
+}
+
+/* 編集欄の補足 */
+.customer-detail-edit-field small {
+  color: #818685;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+/* 編集画面下部 */
+.customer-detail-edit-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  margin-top: 6px;
+}
+
+/* キャンセルと保存 */
+.customer-detail-edit-cancel,
+.customer-detail-edit-save {
+  min-height: 45px;
+
+  border-radius: 999px;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* キャンセル */
+.customer-detail-edit-cancel {
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+
+  color: #515254;
+}
+
+/* 保存 */
+.customer-detail-edit-save {
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+
+  color: #ffffff;
+}
+
+/* 顧客詳細画面のタブレット・スマホ表示 */
+@media (max-width: 768px) {
+  /* 画面全体が横へはみ出さないようにする */
+  body.customer-detail-mode {
+    overflow-x: hidden;
+  }
+
+  /* 顧客詳細画面を端末の横幅に収める */
+  body.customer-detail-mode .app-container {
+    width: 100%;
+    max-width: none;
+    padding: 12px;
+  }
+
+  /* グリッド内の内容が親要素を押し広げないようにする */
+  #customer-detail-view,
+  .customer-detail-shell,
+  .customer-detail-panel,
+  .customer-detail-section-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* 顧客詳細画面内の間隔 */
+  .customer-detail-shell {
+    gap: 10px;
+  }
+
+  /* 上部プロフィールカード */
+  .customer-detail-hero-card {
+    grid-template-columns:
+      112px minmax(0, 1fr);
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+    padding: 14px;
+  }
+
+  /* 顧客写真 */
+  .customer-detail-main-photo {
+    width: 112px;
+    height: 122px;
+  }
+
+  /* 顧客写真内の頭文字 */
+  .customer-detail-main-photo-initial {
+    font-size: 38px;
+  }
+
+  /* 名前周辺が画面を押し広げないようにする */
+  .customer-detail-hero-information,
+  .customer-detail-name-row {
+    min-width: 0;
+  }
+
+  /* 顧客名と編集ボタン */
+  .customer-detail-name-row {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* 顧客名 */
+  .customer-detail-name-row h2 {
+    min-width: 0;
+
+    font-size: 23px;
+
+    overflow-wrap: anywhere;
+  }
+
+  /* 上部の編集ボタン */
+  .customer-detail-edit-button {
+    flex-shrink: 0;
+
+    padding: 7px 9px;
+  }
+
+  /* スマホでは編集ボタンをアイコンだけにする */
+  .customer-detail-edit-button span {
+    display: none;
+  }
+
+  /* 3つのタブ */
+  .customer-detail-tabs {
+    top: 4px;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* タブの文字サイズ */
+  .customer-detail-tab-button {
+    min-width: 0;
+    padding-right: 5px;
+    padding-left: 5px;
+
+    font-size: 13px;
+  }
+
+  /* 各情報カード */
+  .customer-detail-section-card {
+    padding: 14px;
+
+    overflow: hidden;
+  }
+
+  /* カードタイトル部分 */
+  .customer-detail-section-header {
+    min-width: 0;
+    gap: 10px;
+  }
+
+  /* カードタイトル */
+  .customer-detail-section-header h3 {
+    min-width: 0;
+  }
+
+  /* 小さな編集ボタン */
+  .customer-detail-section-edit {
+    flex-shrink: 0;
+
+    padding-right: 11px;
+    padding-left: 11px;
+  }
+
+  /* 基本情報 */
+  .customer-detail-basic-list > div {
+    grid-template-columns:
+      110px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  /* 基本情報の内容 */
+  .customer-detail-basic-list dd {
+    min-width: 0;
+
+    overflow-wrap: anywhere;
+  }
+
+  /* 来店サマリー */
+  .customer-detail-summary-grid {
+    min-width: 0;
+  }
+
+  /* サマリー1項目 */
+  .customer-detail-summary-grid > div {
+    min-width: 0;
+    min-height: 100px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  /* サマリーの数値 */
+  .customer-detail-summary-grid dd {
+    min-width: 0;
+
+    font-size: 18px;
+
+    overflow-wrap: anywhere;
+  }
+
+  /* 写真一覧だけはカード内で横スクロールできるようにする */
+  .customer-detail-gallery-list {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    overscroll-behavior-inline: contain;
+  }
+
+  /* スマホでは写真を少し小さくする */
+  .customer-detail-gallery-item {
+    flex: 0 0 104px;
+
+    width: 104px;
+    height: 104px;
+  }
+
+  /* 下部の2ボタン */
+  .customer-detail-bottom-actions {
+    grid-template-columns:
+      minmax(0, 0.85fr)
+      minmax(0, 1.15fr);
+    gap: 8px;
+
+    width: 100%;
+    min-width: 0;
+    padding: 8px;
+  }
+
+  /* 下部ボタンを割り当てられた幅に収める */
+  .customer-detail-bottom-edit,
+  .customer-detail-register-button {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 6px;
+
+    font-size: clamp(10px, 2.8vw, 12px);
+    white-space: nowrap;
+  }
+
+  /* 下部ボタンのアイコン */
+  .customer-detail-bottom-edit svg,
+  .customer-detail-register-button svg {
+    width: 16px;
+    height: 16px;
+
+    flex-shrink: 0;
+  }
+
+  /* タイムライン */
+  .customer-detail-timeline-item {
+    grid-template-columns:
+      66px minmax(0, 1fr);
+    gap: 12px;
+
+    min-width: 0;
+  }
+
+  /* タイムラインの日付 */
+  .customer-detail-timeline-date {
+    padding-right: 11px;
+  }
+
+  /* タイムラインカード */
+  .customer-detail-timeline-card {
+    min-width: 0;
+  }
+
+  /* タイムラインカード上部 */
+  .customer-detail-timeline-card-header {
+    gap: 7px;
+  }
+
+  /* 会計金額 */
+  .customer-detail-timeline-card-header strong {
+    width: 100%;
+  }
+
+  /* 来店メモ */
+  .customer-detail-timeline-memo {
+    overflow-wrap: anywhere;
+  }
+
+  /* 売上画面は縦1列にする */
+  .customer-detail-sales-grid {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  /* 売上グラフ */
+  .customer-detail-sales-chart {
+    width: 100%;
+    min-width: 0;
+    gap: 4px;
+  }
+
+  /* グラフ上の金額 */
+  .customer-detail-sales-bar-item small {
+    font-size: 7px;
+    white-space: nowrap;
+  }
+
+  /* 売上の棒 */
+  .customer-detail-sales-bar {
+    right: 12%;
+    left: 12%;
+  }
+
+  /* 編集画面をスマホでは下から表示する */
+  .customer-detail-edit-dialog {
+    align-items: end;
+
+    padding: 0;
+  }
+
+  /* 編集画面本体 */
+  .customer-detail-edit-content {
+    width: 100%;
+    max-height: 90dvh;
+
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .customer-detail-hero-card {
+    grid-template-columns:
+      105px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .customer-detail-main-photo {
+    width: 105px;
+    height: 118px;
+  }
+
+  .customer-detail-name-row h2 {
+    font-size: 21px;
+  }
+
+  .customer-detail-id {
+    font-size: 13px;
+  }
+
+  .customer-detail-last-visit {
+    gap: 5px;
+
+    font-size: 11px;
+  }
+
+  .customer-detail-last-visit strong {
+    font-size: 13px;
+  }
+
+  .customer-detail-basic-list > div {
+    grid-template-columns:
+      minmax(0, 1fr);
+    gap: 5px;
+  }
+
+  .customer-detail-bottom-edit,
+  .customer-detail-register-button {
+    padding: 9px 8px;
+
+    font-size: 11px;
+  }
+}
+
+
+/* ==================================================
+   15. サマリー画面
+   売上・来店状況・来店なし顧客
+================================================== */
+
+/* サマリー画面全体 */
+.summary-screen {
+  display: grid;
+  gap: 20px;
+
+  padding: 24px 0 36px;
+}
+
+/* 月と集計期間を選択する領域 */
+.summary-control-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* 月選択 */
+.summary-month-picker {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 52px;
+  padding: 8px 12px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 16px rgb(81 82 84 / 5%);
+}
+
+/* 月選択のカレンダー */
+.summary-month-picker svg {
+  width: 22px;
+  height: 22px;
+
+  color: #515254;
+}
+
+/* 選択中の月を表示するボタン */
+.summary-month-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+
+  min-width: 155px;
+  min-height: 36px;
+  padding: 5px 4px;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 9px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+/* キーボード操作時の選択表示 */
+.summary-month-button:focus {
+  outline: none;
+}
+
+/* 黒い枠ではなくセージ色で表示する */
+.summary-month-button:focus-visible {
+  outline: 2px solid #7d9680;
+  outline-offset: 2px;
+
+  background-color: rgb(227 232 228 / 45%);
+}
+
+/* 月選択の下向き矢印 */
+.summary-month-chevron {
+  width: 18px !important;
+  height: 18px !important;
+
+  color: #607862;
+
+  transition:
+    transform 0.2s ease;
+}
+
+/* 開いているときは矢印を上向きにする */
+.summary-month-button[aria-expanded="true"] .summary-month-chevron {
+  transform: rotate(180deg);
+}
+
+/* 月の選択肢パネル */
+.summary-month-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 10px;
+  left: 44px;
+  z-index: 100;
+
+  display: grid;
+  gap: 4px;
+
+  padding: 7px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 12px;
+
+  box-shadow:
+    0 14px 34px rgb(81 82 84 / 15%);
+}
+
+/* 閉じている月選択 */
+.summary-month-options[hidden] {
+  display: none;
+}
+
+/* 月の選択肢 */
+.summary-month-option {
+  width: 100%;
+  min-height: 39px;
+  padding: 8px 12px;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+/* 選択肢へマウスを乗せたとき */
+.summary-month-option:hover,
+.summary-month-option:focus-visible {
+  background-color: #f1e8dc;
+
+  outline: none;
+}
+
+/* 現在選択している月 */
+.summary-month-option--active {
+  background-color: #e3e8e4;
+
+  color: #607862;
+}
+
+/* 集計期間ボタン */
+.summary-period-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  min-height: 52px;
+  padding: 5px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 16px rgb(81 82 84 / 5%);
+}
+
+/* 集計期間ボタン */
+.summary-period-button {
+  min-height: 40px;
+  padding: 8px 20px;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 10px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 選択中の集計期間 */
+.summary-period-button--active {
+  background-color: #8da38b;
+
+  color: #ffffff;
+}
+
+/* 4つの主要な数字 */
+.summary-kpi-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* 主要な数字のカード */
+.summary-kpi-card {
+  display: grid;
+  gap: 18px;
+
+  min-width: 0;
+  padding: 20px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 16px;
+
+  box-shadow:
+    0 6px 20px rgb(81 82 84 / 6%);
+}
+
+/* カードのタイトル */
+.summary-kpi-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* カードのタイトル文字 */
+.summary-kpi-title h2 {
+  margin: 0;
+
+  color: #454b49;
+  font-size: 15px;
+}
+
+/* 丸いアイコン */
+.summary-kpi-icon {
+  display: grid;
+  place-items: center;
+
+  width: 43px;
+  height: 43px;
+
+  background-color: #91a58e;
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  flex-shrink: 0;
+}
+
+/* 新規顧客のアイコン */
+.summary-kpi-card--new .summary-kpi-icon {
+  background-color: #f19a52;
+}
+
+/* KPIアイコン */
+.summary-kpi-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+/* KPIの大きな数値 */
+.summary-kpi-value {
+  color: #242927;
+  font-size: clamp(27px, 3vw, 37px);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* 前月との比較 */
+.summary-kpi-comparison {
+  position: relative;
+
+  display: grid;
+  gap: 7px;
+
+  padding: 12px 44px 12px 13px;
+
+  background-color: rgb(227 232 228 / 50%);
+  border-radius: 11px;
+}
+
+/* 新規顧客の比較欄 */
+.summary-kpi-card--new .summary-kpi-comparison {
+  background-color: rgb(245 177 135 / 12%);
+}
+
+/* 比較1行 */
+.summary-kpi-comparison > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+}
+
+/* 比較項目名 */
+.summary-kpi-comparison span {
+  color: #606563;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* 比較数値 */
+.summary-kpi-comparison strong {
+  color: #454b49;
+  font-size: 11px;
+}
+
+/* 右肩上がりアイコン */
+.summary-kpi-comparison > svg {
+  position: absolute;
+  right: 13px;
+  bottom: 17px;
+
+  width: 24px;
+  height: 24px;
+
+  color: #607862;
+}
+
+/* 共通の白いパネル */
+.summary-panel {
+  min-width: 0;
+  padding: 20px;
+
+  background-color: #fffdf9;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 16px;
+
+  box-shadow:
+    0 6px 20px rgb(81 82 84 / 6%);
+}
+
+/* パネル上部 */
+.summary-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  margin-bottom: 18px;
+}
+
+/* パネルタイトル */
+.summary-panel-header h2 {
+  margin: 0;
+
+  color: #454b49;
+  font-size: 17px;
+}
+
+/* パネルの補足 */
+.summary-panel-header > span,
+.summary-panel-header p {
+  margin: 3px 0 0;
+
+  color: #818685;
+  font-size: 10px;
+}
+
+/* 売上推移と割合 */
+.summary-main-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 2.1fr)
+    minmax(260px, 0.9fr);
+  gap: 16px;
+}
+
+/* 売上推移上部 */
+.summary-trend-header {
+  align-items: center;
+}
+
+/* 売上推移タイトルと凡例 */
+.summary-trend-header > div:first-child {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
+}
+
+/* グラフの凡例 */
+.summary-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  color: #606563;
+  font-size: 10px;
+}
+
+/* 凡例1件 */
+.summary-chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* 売上の凡例 */
+.summary-chart-legend-line {
+  width: 22px;
+
+  border-top: 2px solid #718a73;
+}
+
+/* 来店回数の凡例 */
+.summary-chart-legend-dashed {
+  width: 22px;
+
+  border-top: 2px dashed #f19a52;
+}
+
+/* 日別・月別 */
+.summary-chart-mode-buttons {
+  display: flex;
+  padding: 3px;
+
+  background-color: #f4f1eb;
+  border-radius: 10px;
+}
+
+/* 日別・月別ボタン */
+.summary-chart-mode-button {
+  min-width: 56px;
+  min-height: 34px;
+
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+
+  color: #606563;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 選択中のグラフ表示 */
+.summary-chart-mode-button--active {
+  background-color: #7d9680;
+
+  color: #ffffff;
+}
+
+/* グラフ本体 */
+.summary-trend-chart {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* SVGグラフ */
+.summary-trend-svg {
+  display: block;
+
+  width: 100%;
+  min-width: 700px;
+  height: auto;
+}
+
+/* グラフの補助線 */
+.summary-chart-grid-line {
+  stroke: rgb(129 134 133 / 16%);
+  stroke-width: 1;
+}
+
+/* グラフの目盛り */
+.summary-chart-axis-label {
+  fill: #818685;
+
+  font-size: 10px;
+}
+
+/* 売上の線 */
+.summary-chart-sales-line {
+  fill: none;
+  stroke: #718a73;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 来店回数の線 */
+.summary-chart-visit-line {
+  fill: none;
+  stroke: #f19a52;
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 売上データの点 */
+.summary-chart-sales-point {
+  fill: #718a73;
+  stroke: #fffdf9;
+  stroke-width: 2;
+}
+
+/* 来店回数の点 */
+.summary-chart-visit-point {
+  fill: #f19a52;
+  stroke: #fffdf9;
+  stroke-width: 2;
+}
+
+/* 新規・常連の割合 */
+.summary-ratio-card {
+  display: grid;
+  align-content: start;
+}
+
+/* ドーナツグラフ */
+.summary-ratio-donut {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: min(220px, 100%);
+  aspect-ratio: 1;
+  margin: 8px auto 22px;
+
+  background:
+    conic-gradient(
+      #91a58e 0 var(--regular-percent),
+      #f5b187 var(--regular-percent) 100%
+    );
+  border-radius: 50%;
+}
+
+/* ドーナツの中央 */
+.summary-ratio-donut::after {
+  content: "";
+
+  position: absolute;
+  inset: 28%;
+
+  background-color: #fffdf9;
+  border-radius: 50%;
+}
+
+/* ドーナツ中央の数字 */
+.summary-ratio-donut-center {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+  grid-template-columns:
+    auto auto;
+  align-items: end;
+  justify-content: center;
+  gap: 3px;
+
+  text-align: center;
+}
+
+/* 来店回数 */
+.summary-ratio-donut-center strong {
+  color: #242927;
+  font-size: 31px;
+}
+
+/* 回 */
+.summary-ratio-donut-center > span {
+  padding-bottom: 5px;
+
+  color: #454b49;
+  font-size: 13px;
+}
+
+/* 中央の説明 */
+.summary-ratio-donut-center small {
+  grid-column: 1 / -1;
+
+  color: #606563;
+  font-size: 9px;
+}
+
+/* 割合の凡例 */
+.summary-ratio-legend {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* 割合の凡例1件 */
+.summary-ratio-legend > div {
+  display: grid;
+  grid-template-columns:
+    auto 1fr;
+  align-items: center;
+  gap: 4px 7px;
+}
+
+/* 凡例の丸 */
+.summary-ratio-dot {
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50%;
+}
+
+/* 常連の丸 */
+.summary-ratio-dot--regular {
+  background-color: #91a58e;
+}
+
+/* 新規の丸 */
+.summary-ratio-dot--new {
+  background-color: #f5b187;
+}
+
+/* 凡例の文字 */
+.summary-ratio-legend span {
+  color: #515254;
+  font-size: 12px;
+}
+
+/* 凡例の回数 */
+.summary-ratio-legend strong {
+  color: #454b49;
+  font-size: 12px;
+  text-align: right;
+}
+
+/* 凡例の割合 */
+.summary-ratio-legend small {
+  grid-column: 2;
+
+  color: #818685;
+  font-size: 10px;
+  text-align: right;
+}
+
+/* 下部のカード配置 */
+.summary-sub-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.2fr)
+    minmax(230px, 0.72fr)
+    minmax(0, 1fr);
+  gap: 16px;
+}
+
+/* 来店なし顧客を縦に大きく表示する */
+.summary-no-visit-card {
+  grid-row: span 2;
+}
+
+/* 来店なし顧客の人数 */
+.summary-no-visit-card .summary-panel-header > strong {
+  color: #607862;
+  font-size: 18px;
+}
+
+/* 来店なし期間フィルター */
+.summary-no-visit-filters {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  margin-bottom: 10px;
+
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+/* 来店なし期間ボタン */
+.summary-no-visit-filter {
+  min-height: 36px;
+
+  background-color: transparent;
+  border: none;
+  border-right:
+    1px solid rgb(129 134 133 / 16%);
+
+  color: #606563;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 最後の期間ボタン */
+.summary-no-visit-filter:last-child {
+  border-right: none;
+}
+
+/* 選択中の期間 */
+.summary-no-visit-filter--active {
+  background-color: #7d9680;
+
+  color: #ffffff;
+}
+
+/* 来店なし顧客一覧 */
+.summary-no-visit-list {
+  display: grid;
+}
+
+/* 来店なし顧客1件 */
+.summary-no-visit-item {
+  display: grid;
+  grid-template-columns:
+    45px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+
+  padding: 13px 2px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 13%);
+}
+
+/* 顧客の頭文字 */
+.summary-no-visit-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 45px;
+  height: 45px;
+
+  background-color: #e3e8e4;
+  border-radius: 12px;
+
+  color: #607862;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* 顧客情報 */
+.summary-no-visit-information {
+  display: grid;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+/* 顧客名 */
+.summary-no-visit-information strong {
+  color: #454b49;
+  font-size: 13px;
+}
+
+/* 最終来店と担当 */
+.summary-no-visit-information span {
+  color: #818685;
+  font-size: 9px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 顧客詳細を見る */
+.summary-no-visit-detail {
+  min-height: 31px;
+  padding: 5px 9px;
+
+  background-color: transparent;
+  border: 1px solid #c9bdaf;
+  border-radius: 8px;
+
+  color: #607862;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 対象者がいない場合 */
+.summary-no-visit-empty {
+  margin: 20px 0;
+  padding: 20px;
+
+  background-color: #f6f3ed;
+  border-radius: 10px;
+
+  color: #818685;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* 一覧をすべて表示する */
+.summary-list-more-button,
+.summary-card-link-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  min-height: 40px;
+  margin-top: 12px;
+  padding: 8px 14px;
+
+  background-color: transparent;
+  border: 1px solid #d6cabd;
+  border-radius: 9px;
+
+  color: #515254;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 今月の誕生日カード */
+.summary-birthday-card {
+  display: grid;
+  align-content: start;
+}
+
+/* 誕生日アイコン */
+.summary-birthday-card .summary-panel-header svg {
+  width: 23px;
+  height: 23px;
+
+  color: #f19a52;
+}
+
+/* 誕生日の合計 */
+.summary-birthday-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+
+  margin: 5px 0 16px;
+}
+
+/* 誕生日人数 */
+.summary-birthday-total strong {
+  color: #242927;
+  font-size: 39px;
+}
+
+/* 名 */
+.summary-birthday-total span {
+  color: #454b49;
+  font-size: 18px;
+}
+
+/* 今週と来週 */
+.summary-birthday-breakdown {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+/* 誕生日内訳 */
+.summary-birthday-breakdown > div {
+  display: grid;
+  gap: 6px;
+
+  padding: 12px;
+
+  background-color: rgb(245 177 135 / 10%);
+  border-radius: 10px;
+
+  text-align: center;
+}
+
+/* 今週・来週 */
+.summary-birthday-breakdown span {
+  color: #606563;
+  font-size: 10px;
+}
+
+/* 誕生日人数 */
+.summary-birthday-breakdown strong {
+  color: #454b49;
+  font-size: 18px;
+}
+
+/* 誕生日カードの顧客検索ボタン */
+.summary-card-link-button {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* 顧客検索ボタンへマウスを乗せたとき */
+.summary-card-link-button:hover {
+  background-color: #e3e8e4;
+  border-color: #7d9680;
+
+  color: #607862;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 14px rgb(81 82 84 / 8%);
+}
+
+/* 右側の矢印を少し動かす */
+.summary-card-link-button span:last-child {
+  transition:
+    transform 0.2s ease;
+}
+
+.summary-card-link-button:hover span:last-child {
+  transform: translateX(3px);
+}
+
+/* キーボード操作時も選択位置を表示する */
+.summary-card-link-button:focus-visible {
+  outline: 2px solid #7d9680;
+  outline-offset: 3px;
+}
+
+/* 曜日一覧 */
+.summary-weekday-list {
+  display: grid;
+  gap: 10px;
+}
+
+/* 曜日1件 */
+.summary-weekday-item {
+  display: grid;
+  grid-template-columns:
+    22px minmax(0, 1fr) 35px;
+  align-items: center;
+  gap: 9px;
+}
+
+/* 曜日と回数 */
+.summary-weekday-item span,
+.summary-weekday-item strong {
+  color: #515254;
+  font-size: 10px;
+}
+
+/* 曜日バー背景 */
+.summary-weekday-track {
+  height: 8px;
+
+  background-color: #ece8e1;
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+/* 曜日バー */
+.summary-weekday-bar {
+  width: var(--weekday-width);
+  height: 100%;
+
+  background-color: #91a58e;
+  border-radius: inherit;
+}
+
+/* 最も多い曜日 */
+.summary-weekday-item--highest .summary-weekday-bar {
+  background-color: #f19a52;
+}
+
+/* 最も多い曜日の文字 */
+.summary-weekday-item--highest strong {
+  color: #f19a52;
+}
+
+/* AI分析カード */
+.summary-ai-card {
+  grid-column: 2 / 4;
+}
+
+/* Geminiラベル */
+.summary-ai-label {
+  padding: 7px 12px;
+
+  background-color: #f1f2ec;
+  border-radius: 999px;
+
+  color: #454b49;
+  font-size: 11px;
+}
+
+/* AI分析一覧 */
+.summary-ai-list {
+  display: grid;
+  gap: 12px;
+}
+
+/* AI分析1件 */
+.summary-ai-item {
+  display: grid;
+  grid-template-columns:
+    39px minmax(0, 1fr);
+  gap: 11px;
+}
+
+/* AI分析アイコン */
+.summary-ai-item-icon {
+  display: grid;
+  place-items: center;
+
+  width: 39px;
+  height: 39px;
+
+  background-color: #eef1e9;
+  border-radius: 10px;
+
+  color: #607862;
+}
+
+/* 注意情報のアイコン */
+.summary-ai-item--warning .summary-ai-item-icon {
+  background-color: rgb(245 177 135 / 13%);
+
+  color: #f19a52;
+}
+
+/* AI分析のアイコン */
+.summary-ai-item-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* AI分析本文 */
+.summary-ai-item-content {
+  display: grid;
+  gap: 3px;
+}
+
+/* AI分析タイトル */
+.summary-ai-item-content strong {
+  color: #454b49;
+  font-size: 12px;
+}
+
+/* AI分析説明 */
+.summary-ai-item-content span {
+  color: #818685;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* 更新時刻の注意書き */
+.summary-update-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 0;
+
+  color: #818685;
+  font-size: 10px;
+}
+
+/* 注意書きアイコン */
+.summary-update-note svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* タブレット表示 */
+@media (max-width: 950px) {
+  .summary-control-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .summary-period-buttons {
+    display: grid;
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+  }
+
+  .summary-period-button {
+    justify-content: center;
+
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .summary-kpi-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .summary-main-grid {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .summary-ratio-donut {
+    width: 210px;
+  }
+
+  .summary-sub-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .summary-no-visit-card {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .summary-ai-card {
+    grid-column: 1 / -1;
+  }
+}
+
+/* スマホ表示 */
+@media (max-width: 650px) {
+  .summary-screen {
+    gap: 13px;
+
+    padding-top: 16px;
+  }
+
+  .summary-month-picker {
+    width: 100%;
+  }
+
+  .summary-month-button {
+    width: 100%;
+  }
+
+  .summary-period-buttons {
+    display: flex;
+
+    overflow-x: auto;
+  }
+
+  .summary-period-button {
+    flex: 0 0 auto;
+  }
+
+  .summary-kpi-grid {
+    grid-template-columns:
+      minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .summary-kpi-card {
+    grid-template-columns:
+      minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+
+  .summary-kpi-title {
+    grid-column: 1;
+  }
+
+  .summary-kpi-value {
+    grid-column: 1;
+
+    font-size: 30px;
+  }
+
+  .summary-kpi-comparison {
+    grid-column: 2;
+    grid-row: 1 / 3;
+
+    min-width: 145px;
+  }
+
+  .summary-sub-grid {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .summary-no-visit-card,
+  .summary-ai-card {
+    grid-column: auto;
+  }
+
+  .summary-trend-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .summary-no-visit-item {
+    grid-template-columns:
+      42px minmax(0, 1fr);
+  }
+
+  .summary-no-visit-detail {
+    grid-column: 2;
+
+    justify-self: start;
+  }
+}
+
+/* 小さなスマートフォン */
+@media (max-width: 430px) {
+  .summary-kpi-card {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .summary-kpi-comparison {
+    grid-column: 1;
+    grid-row: auto;
+
+    min-width: 0;
+  }
+
+  .summary-panel {
+    padding: 15px;
+  }
+
+  .summary-ratio-legend {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .summary-no-visit-item {
+    grid-template-columns:
+      39px minmax(0, 1fr);
+  }
+}
+
+
+/* ==================================================
+   16. レスポンシブ設定
+   画面幅に応じてレイアウトを切り替える
+================================================== */
+
+/* 横幅が600px以下の小さなスマートフォン向け設定 */
+@media (max-width: 600px) {
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+    border-width: 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 22px;
+  }
+
+  .brand-text p {
+    font-size: 11px;
+  }
+
+  /* スマホではボタンの文字を隠し、アイコンだけ表示する */
+  .action-label {
+    display: none;
+  }
+
+  /* スマホではメニューパネルを少しコンパクトにする */
+  .menu-panel {
+    overflow-y: auto;
+  }
+
+  .menu-item-text {
+    gap: 2px;
+  }
+
+  /* 内容の高さに合わせてメニュー全体を伸ばす */
+  .menu-panel-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 32dvh auto;
+
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  /* スマホでは画像エリアを上部に配置する */
+  .menu-panel-visual {
+    width: 100%;
+    min-width: 0;
+    height: 32dvh;
+    min-height: 0;
+  }
+
+  /* 画像上の文字をスマホ向けに調整する */
+  .menu-panel-visual-placeholder {
+    justify-content: flex-end;
+    gap: 8px;
+
+    padding: 20px;
+
+    /* デスク周辺が見えやすい位置に調整する */
+    background-position: center 42%;
+  }
+
+  /* 英字ラベルを少し小さくする */
+  .menu-panel-visual-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+  }
+
+  /* 日本語メッセージをスマホ向けの大きさにする */
+  .menu-panel-visual-text {
+    max-width: 300px;
+    font-size: 24px;
+    line-height: 1.4;
+  }
+
+  /* メニュー部分だけに付いていたスクロールを解除する */
+  .menu-panel-content {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+
+    overflow-y: visible;
+  }
+
+  /* タイトルとcloseボタン周辺 */
+  .menu-panel-top {
+    gap: 16px;
+    padding-bottom: 14px;
+  }
+
+  /* スマホではタイトルを少し小さくする */
+  .menu-panel-title {
+    font-size: 28px;
+  }
+
+  /* closeボタンをコンパクトにする */
+  .menu-close-button {
+    gap: 7px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  /* メニュー一覧を上から自然に並べる */
+  .menu-list {
+    align-self: start;
+
+    max-width: none;
+    margin: 12px 0 0;
+  }
+
+  /* 各メニュー項目の縦幅を少し抑える */
+  .menu-item {
+    gap: 12px;
+    padding: 13px 4px;
+  }
+
+  /* メニュー名 */
+  .menu-item-title {
+    font-size: 16px;
+  }
+
+  /* 補足説明 */
+  .menu-item-description {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+    /* 来店登録画面のスマホ表示 */
+  #visit-registration-view {
+    padding: 28px 0 20px;
+  }
+
+  /* 2枚のカード間隔 */
+  .visit-registration-options {
+    gap: 16px;
+  }
+
+  /* 選択カードをスマホ幅へ合わせる */
+  .visit-registration-card {
+    grid-template-columns:
+      66px
+      1px
+      minmax(0, 1fr);
+    gap: 16px;
+
+    min-height: 150px;
+    padding:
+      22px
+      48px
+      22px
+      18px;
+
+    border-radius: 24px;
+  }
+
+  /* スマホではアイコンを小さくする */
+  .visit-registration-card-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .visit-registration-card-icon svg {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* スマホでは点線を短くする */
+  .visit-registration-card-divider {
+    height: 70px;
+  }
+
+  /* カード内の文字間隔 */
+  .visit-registration-card-content {
+    gap: 8px;
+  }
+
+  /* カードタイトル */
+  .visit-registration-card-title {
+    font-size: 23px;
+  }
+
+  /* カード説明文 */
+  .visit-registration-card-description {
+    font-size: 12px;
+  }
+
+  /* カード右側の矢印 */
+  .visit-registration-card-arrow {
+    right: 17px;
+
+    font-size: 34px;
+  }
+
+  /* 画面下部の装飾 */
+  .visit-registration-decoration {
+    width: 72%;
+    margin-top: 36px;
+  }
+
+  .visit-registration-decoration-mark {
+    width: 50px;
+    height: 50px;
+  }
+
+  .visit-registration-decoration-mark::before {
+    width: 20px;
+    height: 20px;
+
+    border-width: 5px;
+  }
+
+    /* 常連顧客更新画面のスマホ表示 */
+  #regular-customer-view {
+    padding-top: 6px;
+  }
+
+  /* 検索結果を縦並びにする */
+  .regular-customer-result-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+
+    padding: 16px;
+  }
+
+  /* 顧客選択ボタンを横幅いっぱいにする */
+  .regular-customer-select-button {
+    width: 100%;
+  }
+
+  /* 選択中顧客カード */
+  .regular-selected-customer {
+    padding: 20px;
+  }
+
+  /* 顧客プロフィールを上から並べる */
+  .regular-selected-customer-profile {
+    align-items: flex-start;
+  }
+
+  /* 顧客アイコン */
+  .regular-selected-customer-avatar {
+    width: 60px;
+    height: 60px;
+
+    font-size: 18px;
+  }
+
+  /* 顧客名 */
+  .regular-selected-customer-name-row strong {
+    font-size: 19px;
+  }
+
+  /* 集計情報を2列にする */
+  .regular-selected-customer-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 0;
+  }
+
+  /* PC用の左右余白をスマホで調整する */
+  .regular-selected-customer-stats > div {
+    padding: 0 12px;
+  }
+
+  /* 3つ目も左端になるため左余白をなくす */
+  .regular-selected-customer-stats > div:nth-child(3) {
+    padding-left: 0;
+  }
+
+  /* PC用の縦線を調整する */
+  .regular-selected-customer-stats > div:nth-child(3) {
+    border-left: none;
+  }
+
+  /* 特徴とメモを縦並びにする */
+  .regular-selected-customer-details {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  /* 誕生日の選択肢 */
+  .birthday-status-options {
+    gap: 18px;
+  }
+}
+
+/* ========================================
+   通知一覧・設定・アプリについて
+======================================== */
+
+/* メニューから開く補助画面の共通レイアウト */
+.utility-screen {
+  max-width: 880px;
+
+  /* ヘッダーとの間に余白を作り、左右は中央配置する */
+  margin: 24px auto 0;
+
+  padding-bottom: 110px;
+}
+
+/* 補助画面の共通カード */
+.utility-card {
+  padding: 28px;
+
+  background:
+    rgb(248 242 235 / 92%);
+
+  border:
+    1px solid rgb(129 134 133 / 14%);
+  border-radius: 24px;
+
+  box-shadow:
+    0 14px 36px
+    rgb(105 91 76 / 8%);
+}
+
+/* カード上部の見出し */
+.utility-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+.utility-section-header h2,
+.about-heading h2 {
+  margin: 4px 0 8px;
+
+  color: #656b6a;
+
+  font-size: 24px;
+}
+
+.utility-section-header p,
+.about-heading p {
+  margin: 0;
+
+  color: #818685;
+
+  line-height: 1.8;
+}
+
+/* 英字の小さな見出し */
+.utility-eyebrow {
+  margin: 0;
+
+  color: #b58f76;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* 通知件数 */
+.utility-count {
+  flex-shrink: 0;
+
+  padding: 7px 12px;
+
+  color: #ffffff;
+  background: #7d9680;
+
+  border-radius: 999px;
+
+  font-size: 13px;
+}
+
+/* 通知一覧画面のリスト */
+.notification-page-list {
+  display: grid;
+  gap: 10px;
+}
+
+/* 通知パネル用の項目を一覧画面向けに整える */
+.notification-page-list
+.notification-item {
+  width: 100%;
+  padding: 18px;
+
+  background:
+    rgb(255 255 255 / 70%);
+
+  border:
+    1px solid rgb(129 134 133 / 12%);
+  border-radius: 16px;
+
+  text-align: left;
+}
+
+.notification-page-list
+.notification-item:hover {
+  background:
+    rgb(255 255 255 / 96%);
+
+  transform: translateY(-1px);
+}
+
+/* 既読になった通知 */
+.notification-item--read {
+  opacity: 0.48;
+}
+
+/* 既読通知の丸を落ち着いた色にする */
+.notification-item--read
+.notification-item-dot {
+  background-color: #c9bdaf;
+}
+
+/* 通知一覧画面の既読カード */
+.notification-page-list
+.notification-item--read {
+  background:
+    rgb(255 255 255 / 42%);
+}
+
+/* 既読カードへマウスを乗せても明るくしすぎない */
+.notification-page-list
+.notification-item--read:hover {
+  background:
+    rgb(255 255 255 / 58%);
+}
+
+/* 通知がない場合の案内 */
+.utility-empty-message {
+  margin: 0;
+  padding: 30px 20px;
+
+  color: #818685;
+
+  text-align: center;
+}
+
+/* 設定項目のまとまり */
+.settings-group {
+  margin: 0;
+  padding: 24px 0;
+
+  border: 0;
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+.settings-group:first-of-type {
+  padding-top: 18px;
+}
+
+.settings-group legend {
+  padding: 0;
+
+  color: #656b6a;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* 設定項目の説明 */
+.settings-group-description {
+  margin: 8px 0 18px;
+
+  color: #818685;
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 一覧表示・カード表示の選択肢 */
+.settings-option-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* 設定の選択カード */
+.settings-option,
+.settings-toggle-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 18px;
+
+  background:
+    rgb(255 255 255 / 70%);
+
+  border:
+    1px solid rgb(129 134 133 / 14%);
+  border-radius: 16px;
+
+  cursor: pointer;
+}
+
+.settings-option:hover,
+.settings-toggle-option:hover {
+  border-color:
+    rgb(125 150 128 / 46%);
+}
+
+.settings-option input,
+.settings-toggle-option input {
+  flex-shrink: 0;
+
+  width: 18px;
+  height: 18px;
+
+  accent-color: #7d9680;
+}
+
+.settings-option span,
+.settings-toggle-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.settings-option strong,
+.settings-toggle-option strong {
+  color: #656b6a;
+
+  font-size: 14px;
+}
+
+.settings-option small,
+.settings-toggle-option small {
+  color: #818685;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* 設定の保存案内 */
+.settings-save-note {
+  margin: 20px 0 0;
+
+  color: #818685;
+
+  font-size: 12px;
+  text-align: right;
+}
+
+/* アプリ概要上部 */
+.about-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+
+  margin-top: 8px;
+  padding-bottom: 24px;
+
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* バージョン表示 */
+.about-version {
+  flex-shrink: 0;
+
+  padding: 8px 14px;
+
+  color: #7d9680;
+  background:
+    rgb(125 150 128 / 12%);
+
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* アプリ情報カード一覧 */
+.about-information-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 14px;
+
+  margin-top: 24px;
+}
+
+/* アプリ情報1項目 */
+.about-information-card {
+  padding: 20px;
+
+  background:
+    rgb(255 255 255 / 68%);
+
+  border:
+    1px solid rgb(129 134 133 / 12%);
+  border-radius: 16px;
+}
+
+.about-information-card h3 {
+  margin: 0 0 8px;
+
+  color: #656b6a;
+
+  font-size: 14px;
+}
+
+.about-information-card p {
+  margin: 0;
+
+  color: #818685;
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 横幅が767px以下のスマートフォン向け設定 */
+@media (max-width: 767px) {
+    /* 補助画面とヘッダーの間隔をスマホ向けに調整する */
+  .utility-screen {
+    margin-top: 16px;
+  }
+
+  /* メニューから開く画面のスマホ表示 */
+  .utility-card {
+    padding: 20px 16px;
+
+    border-radius: 20px;
+  }
+
+  .utility-section-header,
+  .about-heading {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .utility-section-header h2,
+  .about-heading h2 {
+    font-size: 21px;
+  }
+
+  .settings-option-grid,
+  .about-information-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-save-note {
+    text-align: left;
+  }
+
+  .home-overview {
+    /* スマホでは挨拶とAIサマリーを縦に並べる */
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+    padding: 24px 0;
+  }
+
+  .welcome-message {
+    padding: 8px 4px;
+  }
+
+  .ai-summary-card {
+    padding: 20px;
+  }
+
+  /* --------------------------------------------------
+     顧客検索画面のスマホ表示
+  -------------------------------------------------- */
+  /* 顧客検索画面全体 */
+  #customer-search-view {
+    padding-top: 28px;
+    padding-bottom: 112px;
+  }
+
+  .customer-search-input-field {
+    min-height: 58px;
+    padding: 0 16px;
+
+    border-radius: 16px;
+  }
+
+  .customer-search-input-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .customer-search-input {
+    padding: 14px 0;
+
+    font-size: 15px;
+  }
+
+  /* スマホ用操作ボタンを表示する */
+  .customer-search-mobile-actions {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* 並び替え・詳細条件ボタン */
+  .customer-search-mobile-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 46px;
+    padding: 10px 14px;
+
+    background-color: #fdfaf6;
+    border: 1px solid rgb(129 134 133 / 20%);
+    border-radius: 14px;
+
+    color: #515254;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+  }
+
+  /* 詳細条件アイコン */
+  .customer-search-filter-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .customer-search-filter-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 1カラムへ変更する */
+  .customer-search-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+
+    margin-top: 22px;
+  }
+
+  /* PC右側の設定欄を隠す */
+  .customer-search-sidebar {
+    display: none;
+  }
+
+  /* フィルター・最近検索 */
+  .customer-search-section {
+    padding: 20px 16px;
+
+    border-radius: 18px;
+  }
+
+  .customer-quick-filter-list {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+
+    margin-right: 0;
+    padding-right: 0;
+
+    overflow: visible;
+  }
+
+  .customer-quick-filter {
+    flex: 0 0 auto;
+
+    min-height: 40px;
+    padding: 8px 15px;
+
+    font-size: 13px;
+  }
+
+  /* 最近検索を横スクロールにする */
+  .customer-recent-search-list {
+    flex-wrap: nowrap;
+
+    margin-right: -16px;
+    padding-right: 16px;
+
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .customer-recent-search-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .customer-recent-search-item {
+    flex: 0 0 auto;
+  }
+
+  /* 検索結果 */
+  .customer-search-results-section {
+    margin-top: 24px;
+  }
+
+  .customer-search-results-header {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  /* 顧客カード */
+  .customer-search-result-open {
+    grid-template-columns:
+      62px minmax(0, 1fr) 18px;
+    gap: 12px;
+
+    padding: 16px;
+  }
+
+  /* 顧客の頭文字 */
+  .customer-search-result-avatar {
+    width: 62px;
+    height: 62px;
+
+    border-radius: 16px;
+
+    font-size: 22px;
+  }
+
+  /* 顧客名 */
+  .customer-search-result-name-row strong {
+    font-size: 17px;
+  }
+
+  /* 特徴 */
+  .customer-search-result-features {
+    font-size: 11px;
+  }
+
+  /* 統計情報をカード下段へ移動する */
+  .customer-search-result-statistics {
+    grid-column: 1 / -1;
+
+    margin-top: 4px;
+    padding-top: 14px;
+
+    border-top:
+      1px solid rgb(129 134 133 / 14%);
+  }
+
+  /* 最初の統計にも左線を付けない */
+  .customer-search-result-stat:first-child {
+    border-left: none;
+  }
+
+  .customer-search-result-stat {
+    padding: 0 10px;
+  }
+
+  .customer-search-result-stat small {
+    font-size: 10px;
+  }
+
+  .customer-search-result-stat strong {
+    font-size: 13px;
+  }
+
+  /* 矢印 */
+  .customer-search-result-arrow {
+    grid-column: 3;
+    grid-row: 1;
+
+    font-size: 27px;
+  }
+
+  /* 表示切り替えはスマホでは隠す */
+  .customer-search-view-switcher {
+    display: none;
+  }
+
+  /* スマホ用の一番上へ戻る縦型ボタン */
+  .customer-search-scroll-top {
+    right: 7px;
+    bottom: 94px;
+
+    width: 42px;
+    height: 88px;
+  }
+
+  /* スマホ用のTOP文字 */
+  .customer-search-scroll-top-text {
+    top: 40px;
+    left: -7px;
+
+    width: 38px;
+
+    font-size: 12px;
+    letter-spacing: 0.14em;
+  }
+
+  /* スマホ用の縦線と矢印 */
+  .customer-search-scroll-top-arrow {
+    width: 25px;
+    height: 88px;
+  }
+
+  /* スマホ用パネル */
+  .customer-search-mobile-panel {
+    padding: 10px;
+  }
+
+  .customer-search-mobile-panel-content {
+    max-height: calc(100dvh - 20px);
+    padding: 22px 18px;
+
+    border-radius: 22px;
+  }
+
+  /* 詳細条件パネル内の項目 */
+  .customer-search-mobile-panel
+  .customer-search-condition-row {
+    min-height: 54px;
+
+    font-size: 14px;
+  }
+}
+
+/* 横幅が768px以上のタブレット向け設定 */
+@media (min-width: 768px) {
+  .app-container {
+    /* タブレット以上では左右の余白を少し広くする */
+    padding: 24px;
+  }
+
+    /* カード表示はタブレットで横2列にする */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  ) {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  /* カード表示の各カードを縦型に整える */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-card {
+    height: 100%;
+  }
+
+  /* カード表示の顧客情報 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-open {
+    position: relative;
+
+    grid-template-columns:
+      56px minmax(0, 1fr);
+    grid-template-areas:
+      "avatar profile"
+      "statistics statistics";
+    align-items: center;
+    gap: 14px;
+
+    height: 100%;
+    padding: 18px;
+  }
+
+  /* カード表示の顧客画像 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-avatar {
+    grid-area: avatar;
+
+    width: 56px;
+    height: 56px;
+
+    border-radius: 15px;
+
+    font-size: 20px;
+  }
+
+  /* カード表示の顧客プロフィール */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-profile {
+    grid-area: profile;
+  }
+
+  /* カード表示の顧客名 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-name-row strong {
+    font-size: 17px;
+  }
+
+  /* カード表示の特徴 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-features {
+    max-width: 100%;
+
+    font-size: 11px;
+  }
+
+  /* カード表示の統計情報 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-statistics {
+    grid-area: statistics;
+
+    margin-top: 4px;
+    padding-top: 14px;
+
+    border-top:
+      1px solid rgb(129 134 133 / 14%);
+  }
+
+  /* カード表示の統計項目 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-stat {
+    padding: 0 8px;
+  }
+
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-stat:first-child {
+    padding-left: 0;
+
+    border-left: none;
+  }
+
+  /* 日付や金額を途中で改行させない */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-stat strong {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+
+  /* カード表示の矢印 */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  )
+  .customer-search-result-arrow {
+    position: absolute;
+    top: 18px;
+    right: 14px;
+
+    font-size: 24px;
+  }
+
+  /* 一覧表示は横1列にする */
+  .customer-search-result-list--list {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* 一覧表示ではカードをすっきりさせる */
+  .customer-search-result-list--list
+  .customer-search-result-card {
+    border-radius: 14px;
+
+    box-shadow: none;
+  }
+
+  /* 一覧表示ではカードを浮かせすぎない */
+  .customer-search-result-list--list
+  .customer-search-result-card:hover {
+    transform: none;
+  }
+
+  /* 一覧表示の顧客情報 */
+  .customer-search-result-list--list
+  .customer-search-result-open {
+    grid-template-columns:
+      48px
+      minmax(180px, 1fr)
+      minmax(300px, 1.2fr)
+      18px;
+    gap: 14px;
+
+    padding: 10px 14px;
+  }
+
+  /* 一覧表示の顧客画像 */
+  .customer-search-result-list--list
+  .customer-search-result-avatar {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+
+    font-size: 18px;
+  }
+
+  /* 一覧表示のプロフィール */
+  .customer-search-result-list--list
+  .customer-search-result-profile {
+    gap: 3px;
+  }
+
+  /* 一覧表示の顧客名 */
+  .customer-search-result-list--list
+  .customer-search-result-name-row strong {
+    font-size: 16px;
+  }
+
+  /* 一覧表示の顧客ランク */
+  .customer-search-result-list--list
+  .customer-rank {
+    min-height: 22px;
+    padding: 3px 8px;
+
+    font-size: 10px;
+  }
+
+  /* 一覧表示の顧客番号 */
+  .customer-search-result-list--list
+  .customer-search-result-id {
+    font-size: 12px;
+  }
+
+  /* 一覧表示の特徴 */
+  .customer-search-result-list--list
+  .customer-search-result-features {
+    padding: 4px 8px;
+
+    font-size: 11px;
+  }
+
+  /* 一覧表示の数値欄 */
+  .customer-search-result-list--list
+  .customer-search-result-stat {
+    gap: 3px;
+
+    padding: 2px 12px;
+  }
+
+  .customer-search-result-list--list
+  .customer-search-result-stat small {
+    font-size: 10px;
+  }
+
+  /* 一覧表示の日付や金額も途中で改行させない */
+  .customer-search-result-list--list
+  .customer-search-result-stat strong {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: keep-all;
+  }
+
+  /* 一覧表示の矢印 */
+  .customer-search-result-list--list
+  .customer-search-result-arrow {
+    font-size: 26px;
+  }
+}
+
+/* 横幅が1024px以上のパソコン向け設定 */
+@media (min-width: 1024px) {
+  .app-container {
+    /* PCでは、さらにゆったりした余白にする */
+    padding: 32px;
+  }
+
+    /* PCのカード表示は横3列にする */
+  .customer-search-result-list:not(
+    .customer-search-result-list--list
+  ) {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .action-grid {
+    /* PCでは主要メニューを横4列にする */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    /* PCではカード同士の余白を少し広げる */
+    gap: 16px;
+  }
+
+  .stats-grid {
+    /* PCでは4つの集計項目を横1段に並べる */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .todo-grid {
+    /* PCでは、やることカードを横4列にする */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    /* PCではカード同士の間隔を少し広げる */
+    gap: 16px;
+  }
+
+  .recent-customers-grid {
+    /* PCでは2つの顧客一覧を左右に並べる */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    /* 左右の一覧の間に余白を作る */
+    gap: 24px;
+  }
+
+  .stat-item:nth-child(odd) {
+    /* スマホ用の縦線をPCでは解除する */
+    border-right: none;
+  }
+
+  .stat-item:nth-child(-n + 2) {
+    /* スマホ用の横線をPCでは解除する */
+    border-bottom: none;
+  }
+
+  .stat-item + .stat-item {
+    /* PCでは、1つ目以外の集計項目に区切り線を入れる */
+    border-left: 1px solid rgba(129, 134, 133, 0.2);
+  }
+}
+
+/* 全画面メニュー表示中は背後のページをスクロールさせない */
+body.menu-open {
+  overflow: hidden;
+}
 </style>
