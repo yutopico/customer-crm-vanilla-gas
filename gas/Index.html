@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <base target="_top">
+
+    <meta charset="UTF-8">
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+      顧客取得テスト
+    </title>
+  </head>
+
+  <body>
+    <h1>
+      顧客取得テスト
+    </h1>
+
+    <p id="status-message">
+      スプレッドシートを読み込んでいます...
+    </p>
+
+    <pre id="customer-result"></pre>
+
+    <script>
+      // 読み込み状況と取得結果の表示先
+      const statusMessage =
+        document.querySelector(
+          "#status-message"
+        );
+
+      const customerResult =
+        document.querySelector(
+          "#customer-result"
+        );
+
+      // 顧客データの取得に成功したとき
+      const showCustomers = (
+        customers
+      ) => {
+        statusMessage.textContent =
+          `${customers.length}名取得しました。`;
+
+        customerResult.textContent =
+          JSON.stringify(
+            customers,
+            null,
+            2
+          );
+      };
+
+      // 顧客データの取得に失敗したとき
+      const showError = (
+        error
+      ) => {
+        statusMessage.textContent =
+          "読み込みに失敗しました。";
+
+        customerResult.textContent =
+          error.message ||
+          String(error);
+      };
+
+      // Code.gsのgetCustomersを呼び出す
+      google.script.run
+        .withSuccessHandler(
+          showCustomers
+        )
+        .withFailureHandler(
+          showError
+        )
+        .getCustomers();
+    </script>
+  </body>
+</html>
