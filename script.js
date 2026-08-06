@@ -382,7 +382,9 @@ const summaryMonthPicker = document.querySelector(".summary-month-picker");
 const summaryMonthButton = document.querySelector("#summary-month-button");
 const summaryMonthLabel = document.querySelector("#summary-month-label");
 const summaryMonthOptions = document.querySelector("#summary-month-options");
-const summaryMonthOptionButtons = document.querySelectorAll("[data-summary-month]");
+// 来店履歴取得後に月ボタンを入れ替えるため、
+// あとから更新できる変数として管理する
+let summaryMonthOptionButtons =document.querySelectorAll("[data-summary-month]");
 const summarySalesTitle = document.querySelector("#summary-sales-title");
 const summaryBirthdayTitle = document.querySelector("#summary-birthday-title");
 const summaryPeriodButtons = document.querySelectorAll("[data-summary-period]");
@@ -5728,14 +5730,10 @@ const savedSummaryMonth =
     summaryMonthStorageKey
   );
 
-// 保存された月が正しい形式なら復元する
+// 来店履歴を取得したあとに、
+// 表示可能な月から選択月を決定する
 let activeSummaryMonth =
-  /^\d{4}-\d{2}$/.test(
-    savedSummaryMonth ||
-    ""
-  )
-    ? savedSummaryMonth
-    : "2026-08";
+  "";
 
 // 現在選択中の集計期間
 let activeSummaryPeriod = "month";
@@ -7618,6 +7616,148 @@ summaryBirthdaySearchButton.addEventListener(
   }
 );
 
+// 来店履歴に存在する年月を取得する
+const getSummaryAvailableMonths =
+  () => {
+    const availableMonths =
+      spreadsheetVisitHistories
+        .map((visitHistory) => {
+          const visitDate =
+            createCustomerDetailDate(
+              visitHistory.visitDate
+            );
+
+          if (!visitDate) {
+            return "";
+          }
+
+          const year =
+            visitDate.getFullYear();
+
+          const month =
+            String(
+              visitDate.getMonth() + 1
+            ).padStart(
+              2,
+              "0"
+            );
+
+          return `${year}-${month}`;
+        })
+        .filter(Boolean);
+
+    const uniqueMonths = [
+      ...new Set(
+        availableMonths
+      ),
+    ].sort(
+      (
+        firstMonth,
+        secondMonth
+      ) => {
+        return secondMonth.localeCompare(
+          firstMonth
+        );
+      }
+    );
+
+    if (
+      uniqueMonths.length > 0
+    ) {
+      return uniqueMonths;
+    }
+
+    // 来店履歴がまだ1件もない場合だけ、
+    // 現在の月を空表示用として使用する
+    const currentDate =
+      new Date();
+
+    return [
+      `${
+        currentDate.getFullYear()
+      }-${
+        String(
+          currentDate.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        )
+      }`,
+    ];
+  };
+
+
+// 来店履歴から月選択ボタンを作る
+const renderSummaryMonthOptions =
+  () => {
+    const availableMonths =
+      getSummaryAvailableMonths();
+
+    // 保存されていた月が実際に存在すれば復元し、
+    // 存在しなければ最新月を選択する
+    if (
+      !availableMonths.includes(
+        activeSummaryMonth
+      )
+    ) {
+      activeSummaryMonth =
+        availableMonths.includes(
+          savedSummaryMonth
+        )
+          ? savedSummaryMonth
+          : availableMonths[0];
+    }
+
+    summaryMonthOptions.innerHTML =
+      availableMonths
+        .map((monthValue) => {
+          const [
+            year,
+            month,
+          ] =
+            monthValue.split(
+              "-"
+            );
+
+          const isActive =
+            monthValue ===
+            activeSummaryMonth;
+
+          return `
+            <button
+              class="summary-month-option${
+                isActive
+                  ? " summary-month-option--active"
+                  : ""
+              }"
+              type="button"
+              role="option"
+              data-summary-month="${monthValue}"
+              aria-selected="${isActive}"
+            >
+              ${year}年${Number(
+                month
+              )}月
+            </button>
+          `;
+        })
+        .join("");
+
+    // 新しく作ったボタンを再取得する
+    summaryMonthOptionButtons =
+      summaryMonthOptions
+        .querySelectorAll(
+          "[data-summary-month]"
+        );
+
+    localStorage.setItem(
+      summaryMonthStorageKey,
+      activeSummaryMonth
+    );
+
+    syncSummaryMonthSelection();
+  };
+
 // 選択中の月をプルダウン表示へ反映する
 const syncSummaryMonthSelection = () => {
   summaryMonthOptionButtons.forEach(
@@ -7675,37 +7815,50 @@ summaryMonthButton.addEventListener(
   }
 );
 
-// 選択した月を画面へ反映する
-summaryMonthOptionButtons.forEach(
-  (monthOptionButton) => {
-    monthOptionButton.addEventListener(
-      "click",
-      () => {
-        const selectedMonth =
-          monthOptionButton.dataset
-            .summaryMonth ||
-          "2026-07";
+// JavaScriptで作った月ボタンの選択を処理する
+summaryMonthOptions.addEventListener(
+  "click",
+  (event) => {
+    const monthOptionButton =
+      event.target.closest(
+        "[data-summary-month]"
+      );
 
-        activeSummaryMonth =
-          selectedMonth;
+    if (
+      !monthOptionButton ||
+      !summaryMonthOptions.contains(
+        monthOptionButton
+      )
+    ) {
+      return;
+    }
 
-        // ブラウザを更新しても選択月を復元できるよう保存する
-        localStorage.setItem(
-          summaryMonthStorageKey,
-          activeSummaryMonth
-        );
+    const selectedMonth =
+      monthOptionButton.dataset
+        .summaryMonth ||
+      "";
 
-        isSummaryNoVisitShowingAll =
-          false;
+    if (!selectedMonth) {
+      return;
+    }
 
-        syncSummaryMonthSelection();
+    activeSummaryMonth =
+      selectedMonth;
 
-                closeSummaryMonthOptions();
-                renderSummaryScreen();
-              }
-            );
-          }
-        );
+    // ブラウザを更新しても選択月を復元できるよう保存する
+    localStorage.setItem(
+      summaryMonthStorageKey,
+      activeSummaryMonth
+    );
+
+    isSummaryNoVisitShowingAll =
+      false;
+
+    syncSummaryMonthSelection();
+    closeSummaryMonthOptions();
+    renderSummaryScreen();
+  }
+);
 
 // 月選択以外の場所を押したときに閉じる
 document.addEventListener(
@@ -8800,6 +8953,9 @@ const loadInitialAppDataFromSpreadsheet =
               ? appData.customers
               : []
           );
+
+          // 来店履歴に存在する月を選択肢へ表示する
+          renderSummaryMonthOptions();
 
           // 顧客カードが作られたあとに、
           // 保存されていた顧客詳細を表示する
