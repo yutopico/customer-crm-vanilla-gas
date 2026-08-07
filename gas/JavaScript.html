@@ -331,6 +331,7 @@ const customerDetailBackButton = document.querySelector(".customer-detail-back-b
 const customerDetailTabButtons = document.querySelectorAll("[data-customer-detail-tab]");
 const customerDetailPanels = document.querySelectorAll("[data-customer-detail-panel]");
 const customerDetailMainPhoto = document.querySelector("#customer-detail-main-photo");
+const customerDetailMainPhotoImage = document.querySelector("#customer-detail-main-photo-image");
 const customerDetailAvatar = document.querySelector("#customer-detail-avatar");
 const customerDetailPhotoStatus = document.querySelector("#customer-detail-photo-status");
 const customerDetailName = document.querySelector("#customer-detail-name");
@@ -352,6 +353,7 @@ const customerDetailSummaryLastVisit = document.querySelector("#customer-detail-
 const customerDetailFeatureList = document.querySelector("#customer-detail-feature-list");
 const customerDetailLatestMemo = document.querySelector("#customer-detail-latest-memo");
 const customerDetailGalleryList = document.querySelector("#customer-detail-gallery-list");
+const customerDetailPhotoInput =document.querySelector("#customer-detail-photo-input");
 const customerDetailTimelineList = document.querySelector("#customer-detail-timeline-list");
 const customerDetailTimelineLoading = document.querySelector("#customer-detail-timeline-loading");
 const customerDetailTimelineLoadMoreButton = document.querySelector("#customer-detail-timeline-load-more");
@@ -4111,51 +4113,54 @@ const renderCustomerDetailGallery = () => {
     return;
   }
 
-  // 写真が未登録の場合は、
-  // 補足用の仮画像データを使用しない
-  const galleryLabels =
-    activeCustomerDetailData.hasPhoto
-      ? activeCustomerDetailData.galleryLabels
+  const galleryPhotos =
+    Array.isArray(
+      activeCustomerDetailData.galleryPhotos
+    )
+      ? activeCustomerDetailData.galleryPhotos
       : [];
 
   const galleryItems =
-    galleryLabels.map((galleryLabel) => {
-      return `
-        <div class="customer-detail-gallery-item">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
+    galleryPhotos
+      .map((photo, index) => {
+        return `
+          <div
+            class="customer-detail-gallery-item customer-detail-gallery-item--photo"
           >
-            <rect
-              x="3"
-              y="5"
-              width="18"
-              height="15"
-              rx="2"
-            ></rect>
+            <img
+              class="customer-detail-gallery-image"
+              src="${photo.previewUrl}"
+              alt="顧客写真 ${index + 1}枚目"
+            >
 
-            <circle
-              cx="9"
-              cy="10"
-              r="2"
-            ></circle>
+            <button
+              class="customer-detail-gallery-representative${
+                photo.isRepresentative
+                  ? " customer-detail-gallery-representative--active"
+                  : ""
+              }"
+              type="button"
+              data-photo-id="${photo.photoId}"
+            >
+              ${
+                photo.isRepresentative
+                  ? "★ 代表"
+                  : "☆ 代表に設定"
+              }
+            </button>
 
-            <path
-              d="m4 18 5-5 4 4 2-2 5 5"
-            ></path>
-          </svg>
-
-          <span>
-            ${galleryLabel}
-          </span>
-        </div>
-      `;
-    }).join("");
+            <button
+              class="customer-detail-gallery-remove"
+              type="button"
+              data-photo-id="${photo.photoId}"
+              aria-label="顧客写真 ${index + 1}枚目を削除"
+            >
+              ×
+            </button>
+          </div>
+        `;
+      })
+      .join("");
 
   customerDetailGalleryList.innerHTML = `
     ${galleryItems}
@@ -4626,6 +4631,28 @@ const renderCustomerDetailScreen = () => {
   customerDetailAvatar.textContent =
     customerData.initial;
 
+  const hasRepresentativePhoto =
+    Boolean(
+      customerData
+        .representativePhotoPreviewUrl
+    );
+
+  customerDetailMainPhotoImage.hidden =
+    !hasRepresentativePhoto;
+
+  customerDetailAvatar.hidden =
+    hasRepresentativePhoto;
+
+  if (hasRepresentativePhoto) {
+    customerDetailMainPhotoImage.src =
+      customerData
+        .representativePhotoPreviewUrl;
+  } else {
+    customerDetailMainPhotoImage.removeAttribute(
+      "src"
+    );
+  }
+
   customerDetailMainPhoto.classList.toggle(
     "customer-detail-main-photo--empty",
     !customerData.hasPhoto
@@ -4729,6 +4756,72 @@ const renderCustomerDetailScreen = () => {
   renderCustomerDetailSales();
 };
 
+// GASから顧客写真を取得して詳細画面へ反映する
+const loadCustomerDetailPhotos = (
+  customerId
+) => {
+  if (
+    !window.google?.script?.run ||
+    !customerId
+  ) {
+    return;
+  }
+
+  google.script.run
+    .withSuccessHandler(
+      (photos) => {
+        // 読み込み中に別の顧客へ移動した場合は反映しない
+        if (
+          !activeCustomerDetailData ||
+          activeCustomerDetailData.id !==
+            customerId
+        ) {
+          return;
+        }
+
+        const photoList =
+          Array.isArray(
+            photos
+          )
+            ? photos
+            : [];
+
+        activeCustomerDetailData.galleryPhotos =
+          photoList;
+
+        const representativePhoto =
+          photoList.find(
+            (photo) => {
+              return photo
+                .isRepresentative;
+            }
+          );
+
+        activeCustomerDetailData.hasPhoto =
+          photoList.length > 0;
+
+        activeCustomerDetailData
+          .representativePhotoPreviewUrl =
+          representativePhoto
+            ?.previewUrl ||
+          "";
+
+        renderCustomerDetailScreen();
+      }
+    )
+    .withFailureHandler(
+      (error) => {
+        console.error(
+          "顧客写真の取得に失敗しました:",
+          error
+        );
+      }
+    )
+    .getCustomerPhotos(
+      customerId
+    );
+};
+
 // 選択した顧客情報を詳細画面用にまとめる
 const renderCustomerDetail = (
   requestedCustomerId
@@ -4764,6 +4857,12 @@ const renderCustomerDetail = (
       ".customer-search-result-avatar"
     )?.textContent.trim() ||
     name.slice(0, 1);
+
+  // 顧客検索カードに表示されている代表写真を取得する
+  const representativePhotoPreviewUrl =
+    resultCard.querySelector(
+      ".customer-search-result-avatar-image"
+    )?.src || "";
 
   const featureText =
     resultCard.querySelector(
@@ -4850,6 +4949,8 @@ const renderCustomerDetail = (
       resultCard.dataset.hasPhoto ===
       "true",
 
+    representativePhotoPreviewUrl,
+
     features,
 
     memo:
@@ -4857,8 +4958,8 @@ const renderCustomerDetail = (
         .detailMemo ||
       "メモは登録されていません。",
 
-    // 写真は、写真管理機能との接続後に取得する
-    galleryLabels: [],
+    // 顧客詳細で追加した写真を管理する
+    galleryPhotos: [],
     tendencies: [],
 
     history:
@@ -4877,6 +4978,10 @@ const renderCustomerDetail = (
   );
 
   renderCustomerDetailScreen();
+
+  loadCustomerDetailPhotos(
+    customerId
+  );
 
   sessionStorage.setItem(
     "currentCustomerDetailId",
@@ -5273,10 +5378,130 @@ customerDetailRegisterButtons.forEach(
   }
 );
 
-// 写真・画像の追加ボタンは現在のフロント版では案内を表示する
+// GASから返った写真一覧を現在の顧客へ反映する
+const applySavedCustomerDetailPhotos = (
+  photos
+) => {
+  if (!activeCustomerDetailData) {
+    return;
+  }
+
+  const photoList =
+    Array.isArray(
+      photos
+    )
+      ? photos
+      : [];
+
+  activeCustomerDetailData.galleryPhotos =
+    photoList;
+
+  const representativePhoto =
+    photoList.find(
+      (photo) => {
+        return photo
+          .isRepresentative;
+      }
+    );
+
+  activeCustomerDetailData.hasPhoto =
+    photoList.length > 0;
+
+  activeCustomerDetailData
+    .representativePhotoPreviewUrl =
+    representativePhoto
+      ?.previewUrl ||
+    "";
+
+  renderCustomerDetailScreen();
+};
+
+
+// 写真の追加・削除・代表変更を操作する
 customerDetailGalleryList.addEventListener(
   "click",
   (event) => {
+    const representativeButton =
+      event.target.closest(
+        ".customer-detail-gallery-representative"
+      );
+
+    if (representativeButton) {
+      if (
+        !activeCustomerDetailData
+      ) {
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(
+          (photos) => {
+            applySavedCustomerDetailPhotos(
+              photos
+            );
+
+            loadInitialAppDataFromSpreadsheet();
+          }
+        )
+        .withFailureHandler(
+          (error) => {
+            console.error(
+              "代表写真の変更に失敗しました:",
+              error
+            );
+          }
+        )
+        .setRepresentativeCustomerPhoto(
+          activeCustomerDetailData.id,
+          representativeButton.dataset
+            .photoId
+        );
+
+      return;
+    }
+
+    const removeButton =
+      event.target.closest(
+        ".customer-detail-gallery-remove"
+      );
+
+    if (removeButton) {
+      if (
+        !activeCustomerDetailData
+      ) {
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(
+          (photos) => {
+            applySavedCustomerDetailPhotos(
+              photos
+            );
+
+            loadInitialAppDataFromSpreadsheet();
+          }
+        )
+        .withFailureHandler(
+          (error) => {
+            console.error(
+              "写真の削除に失敗しました:",
+              error
+            );
+
+            window.alert(
+              "写真の削除に失敗しました。"
+            );
+          }
+        )
+        .deleteCustomerPhoto(
+          activeCustomerDetailData.id,
+          removeButton.dataset.photoId
+        );
+
+      return;
+    }
+
     const addButton =
       event.target.closest(
         ".customer-detail-gallery-add"
@@ -5286,8 +5511,174 @@ customerDetailGalleryList.addEventListener(
       return;
     }
 
-    window.alert(
-      "写真・画像の保存機能は、GoogleスプレッドシートとGASの接続時に実装します。"
+    customerDetailPhotoInput.click();
+  }
+);
+
+
+// 顧客詳細から写真をDriveへ追加する
+const addCustomerDetailPhotoFiles =
+  async (files) => {
+    if (
+      !activeCustomerDetailData
+    ) {
+      return;
+    }
+
+    const imageFiles =
+      Array.from(files).filter(
+        (file) => {
+          return file.type.startsWith(
+            "image/"
+          );
+        }
+      );
+
+    if (
+      imageFiles.length === 0
+    ) {
+      return;
+    }
+
+    // 同じファイル名の写真は重複追加しない
+    const newFiles =
+      imageFiles.filter(
+        (file) => {
+          return !activeCustomerDetailData
+            .galleryPhotos
+            .some((photo) => {
+              return (
+                photo.fileName ===
+                file.name
+              );
+            });
+        }
+      );
+
+    if (
+      newFiles.length === 0
+    ) {
+      return;
+    }
+
+    try {
+      const photoDataList =
+        await createCustomerPhotoDataListForGas(
+          newFiles
+        );
+
+      google.script.run
+        .withSuccessHandler(
+          (photos) => {
+            applySavedCustomerDetailPhotos(
+              photos
+            );
+
+            loadInitialAppDataFromSpreadsheet();
+          }
+        )
+        .withFailureHandler(
+          (error) => {
+            console.error(
+              "写真の追加に失敗しました:",
+              error
+            );
+
+            window.alert(
+              "写真の保存に失敗しました。"
+            );
+          }
+        )
+        .addCustomerPhotos(
+          activeCustomerDetailData.id,
+          photoDataList
+        );
+    } catch (error) {
+      console.error(
+        "写真の読み込みに失敗しました:",
+        error
+      );
+    }
+  };
+
+
+// ファイル選択画面から写真を選んだとき
+customerDetailPhotoInput.addEventListener(
+  "change",
+  () => {
+    addCustomerDetailPhotoFiles(
+      customerDetailPhotoInput.files
+    );
+
+    // 同じ写真を再選択できるよう入力欄を空にする
+    customerDetailPhotoInput.value = "";
+  }
+);
+
+
+// 写真をギャラリーへ重ねたとき
+customerDetailGalleryList.addEventListener(
+  "dragenter",
+  (event) => {
+    preventPhotoDragDefault(event);
+
+    customerDetailGalleryList.classList.add(
+      "customer-detail-gallery-list--dragging"
+    );
+  }
+);
+
+
+// 写真をギャラリー上で動かしているとき
+customerDetailGalleryList.addEventListener(
+  "dragover",
+  (event) => {
+    preventPhotoDragDefault(event);
+
+    event.dataTransfer.dropEffect =
+      "copy";
+
+    customerDetailGalleryList.classList.add(
+      "customer-detail-gallery-list--dragging"
+    );
+  }
+);
+
+
+// 写真がギャラリーから離れたとき
+customerDetailGalleryList.addEventListener(
+  "dragleave",
+  (event) => {
+    preventPhotoDragDefault(event);
+
+    if (
+      event.relatedTarget &&
+      customerDetailGalleryList.contains(
+        event.relatedTarget
+      )
+    ) {
+      return;
+    }
+
+    customerDetailGalleryList.classList.remove(
+      "customer-detail-gallery-list--dragging"
+    );
+  }
+);
+
+
+// エクスプローラーから写真をドロップしたとき
+customerDetailGalleryList.addEventListener(
+  "drop",
+  (event) => {
+    preventPhotoDragDefault(event);
+
+    customerDetailGalleryList.classList.remove(
+      "customer-detail-gallery-list--dragging"
+    );
+
+    addCustomerDetailPhotoFiles(
+      event.dataTransfer.files
     );
   }
 );
@@ -9703,6 +10094,10 @@ const createSpreadsheetCustomerCardHtml =
       customer.photoUrl ||
       "";
 
+    const photoPreviewUrl =
+      customer.photoPreviewUrl ||
+      "";
+
     const memo =
       customer.memo ||
       "";
@@ -9890,9 +10285,21 @@ const createSpreadsheetCustomerCardHtml =
             class="customer-search-result-avatar"
             aria-hidden="true"
           >
-            ${escapeCustomerSearchHtml(
-              initial
-            )}
+            ${
+              photoPreviewUrl
+                ? `
+                  <img
+                    class="customer-search-result-avatar-image"
+                    src="${escapeCustomerSearchHtml(
+                      photoPreviewUrl
+                    )}"
+                    alt=""
+                  >
+                `
+                : escapeCustomerSearchHtml(
+                    initial
+                  )
+            }
           </span>
 
           <span class="customer-search-result-profile">
@@ -11245,6 +11652,9 @@ resizeNewCustomerMemo();
 // 現在選択されている顧客写真を記録する
 let customerPhotoFiles = [];
 
+// 新規顧客の代表写真として使用する位置
+let customerPhotoRepresentativeIndex = 0;
+
 // プレビュー表示用に作成したURLを記録する
 let customerPhotoPreviewUrls = [];
 
@@ -11256,6 +11666,69 @@ const isSameCustomerPhoto = (firstFile, secondFile) => {
     firstFile.lastModified === secondFile.lastModified
   );
 };
+
+// 写真ファイルをGASへ送れるBase64へ変換する
+const createCustomerPhotoDataForGas = (
+  file
+) => {
+  return new Promise(
+    (resolve, reject) => {
+      const reader =
+        new FileReader();
+
+      reader.addEventListener(
+        "load",
+        () => {
+          const result =
+            String(
+              reader.result || ""
+            );
+
+          const base64 =
+            result.includes(",")
+              ? result.split(",")[1]
+              : "";
+
+          resolve({
+            fileName:
+              file.name,
+
+            mimeType:
+              file.type,
+
+            base64,
+          });
+        }
+      );
+
+      reader.addEventListener(
+        "error",
+        () => {
+          reject(
+            new Error(
+              `${file.name} の読み込みに失敗しました。`
+            )
+          );
+        }
+      );
+
+      reader.readAsDataURL(
+        file
+      );
+    }
+  );
+};
+
+
+// 複数写真をまとめてGAS送信用へ変換する
+const createCustomerPhotoDataListForGas =
+  async (files) => {
+    return Promise.all(
+      Array.from(files).map(
+        createCustomerPhotoDataForGas
+      )
+    );
+  };
 
 // 写真一覧をファイル入力欄へ反映する
 const syncCustomerPhotoInput = () => {
@@ -11279,78 +11752,168 @@ const clearCustomerPhotoPreviewUrls = () => {
 
 // 選択されている写真をプレビューへ表示する
 const renderCustomerPhotoPreviews = () => {
-  // 前回のプレビューURLと表示内容を削除する
   clearCustomerPhotoPreviewUrls();
   photoPreviewList.replaceChildren();
 
-  // 写真がない場合は未選択表示へ戻す
-  if (customerPhotoFiles.length === 0) {
-    photoPreviewPlaceholder.hidden = false;
+  if (
+    customerPhotoFiles.length === 0
+  ) {
+    customerPhotoRepresentativeIndex = 0;
 
-    photoRemoveButton.hidden = true;
+    photoPreviewPlaceholder.hidden =
+      false;
+
+    photoRemoveButton.hidden =
+      true;
 
     return;
   }
 
-  // 写真がある場合は未選択表示を隠す
-  photoPreviewPlaceholder.hidden = true;
+  photoPreviewPlaceholder.hidden =
+    true;
 
-  // 写真の枚数に合わせて削除ボタンの文字を変更する
   photoRemoveButton.textContent =
     customerPhotoFiles.length === 1
       ? "写真を削除"
       : "写真をすべて削除";
 
-  photoRemoveButton.hidden = false;
+  photoRemoveButton.hidden =
+    false;
 
-  customerPhotoFiles.forEach((file, index) => {
-    // 写真1枚分の領域を作る
-    const previewItem = document.createElement("div");
+  customerPhotoFiles.forEach(
+    (file, index) => {
+      const previewItem =
+        document.createElement(
+          "div"
+        );
 
-    previewItem.className = "photo-preview-item";
+      previewItem.className =
+        "photo-preview-item";
 
-    // 写真を表示する要素を作る
-    const previewImage = document.createElement("img");
-    const previewUrl = URL.createObjectURL(file);
+      const previewImage =
+        document.createElement(
+          "img"
+        );
 
-    customerPhotoPreviewUrls.push(previewUrl);
+      const previewUrl =
+        URL.createObjectURL(
+          file
+        );
 
-    previewImage.className = "photo-preview-image";
-    previewImage.src = previewUrl;
-    previewImage.alt =
-      `選択した顧客写真 ${index + 1}枚目`;
+      customerPhotoPreviewUrls.push(
+        previewUrl
+      );
 
-    // 1枚だけ削除するボタンを作る
-    const removeButton = document.createElement("button");
+      previewImage.className =
+        "photo-preview-image";
 
-    removeButton.className =
-      "photo-preview-item-remove";
+      previewImage.src =
+        previewUrl;
 
-    removeButton.type = "button";
-    removeButton.textContent = "×";
+      previewImage.alt =
+        `選択した顧客写真 ${index + 1}枚目`;
 
-    removeButton.setAttribute(
-      "aria-label",
-      `${index + 1}枚目の写真を削除`
-    );
+      // 代表写真を選択するボタン
+      const representativeButton =
+        document.createElement(
+          "button"
+        );
 
-    // 個別削除ボタンを押したとき
-    removeButton.addEventListener("click", () => {
-      customerPhotoFiles.splice(index, 1);
+      representativeButton.type =
+        "button";
 
-      syncCustomerPhotoInput();
-      renderCustomerPhotoPreviews();
-    });
+      const isRepresentative =
+        index ===
+        customerPhotoRepresentativeIndex;
 
-    previewItem.append(
-      previewImage,
-      removeButton
-    );
+      representativeButton.className =
+        "photo-preview-item-representative";
 
-    photoPreviewList.appendChild(
-      previewItem
-    );
-  });
+      if (isRepresentative) {
+        representativeButton.classList.add(
+          "photo-preview-item-representative--active"
+        );
+      }
+
+      representativeButton.textContent =
+        isRepresentative
+          ? "★ 代表写真"
+          : "☆ 代表に設定";
+
+      representativeButton.addEventListener(
+        "click",
+        () => {
+          customerPhotoRepresentativeIndex =
+            index;
+
+          renderCustomerPhotoPreviews();
+        }
+      );
+
+      // 個別削除ボタン
+      const removeButton =
+        document.createElement(
+          "button"
+        );
+
+      removeButton.className =
+        "photo-preview-item-remove";
+
+      removeButton.type =
+        "button";
+
+      removeButton.textContent =
+        "×";
+
+      removeButton.setAttribute(
+        "aria-label",
+        `${index + 1}枚目の写真を削除`
+      );
+
+      removeButton.addEventListener(
+        "click",
+        () => {
+          customerPhotoFiles.splice(
+            index,
+            1
+          );
+
+          if (
+            customerPhotoFiles.length ===
+            0
+          ) {
+            customerPhotoRepresentativeIndex =
+              0;
+          } else if (
+            index <
+            customerPhotoRepresentativeIndex
+          ) {
+            customerPhotoRepresentativeIndex -=
+              1;
+          } else if (
+            index ===
+            customerPhotoRepresentativeIndex
+          ) {
+            customerPhotoRepresentativeIndex =
+              0;
+          }
+
+          syncCustomerPhotoInput();
+          renderCustomerPhotoPreviews();
+        }
+      );
+
+      previewItem.append(
+        previewImage,
+        representativeButton,
+        removeButton
+      );
+
+      photoPreviewList.appendChild(
+        previewItem
+      );
+    }
+  );
 };
 
 // 新しく選択された写真を一覧へ追加する
@@ -12040,26 +12603,158 @@ newCustomerConfirmBack.addEventListener(
 // 確認画面の「登録する」を押したとき
 newCustomerConfirmRegister.addEventListener(
   "click",
-  () => {
-    // 登録処理中の表示へ切り替える
-    newCustomerConfirmRegister.disabled = true;
+  async () => {
+    newCustomerConfirmRegister.disabled =
+      true;
+
     newCustomerConfirmRegister.textContent =
       "登録中...";
 
-    // 現段階では通信を想定した仮処理
-    setTimeout(() => {
-      // 今回入力したスタッフ名を候補として保存する
-      saveStaffMemberName();
+    try {
+      if (
+        !window.google?.script?.run
+      ) {
+        throw new Error(
+          "GASへ接続できません。"
+        );
+      }
 
-      newCustomerConfirmMain.hidden = true;
-      newCustomerRegisterSuccess.hidden = false;
+      const birthdayStatus =
+        document.querySelector(
+          'input[name="birthdayStatus"]:checked'
+        )?.value;
 
-      newCustomerConfirmRegister.disabled = false;
+      const birthday =
+        birthdayStatus ===
+        "unknown"
+          ? ""
+          : [
+              birthYearSelect.value,
+              String(
+                birthMonthSelect.value
+              ).padStart(
+                2,
+                "0"
+              ),
+              String(
+                birthDaySelect.value
+              ).padStart(
+                2,
+                "0"
+              ),
+            ].join("-");
+
+      const features =
+        Array.from(
+          featureList.querySelectorAll(
+            ".feature-chip--selected"
+          )
+        ).map((button) => {
+          return getFeatureButtonName(
+            button
+          );
+        });
+
+      const photoDataList =
+        await createCustomerPhotoDataListForGas(
+          customerPhotoFiles
+        );
+
+      const customerData = {
+        name:
+          customerNameInput.value.trim(),
+
+        visitDate:
+          visitDateInput.value,
+
+        birthday,
+
+        features,
+
+        paymentAmount:
+          getPaymentAmountNumber() ||
+          0,
+
+        staffMember:
+          staffMemberInput.value.trim(),
+
+        memo:
+          newCustomerMemo.value.trim(),
+
+        photos:
+          photoDataList,
+
+        representativePhotoIndex:
+          customerPhotoRepresentativeIndex,
+      };
+
+      google.script.run
+        .withSuccessHandler(
+          (result) => {
+            console.log(
+              "新規顧客を登録しました:",
+              result
+            );
+
+            saveStaffMemberName();
+
+            newCustomerConfirmMain.hidden =
+              true;
+
+            newCustomerRegisterSuccess.hidden =
+              false;
+
+            newCustomerConfirmRegister.disabled =
+              false;
+
+            newCustomerConfirmRegister.textContent =
+              "登録する";
+
+            newCustomerSuccessBack.focus();
+
+            // 顧客一覧・サマリーなどを最新状態へ更新する
+            loadInitialAppDataFromSpreadsheet();
+          }
+        )
+        .withFailureHandler(
+          (error) => {
+            console.error(
+              "新規顧客登録に失敗しました:",
+              error
+            );
+
+            newCustomerConfirmRegister.disabled =
+              false;
+
+            newCustomerConfirmRegister.textContent =
+              "登録する";
+
+            window.alert(
+              "新規顧客の登録に失敗しました。\n" +
+              "入力内容と接続状態を確認してください。"
+            );
+          }
+        )
+        .registerNewCustomer(
+          customerData
+        );
+    } catch (error) {
+      console.error(
+        "写真の準備に失敗しました:",
+        error
+      );
+
+      newCustomerConfirmRegister.disabled =
+        false;
+
       newCustomerConfirmRegister.textContent =
         "登録する";
 
-      newCustomerSuccessBack.focus();
-    }, 900);
+      window.alert(
+        error.message ||
+        "写真の読み込みに失敗しました。"
+      );
+    }
   }
 );
 
