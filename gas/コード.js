@@ -6,6 +6,10 @@ const CRM_SPREADSHEET_ID =
 const CUSTOMER_PHOTO_SHEET_NAME =
   "顧客写真";
 
+// 特徴タグを管理するシート名
+const FEATURE_TAG_SHEET_NAME =
+  "特徴タグ";
+
 // 顧客写真を保存するGoogle Driveフォルダ名
 const CUSTOMER_PHOTO_FOLDER_NAME =
   "顧客管理Webアプリ_顧客写真";
@@ -223,6 +227,555 @@ function getVisitHistories() {
 
 
 /**
+ * 特徴タグシートを取得する
+ */
+function getFeatureTagSheet_() {
+  const spreadsheet =
+    SpreadsheetApp.openById(
+      CRM_SPREADSHEET_ID
+    );
+
+  const sheet =
+    spreadsheet.getSheetByName(
+      FEATURE_TAG_SHEET_NAME
+    );
+
+  if (!sheet) {
+    throw new Error(
+      "「特徴タグ」シートが見つかりません。"
+    );
+  }
+
+  return sheet;
+}
+
+
+/**
+ * 有効な特徴タグ一覧を取得する
+ */
+function getFeatureTags() {
+  const sheet =
+    getFeatureTagSheet_();
+
+  const values =
+    sheet
+      .getDataRange()
+      .getDisplayValues();
+
+  if (values.length <= 1) {
+    return [];
+  }
+
+  return values
+    .slice(1)
+    .filter((row) => {
+      return (
+        row[0].trim() !== "" &&
+        row[1].trim() !== "" &&
+        row[4].trim() !== "無効"
+      );
+    })
+    .map((row) => {
+      return {
+        tagId:
+          row[0].trim(),
+
+        tagName:
+          row[1].trim(),
+
+        displayOrder:
+          Number(row[2]) || 0,
+
+        registeredAt:
+          row[3],
+
+        status:
+          row[4].trim(),
+      };
+    })
+    .sort((firstTag, secondTag) => {
+      return (
+        firstTag.displayOrder -
+        secondTag.displayOrder
+      );
+    });
+}
+
+
+/**
+ * 次の特徴タグ表示順を取得する
+ */
+function getNextFeatureTagDisplayOrder_(
+  sheet
+) {
+  const lastRow =
+    sheet.getLastRow();
+
+  if (lastRow <= 1) {
+    return 1;
+  }
+
+  const displayOrders =
+    sheet
+      .getRange(
+        2,
+        3,
+        lastRow - 1,
+        1
+      )
+      .getDisplayValues()
+      .flat()
+      .map((value) => {
+        return Number(value) || 0;
+      });
+
+  return (
+    Math.max(
+      0,
+      ...displayOrders
+    ) + 1
+  );
+}
+
+
+/**
+ * 顧客マスタの特徴名をまとめて更新する
+ */
+function updateCustomerFeatureNames_(
+  transformFeatures
+) {
+  const spreadsheet =
+    SpreadsheetApp.openById(
+      CRM_SPREADSHEET_ID
+    );
+
+  const customerSheet =
+    spreadsheet.getSheetByName(
+      "顧客マスタ"
+    );
+
+  if (
+    !customerSheet ||
+    customerSheet.getLastRow() <= 1
+  ) {
+    return;
+  }
+
+  const featureRange =
+    customerSheet.getRange(
+      2,
+      7,
+      customerSheet.getLastRow() - 1,
+      1
+    );
+
+  const featureValues =
+    featureRange.getDisplayValues();
+
+  const updatedValues =
+    featureValues.map(([featureText]) => {
+      const features =
+        String(
+          featureText || ""
+        )
+          .split(",")
+          .map((feature) => {
+            return feature.trim();
+          })
+          .filter(Boolean);
+
+      return [
+        transformFeatures(
+          features
+        ).join(","),
+      ];
+    });
+
+  featureRange.setValues(
+    updatedValues
+  );
+}
+
+
+/**
+ * 新しい特徴タグを保存する
+ */
+function addFeatureTag(
+  tagName
+) {
+  const normalizedTagName =
+    String(
+      tagName || ""
+    ).trim();
+
+  if (!normalizedTagName) {
+    throw new Error(
+      "タグ名を入力してください。"
+    );
+  }
+
+  const lock =
+    LockService.getScriptLock();
+
+  lock.waitLock(
+    30000
+  );
+
+  try {
+    const sheet =
+      getFeatureTagSheet_();
+
+    const values =
+      sheet
+        .getDataRange()
+        .getDisplayValues();
+
+    const existingIndex =
+      values
+        .slice(1)
+        .findIndex((row) => {
+          return (
+            row[1]
+              .trim()
+              .toLowerCase() ===
+            normalizedTagName
+              .toLowerCase()
+          );
+        });
+
+    // 過去に削除した同名タグがあれば復活させる
+    if (existingIndex >= 0) {
+      const rowNumber =
+        existingIndex + 2;
+
+      const existingRow =
+        values[
+          existingIndex + 1
+        ];
+
+      if (
+        existingRow[4].trim() ===
+        "無効"
+      ) {
+        sheet
+          .getRange(
+            rowNumber,
+            5
+          )
+          .setValue(
+            "有効"
+          );
+      }
+
+      return {
+        tagId:
+          existingRow[0].trim(),
+
+        tagName:
+          existingRow[1].trim(),
+
+        displayOrder:
+          Number(
+            existingRow[2]
+          ) || 0,
+      };
+    }
+
+    const tagId =
+      createNextId_(
+        sheet,
+        "FT"
+      );
+
+    const displayOrder =
+      getNextFeatureTagDisplayOrder_(
+        sheet
+      );
+
+    sheet.appendRow([
+      tagId,
+      normalizedTagName,
+      displayOrder,
+      new Date(),
+      "有効",
+    ]);
+
+    return {
+      tagId,
+      tagName:
+        normalizedTagName,
+      displayOrder,
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/**
+ * 特徴タグ名を変更する
+ *
+ * 顧客マスタに保存済みの同名特徴も
+ * 一緒に変更する。
+ */
+function updateFeatureTagName(
+  tagId,
+  nextTagName
+) {
+  const normalizedTagId =
+    String(
+      tagId || ""
+    ).trim();
+
+  const normalizedTagName =
+    String(
+      nextTagName || ""
+    ).trim();
+
+  if (
+    !normalizedTagId ||
+    !normalizedTagName
+  ) {
+    throw new Error(
+      "タグ情報が不足しています。"
+    );
+  }
+
+  const lock =
+    LockService.getScriptLock();
+
+  lock.waitLock(
+    30000
+  );
+
+  try {
+    const sheet =
+      getFeatureTagSheet_();
+
+    const values =
+      sheet
+        .getDataRange()
+        .getDisplayValues();
+
+    const tagIndex =
+      values
+        .slice(1)
+        .findIndex((row) => {
+          return (
+            row[0].trim() ===
+            normalizedTagId
+          );
+        });
+
+    if (tagIndex < 0) {
+      throw new Error(
+        "変更するタグが見つかりません。"
+      );
+    }
+
+    const duplicateTag =
+      values
+        .slice(1)
+        .find((row) => {
+          return (
+            row[0].trim() !==
+              normalizedTagId &&
+            row[1]
+              .trim()
+              .toLowerCase() ===
+              normalizedTagName
+                .toLowerCase() &&
+            row[4].trim() !==
+              "無効"
+          );
+        });
+
+    if (duplicateTag) {
+      throw new Error(
+        "同じ名前のタグがすでに存在します。"
+      );
+    }
+
+    const rowNumber =
+      tagIndex + 2;
+
+    const originalName =
+      values[
+        tagIndex + 1
+      ][1].trim();
+
+    sheet
+      .getRange(
+        rowNumber,
+        2
+      )
+      .setValue(
+        normalizedTagName
+      );
+
+    // すでに顧客へ付いているタグも一括変更する
+    updateCustomerFeatureNames_(
+      (features) => {
+        return features.map(
+          (featureName) => {
+            return (
+              featureName
+                .toLowerCase() ===
+              originalName
+                .toLowerCase()
+            )
+              ? normalizedTagName
+              : featureName;
+          }
+        );
+      }
+    );
+
+    return {
+      tagId:
+        normalizedTagId,
+
+      tagName:
+        normalizedTagName,
+
+      displayOrder:
+        Number(
+          values[
+            tagIndex + 1
+          ][2]
+        ) || 0,
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/**
+ * 特徴タグを無効化する
+ *
+ * 顧客へ登録済みの同じ特徴も削除する。
+ */
+function deleteFeatureTags(
+  tagIds
+) {
+  if (
+    !Array.isArray(
+      tagIds
+    )
+  ) {
+    return [];
+  }
+
+  const normalizedTagIds =
+    Array.from(
+      new Set(
+        tagIds
+          .map((tagId) => {
+            return String(
+              tagId || ""
+            ).trim();
+          })
+          .filter(Boolean)
+      )
+    );
+
+  if (
+    normalizedTagIds.length === 0
+  ) {
+    return [];
+  }
+
+  const lock =
+    LockService.getScriptLock();
+
+  lock.waitLock(
+    30000
+  );
+
+  try {
+    const sheet =
+      getFeatureTagSheet_();
+
+    const values =
+      sheet
+        .getDataRange()
+        .getDisplayValues();
+
+    const deletedTagNames =
+      [];
+
+    const statusValues =
+      values
+        .slice(1)
+        .map((row) => {
+          const shouldDelete =
+            normalizedTagIds.includes(
+              row[0].trim()
+            );
+
+          if (shouldDelete) {
+            deletedTagNames.push(
+              row[1].trim()
+            );
+
+            return [
+              "無効",
+            ];
+          }
+
+          return [
+            row[4].trim(),
+          ];
+        });
+
+    if (
+      statusValues.length > 0
+    ) {
+      sheet
+        .getRange(
+          2,
+          5,
+          statusValues.length,
+          1
+        )
+        .setValues(
+          statusValues
+        );
+    }
+
+    const deletedNameSet =
+      new Set(
+        deletedTagNames.map(
+          (tagName) => {
+            return tagName
+              .toLowerCase();
+          }
+        )
+      );
+
+    // 削除したタグを顧客情報からも取り除く
+    updateCustomerFeatureNames_(
+      (features) => {
+        return features.filter(
+          (featureName) => {
+            return !deletedNameSet.has(
+              featureName
+                .toLowerCase()
+            );
+          }
+        );
+      }
+    );
+
+    return normalizedTagIds;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/**
  * アプリの初期表示に必要なデータをまとめて取得する
  */
 function getInitialAppData() {
@@ -232,6 +785,9 @@ function getInitialAppData() {
 
     visitHistories:
       getVisitHistories(),
+
+    featureTags:
+      getFeatureTags(),
   };
 }
 

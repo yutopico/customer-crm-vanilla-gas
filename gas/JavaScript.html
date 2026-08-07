@@ -379,8 +379,10 @@ const customerDetailEditSaveButton =document.querySelector(".customer-detail-edi
 // 顧客詳細をGASへ保存している最中か管理する
 let isCustomerDetailEditSaving = false;
 const customerDetailEditNameInput = document.querySelector("#customer-detail-edit-name");
-const customerDetailEditStaffInput = document.querySelector("#customer-detail-edit-staff");
-const customerDetailEditFeaturesInput = document.querySelector("#customer-detail-edit-features");
+const customerDetailEditStaffInput =document.querySelector("#customer-detail-edit-staff");
+const customerDetailEditFeatureList =document.querySelector("#customer-detail-edit-feature-list");
+const customerDetailEditFeatureInput =document.querySelector("#customer-detail-edit-feature-input");
+const customerDetailEditFeatureAddButton =document.querySelector(".customer-detail-edit-feature-add-button");
 const customerDetailEditMemoInput = document.querySelector("#customer-detail-edit-memo");
 
 // サマリー画面に使用する要素を取得する
@@ -738,9 +740,6 @@ const birthdayStatusInputs = document.querySelectorAll('input[name="birthdayStat
 const birthYearSelect = document.querySelector("#birth-year");
 const birthMonthSelect = document.querySelector("#birth-month");
 const birthDaySelect = document.querySelector("#birth-day");
-
-// お客様の特徴を選択するボタンを取得する
-const featureButtons = document.querySelectorAll(".feature-chip");
 
 // 特徴の追加に使用する要素を取得する
 const featureList = document.querySelector(".feature-list");
@@ -5232,6 +5231,312 @@ const setCustomerDetailEditSavingState = (
       : "保存する";
 };
 
+// 顧客詳細編集で使用できる特徴タグ名を取得する
+const getCustomerDetailEditFeatureNames =
+  () => {
+    const standardFeatureNames =
+      Array.from(
+        featureList.querySelectorAll(
+          ".feature-chip"
+        )
+      ).map((button) => {
+        const label =
+          button.querySelector(
+            ".feature-chip-label"
+          );
+
+        return (
+          label?.textContent ||
+          button.textContent ||
+          ""
+        ).trim();
+      });
+
+    const customerFeatureNames =
+      activeCustomerDetailData
+        ?.features ||
+      [];
+
+    // 標準タグと、その顧客だけが持っているタグをまとめる
+    return Array.from(
+      new Set([
+        ...standardFeatureNames,
+        ...customerFeatureNames,
+      ])
+    ).filter(Boolean);
+  };
+
+
+// 顧客詳細編集用の特徴タグを1個作る
+const createCustomerDetailEditFeatureChip =
+  (
+    featureName,
+    isSelected
+  ) => {
+    const button =
+      document.createElement(
+        "button"
+      );
+
+    button.type =
+      "button";
+
+    button.className =
+      "feature-chip customer-detail-edit-feature-chip";
+
+    button.textContent =
+      featureName;
+
+    button.setAttribute(
+      "aria-pressed",
+      String(
+        isSelected
+      )
+    );
+
+    if (isSelected) {
+      button.classList.add(
+        "feature-chip--selected"
+      );
+    }
+
+    button.addEventListener(
+      "click",
+      () => {
+        const nextSelected =
+          !button.classList.contains(
+            "feature-chip--selected"
+          );
+
+        button.classList.toggle(
+          "feature-chip--selected",
+          nextSelected
+        );
+
+        button.setAttribute(
+          "aria-pressed",
+          String(
+            nextSelected
+          )
+        );
+      }
+    );
+
+    return button;
+  };
+
+
+// 編集画面へ特徴タグを表示する
+const renderCustomerDetailEditFeatures =
+  () => {
+    if (
+      !activeCustomerDetailData
+    ) {
+      return;
+    }
+
+    customerDetailEditFeatureList
+      .replaceChildren();
+
+    const selectedFeatures =
+      new Set(
+        activeCustomerDetailData
+          .features
+      );
+
+    getCustomerDetailEditFeatureNames()
+      .forEach(
+        (featureName) => {
+          const button =
+            createCustomerDetailEditFeatureChip(
+              featureName,
+              selectedFeatures.has(
+                featureName
+              )
+            );
+
+          customerDetailEditFeatureList
+            .appendChild(
+              button
+            );
+        }
+      );
+
+    customerDetailEditFeatureInput.value =
+      "";
+  };
+
+
+// 顧客詳細編集から新しい特徴タグを追加する
+const addCustomerDetailEditFeature =
+  () => {
+    const featureName =
+      customerDetailEditFeatureInput
+        .value
+        .trim();
+
+    if (!featureName) {
+      customerDetailEditFeatureInput
+        .focus();
+
+      return;
+    }
+
+    const currentButtons =
+      Array.from(
+        customerDetailEditFeatureList
+          .querySelectorAll(
+            ".customer-detail-edit-feature-chip"
+          )
+      );
+
+    const existingButton =
+      currentButtons.find(
+        (button) => {
+          return (
+            button.textContent
+              .trim()
+              .toLowerCase() ===
+            featureName.toLowerCase()
+          );
+        }
+      );
+
+    // すでに存在する場合は新しく作らず選択状態にする
+    if (existingButton) {
+      existingButton.classList.add(
+        "feature-chip--selected"
+      );
+
+      existingButton.setAttribute(
+        "aria-pressed",
+        "true"
+      );
+
+      customerDetailEditFeatureInput.value =
+        "";
+
+      existingButton.focus();
+
+      return;
+    }
+
+    if (
+      !window.google?.script?.run
+    ) {
+      window.alert(
+        "GASへ接続できません。"
+      );
+
+      return;
+    }
+
+    customerDetailEditFeatureInput.disabled =
+      true;
+
+    customerDetailEditFeatureAddButton.disabled =
+      true;
+
+    google.script.run
+      .withSuccessHandler(
+        (featureTag) => {
+          // 新規登録画面のタグマスタにも即反映する
+          const masterButton =
+            Array.from(
+              featureList.querySelectorAll(
+                ".feature-chip"
+              )
+            ).find((button) => {
+              return (
+                getFeatureButtonName(
+                  button
+                ).toLowerCase() ===
+                featureTag.tagName
+                  .toLowerCase()
+              );
+            });
+
+          if (!masterButton) {
+            featureList.appendChild(
+              createFeatureTagMasterButton(
+                featureTag
+              )
+            );
+          }
+
+          // 顧客詳細では追加直後から選択済みにする
+          const newButton =
+            createCustomerDetailEditFeatureChip(
+              featureTag.tagName,
+              true
+            );
+
+          customerDetailEditFeatureList
+            .appendChild(
+              newButton
+            );
+
+          customerDetailEditFeatureInput.value =
+            "";
+
+          customerDetailEditFeatureInput.disabled =
+            false;
+
+          customerDetailEditFeatureAddButton.disabled =
+            false;
+
+          customerDetailEditFeatureInput.focus();
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "特徴タグの追加に失敗しました:",
+            error
+          );
+
+          customerDetailEditFeatureInput.disabled =
+            false;
+
+          customerDetailEditFeatureAddButton.disabled =
+            false;
+
+          window.alert(
+            "特徴タグの追加に失敗しました。"
+          );
+        }
+      )
+      .addFeatureTag(
+        featureName
+      );
+  };
+
+
+customerDetailEditFeatureAddButton
+  .addEventListener(
+    "click",
+    addCustomerDetailEditFeature
+  );
+
+
+customerDetailEditFeatureInput
+  .addEventListener(
+    "keydown",
+    (event) => {
+      if (
+        event.key !==
+        "Enter"
+      ) {
+        return;
+      }
+
+      // フォーム全体が保存されるのを防ぐ
+      event.preventDefault();
+
+      addCustomerDetailEditFeature();
+    }
+  );
+
 // 顧客情報の編集画面を開く
 const openCustomerDetailEditDialog = () => {
   if (!activeCustomerDetailData) {
@@ -5244,10 +5549,7 @@ const openCustomerDetailEditDialog = () => {
   customerDetailEditStaffInput.value =
     activeCustomerDetailData.staff;
 
-  customerDetailEditFeaturesInput.value =
-    activeCustomerDetailData.features.join(
-      ", "
-    );
+  renderCustomerDetailEditFeatures();
 
   customerDetailEditMemoInput.value =
     activeCustomerDetailData.memo;
@@ -5362,13 +5664,15 @@ customerDetailEditForm.addEventListener(
         .trim();
 
     const updatedFeatures =
-      customerDetailEditFeaturesInput
-        .value
-        .split(",")
-        .map((featureName) => {
-          return featureName.trim();
-        })
-        .filter(Boolean);
+      Array.from(
+        customerDetailEditFeatureList
+          .querySelectorAll(
+            ".feature-chip--selected"
+          )
+      ).map((button) => {
+        return button.textContent
+          .trim();
+      });
 
     const updatedMemo =
       customerDetailEditMemoInput
@@ -10916,6 +11220,14 @@ const loadInitialAppDataFromSpreadsheet =
             appData
           );
 
+          renderFeatureTagMaster(
+            Array.isArray(
+              appData?.featureTags
+            )
+              ? appData.featureTags
+              : []
+          );
+
           spreadsheetVisitHistories =
             Array.isArray(
               appData?.visitHistories
@@ -11592,18 +11904,94 @@ const startFeatureRename = (button) => {
       return;
     }
 
+    // キャンセルまたは名前変更なしなら
+    // Sheetsへ通信せず元のタグへ戻す
+    if (
+      !shouldSave ||
+      nextName === originalName
+    ) {
+      isFinished = true;
+
+      renameInput.replaceWith(
+        button
+      );
+
+      button.focus();
+
+      return;
+    }
+
+    const featureTagId =
+      button.dataset
+        .featureTagId ||
+      "";
+
+    if (
+      !window.google?.script?.run ||
+      !featureTagId
+    ) {
+      window.alert(
+        "特徴タグを保存できません。"
+      );
+
+      renameInput.focus();
+      renameInput.select();
+
+      return;
+    }
+
     isFinished = true;
 
-    // 元のタグへ新しい名前を反映する
-    const label = button.querySelector(
-      ".feature-chip-label"
-    );
+    renameInput.disabled =
+      true;
 
-    label.textContent = nextName;
+    google.script.run
+      .withSuccessHandler(
+        (updatedFeatureTag) => {
+          const label =
+            button.querySelector(
+              ".feature-chip-label"
+            );
 
-    // 入力欄を元のタグへ戻す
-    renameInput.replaceWith(button);
-    button.focus();
+          label.textContent =
+            updatedFeatureTag
+              ?.tagName ||
+            nextName;
+
+          renameInput.replaceWith(
+            button
+          );
+
+          button.focus();
+
+          // Sheetsの最新データをブラウザへ再同期する
+          loadInitialAppDataFromSpreadsheet();
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "特徴タグ名の変更に失敗しました:",
+            error
+          );
+
+          isFinished = false;
+
+          renameInput.disabled =
+            false;
+
+          window.alert(
+            "特徴タグ名の変更に失敗しました。"
+          );
+
+          renameInput.focus();
+          renameInput.select();
+        }
+      )
+      .updateFeatureTagName(
+        featureTagId,
+        nextName
+      );
   };
 
   // Enterで変更を保存する
@@ -11676,10 +12064,86 @@ const addFeatureButtonEvent = (button) => {
   });
 };
 
-// 最初から表示されている特徴タグへ処理を登録する
-featureButtons.forEach((button) => {
-  addFeatureButtonEvent(button);
-});
+// Sheetsの特徴タグからボタンを1個作る
+const createFeatureTagMasterButton = (
+  featureTag,
+  isSelected = false
+) => {
+  const button =
+    document.createElement(
+      "button"
+    );
+
+  button.className =
+    "feature-chip";
+
+  button.type =
+    "button";
+
+  button.dataset.featureTagId =
+    featureTag.tagId;
+
+  button.textContent =
+    featureTag.tagName;
+
+  button.setAttribute(
+    "aria-pressed",
+    String(
+      isSelected
+    )
+  );
+
+  if (isSelected) {
+    button.classList.add(
+      "feature-chip--selected"
+    );
+  }
+
+  addFeatureButtonEvent(
+    button
+  );
+
+  return button;
+};
+
+
+// Sheetsから取得した特徴タグ一覧を表示する
+const renderFeatureTagMaster = (
+  featureTags
+) => {
+  // 再描画前に、現在選択しているタグIDを覚えておく
+  const selectedFeatureTagIds =
+    new Set(
+      Array.from(
+        featureList.querySelectorAll(
+          ".feature-chip--selected"
+        )
+      )
+        .map((button) => {
+          return (
+            button.dataset
+              .featureTagId ||
+            ""
+          );
+        })
+        .filter(Boolean)
+    );
+
+  featureList.replaceChildren();
+
+  featureTags.forEach(
+    (featureTag) => {
+      featureList.appendChild(
+        createFeatureTagMasterButton(
+          featureTag,
+          selectedFeatureTagIds.has(
+            featureTag.tagId
+          )
+        )
+      );
+    }
+  );
+};
 
 // 特徴タグの編集モードを切り替える
 const setFeatureEditMode = (isEditing) => {
@@ -11744,78 +12208,214 @@ featureDeleteDialogCancel.addEventListener("click", () => {
   featureDeleteButton.focus();
 });
 
-// 「削除する」を押した場合は選択中のタグを削除する
-featureDeleteDialogConfirm.addEventListener("click", () => {
-  pendingDeleteFeatureButtons.forEach((button) => {
-    button.remove();
-  });
+// 「削除する」を押した場合は
+// Sheetsのタグマスタを無効化する
+featureDeleteDialogConfirm.addEventListener(
+  "click",
+  () => {
+    const tagIds =
+      pendingDeleteFeatureButtons
+        .map((button) => {
+          return (
+            button.dataset
+              .featureTagId ||
+            ""
+          );
+        })
+        .filter(Boolean);
 
-  pendingDeleteFeatureButtons = [];
-  featureDeleteDialog.hidden = true;
+    if (
+      !window.google?.script?.run
+    ) {
+      window.alert(
+        "GASへ接続できません。"
+      );
 
-  // 選択件数と削除ボタンの状態を更新する
-  updateFeatureEditor();
+      return;
+    }
 
-  // 削除後は編集ボタンへ操作位置を戻す
-  featureEditButton.focus();
-});
+    featureDeleteDialogConfirm.disabled =
+      true;
 
-// 入力された特徴を新しいタグとして追加する
+    featureDeleteDialogCancel.disabled =
+      true;
+
+    featureDeleteDialogConfirm.textContent =
+      "削除中...";
+
+    google.script.run
+      .withSuccessHandler(
+        () => {
+          pendingDeleteFeatureButtons
+            .forEach(
+              (button) => {
+                button.remove();
+              }
+            );
+
+          pendingDeleteFeatureButtons =
+            [];
+
+          featureDeleteDialog.hidden =
+            true;
+
+          featureDeleteDialogConfirm.disabled =
+            false;
+
+          featureDeleteDialogCancel.disabled =
+            false;
+
+          featureDeleteDialogConfirm.textContent =
+            "削除する";
+
+          updateFeatureEditor();
+
+          featureEditButton.focus();
+
+          // Sheetsの最新データをブラウザへ再同期する
+          loadInitialAppDataFromSpreadsheet();
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "特徴タグの削除に失敗しました:",
+            error
+          );
+
+          featureDeleteDialogConfirm.disabled =
+            false;
+
+          featureDeleteDialogCancel.disabled =
+            false;
+
+          featureDeleteDialogConfirm.textContent =
+            "削除する";
+
+          window.alert(
+            "特徴タグの削除に失敗しました。"
+          );
+        }
+      )
+      .deleteFeatureTags(
+        tagIds
+      );
+  }
+);
+
+// 入力された特徴をタグマスタへ追加する
 const addCustomFeature = () => {
-  // 入力欄の前後にある余分な空白を取り除く
-  const featureName = customFeatureInput.value.trim();
+  const featureName =
+    customFeatureInput
+      .value
+      .trim();
 
-  // 何も入力されていない場合は追加しない
   if (!featureName) {
     customFeatureInput.focus();
+
     return;
   }
 
-  // 現在表示されている特徴タグを取得する
-  const currentFeatureButtons = featureList.querySelectorAll(
-    ".feature-chip"
-  );
+  const currentFeatureButtons =
+    featureList.querySelectorAll(
+      ".feature-chip"
+    );
 
-  // 同じ名前の特徴がすでに存在するか確認する
-  const existingButton = Array.from(currentFeatureButtons).find(
-    (button) => {
+  const existingButton =
+    Array.from(
+      currentFeatureButtons
+    ).find((button) => {
       return (
-        getFeatureButtonName(button).toLowerCase() ===
+        getFeatureButtonName(
+          button
+        ).toLowerCase() ===
         featureName.toLowerCase()
       );
-    }
-  );
+    });
 
-  // 同じ特徴がある場合は、新しく作らず選択状態にする
+  // 既存タグなら新規保存せず選択する
   if (existingButton) {
-    existingButton.classList.add("feature-chip--selected");
-    existingButton.setAttribute("aria-pressed", "true");
+    existingButton.classList.add(
+      "feature-chip--selected"
+    );
 
-    customFeatureInput.value = "";
+    existingButton.setAttribute(
+      "aria-pressed",
+      "true"
+    );
+
+    customFeatureInput.value =
+      "";
+
     existingButton.focus();
 
     return;
   }
 
-  // 新しい特徴タグを作成する
-  const newFeatureButton = document.createElement("button");
+  if (
+    !window.google?.script?.run
+  ) {
+    window.alert(
+      "GASへ接続できません。"
+    );
 
-  newFeatureButton.className =
-    "feature-chip feature-chip--selected";
+    return;
+  }
 
-  newFeatureButton.type = "button";
-  newFeatureButton.textContent = featureName;
-  newFeatureButton.setAttribute("aria-pressed", "true");
+  customFeatureInput.disabled =
+    true;
 
-  // 新しく作ったタグにも選択切り替え機能を付ける
-  addFeatureButtonEvent(newFeatureButton);
+  featureAddButton.disabled =
+    true;
 
-  // 特徴一覧の最後へ追加する
-  featureList.appendChild(newFeatureButton);
+  google.script.run
+    .withSuccessHandler(
+      (featureTag) => {
+        const newButton =
+          createFeatureTagMasterButton(
+            featureTag,
+            true
+          );
 
-  // 入力欄を空にして、次の入力へ備える
-  customFeatureInput.value = "";
-  customFeatureInput.focus();
+        featureList.appendChild(
+          newButton
+        );
+
+        customFeatureInput.value =
+          "";
+
+        customFeatureInput.disabled =
+          false;
+
+        featureAddButton.disabled =
+          false;
+
+        customFeatureInput.focus();
+      }
+    )
+    .withFailureHandler(
+      (error) => {
+        console.error(
+          "特徴タグの追加に失敗しました:",
+          error
+        );
+
+        customFeatureInput.disabled =
+          false;
+
+        featureAddButton.disabled =
+          false;
+
+        window.alert(
+          "特徴タグの追加に失敗しました。"
+        );
+
+        customFeatureInput.focus();
+      }
+    )
+    .addFeatureTag(
+      featureName
+    );
 };
 
 // 追加ボタンをクリックしたとき

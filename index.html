@@ -1293,68 +1293,12 @@
                             </button>
                         </div>
 
-                        <!-- よく使用する特徴タグ -->
+                        <!-- 特徴タグはGoogle Sheetsから動的に表示する -->
                         <div
                             class="feature-list"
                             aria-label="お客様の特徴"
                             aria-describedby="feature-required-message"
-                        >
-                            <button
-                                class="feature-chip"
-                                type="button"
-                                aria-pressed="false"
-                            >
-                                短髪
-                            </button>
-
-                            <button
-                                class="feature-chip"
-                                type="button"
-                                aria-pressed="false"
-                            >
-                                髭
-                            </button>
-
-                            <button
-                                class="feature-chip"
-                                type="button"
-                                aria-pressed="false"
-                            >
-                                筋肉質
-                            </button>
-
-                            <button
-                                class="feature-chip"
-                                type="button"
-                                aria-pressed="false"
-                            >
-                                細身
-                            </button>
-
-                            <button
-                                class="feature-chip"
-                                type="button"
-                                aria-pressed="false"
-                            >
-                                体育会系
-                            </button>
-
-                            <button
-                                class="feature-chip"
-                                type="button"
-                                aria-pressed="false"
-                            >
-                                お酒好き
-                            </button>
-
-                            <button
-                                class="feature-chip"
-                                type="button"
-                                aria-pressed="false"
-                            >
-                                社長
-                            </button>
-                        </div>
+                        ></div>
 
                         <p
                             class="form-error-message"
@@ -5329,21 +5273,35 @@
                                 </div>
                             </div>
 
-                            <label class="customer-detail-edit-field">
+                            <div class="customer-detail-edit-field">
                                 <span>
                                     特徴
                                 </span>
 
-                                <input
-                                    id="customer-detail-edit-features"
-                                    type="text"
-                                    placeholder="短髪, 髭, お酒好き"
-                                >
+                                <div
+                                    class="customer-detail-edit-feature-list"
+                                    id="customer-detail-edit-feature-list"
+                                ></div>
+
+                                <div class="customer-detail-edit-feature-add-row">
+                                    <input
+                                        id="customer-detail-edit-feature-input"
+                                        type="text"
+                                        placeholder="特徴を入力してください"
+                                    >
+
+                                    <button
+                                        class="customer-detail-edit-feature-add-button"
+                                        type="button"
+                                    >
+                                        追加
+                                    </button>
+                                </div>
 
                                 <small>
-                                    複数の特徴はカンマで区切ります。
+                                    タグを選択するか、新しい特徴を追加できます。
                                 </small>
-                            </label>
+                            </div>
 
                             <label class="customer-detail-edit-field">
                                 <span>

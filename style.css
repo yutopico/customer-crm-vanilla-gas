@@ -7314,6 +7314,69 @@ body.customer-detail-mode .app-container {
   font-weight: 400;
 }
 
+/* 顧客詳細編集の特徴タグ一覧 */
+.customer-detail-edit-feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+
+/* 編集モーダル内ではタグを少しコンパクトにする */
+.customer-detail-edit-feature-list
+.feature-chip {
+  min-width: 0;
+  padding: 8px 12px;
+
+  font-size: 12px;
+}
+
+
+/* 新しい特徴の入力欄と追加ボタン */
+.customer-detail-edit-feature-add-row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  gap: 8px;
+}
+
+
+/* 特徴追加ボタン */
+.customer-detail-edit-feature-add-button {
+  min-width: 72px;
+  padding: 0 16px;
+
+  background-color: transparent;
+  border: 1px solid #f5b187;
+  border-radius: 9px;
+
+  color: #d9824e;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* 追加ボタンへマウスを乗せたとき */
+.customer-detail-edit-feature-add-button:hover:not(
+  :disabled
+) {
+  background-color:
+    rgb(245 177 135 / 14%);
+}
+
+
+/* 保存中は特徴タグと追加ボタンも操作不可と分かるようにする */
+.customer-detail-edit-feature-chip:disabled,
+.customer-detail-edit-feature-add-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* 編集画面下部 */
 .customer-detail-edit-actions {
   display: grid;
