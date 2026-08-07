@@ -7534,36 +7534,384 @@ const renderSummaryTrendChart = () => {
   `;
 };
 
-// 来店なし顧客を表示する
-const renderSummaryNoVisitCustomers = () => {
-  const monthData =
-    getActiveSummaryMonthData();
+// 来店なし顧客を実データから取得する
+const getRealSummaryNoVisitCustomers = () => {
+  const selectedMonthDate =
+    createSummarySelectedMonthDate();
 
-  const matchingCustomers =
-    monthData.noVisitCustomers
-      .map((customer) => {
-        return {
-          ...customer,
+  const selectedMonthEndDate =
+    new Date(
+      selectedMonthDate.getFullYear(),
+      selectedMonthDate.getMonth() + 1,
+      0
+    );
 
-          daysSinceVisit:
-            getSummaryDaysSinceVisit(
-              customer.lastVisit,
-              monthData.referenceDate
-            ),
-        };
-      })
-      .filter((customer) => {
-        return (
-          customer.daysSinceVisit >=
-          activeSummaryNoVisitDays
+  const today = new Date();
+
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  // 現在月なら今日、過去月ならその月の月末を基準にする
+  const isCurrentMonth =
+    selectedMonthDate.getFullYear() ===
+      today.getFullYear() &&
+    selectedMonthDate.getMonth() ===
+      today.getMonth();
+
+  const referenceDate =
+    isCurrentMonth
+      ? today
+      : selectedMonthEndDate;
+
+  // 顧客ごとの最新来店を保存する
+  const latestVisitByCustomerId =
+    new Map();
+
+  spreadsheetVisitHistories.forEach(
+    (visitHistory) => {
+      const customerId =
+        visitHistory.customerId ||
+        "";
+
+      const visitDate =
+        createCustomerDetailDate(
+          visitHistory.visitDate
         );
-      })
-      .sort((customerA, customerB) => {
+
+      if (
+        !customerId ||
+        !visitDate ||
+        visitDate > referenceDate
+      ) {
+        return;
+      }
+
+      const savedVisit =
+        latestVisitByCustomerId.get(
+          customerId
+        );
+
+      if (
+        !savedVisit ||
+        visitDate >
+          savedVisit.visitDate
+      ) {
+        latestVisitByCustomerId.set(
+          customerId,
+          {
+            visitDate,
+            visitHistory,
+          }
+        );
+      }
+    }
+  );
+
+  return Array.from(
+    customerSearchResultCards
+  )
+    .map((customerCard) => {
+      const customerId =
+        customerCard.dataset
+          .customerId ||
+        "";
+
+      const customerName =
+        customerCard.dataset
+          .customerName ||
+        "";
+
+      const latestVisit =
+        latestVisitByCustomerId.get(
+          customerId
+        );
+
+      if (!latestVisit) {
+        return null;
+      }
+
+      return {
+        id:
+          customerId,
+
+        name:
+          customerName,
+
+        initial:
+          Array.from(
+            customerName.trim()
+          )[0] ||
+          "客",
+
+        lastVisit:
+          latestVisit.visitHistory
+            .visitDate ||
+          "",
+
+        staff:
+          customerCard.dataset
+            .staffMember ||
+          "未登録",
+
+        daysSinceVisit:
+          Math.max(
+            0,
+            Math.floor(
+              (
+                referenceDate.getTime() -
+                latestVisit.visitDate.getTime()
+              ) /
+              86400000
+            )
+          ),
+      };
+    })
+    .filter(Boolean)
+    .filter((customer) => {
+      return (
+        customer.daysSinceVisit >=
+        activeSummaryNoVisitDays
+      );
+    })
+    .sort(
+      (
+        customerA,
+        customerB
+      ) => {
         return (
           customerB.daysSinceVisit -
           customerA.daysSinceVisit
         );
-      });
+      }
+    );
+};
+
+
+// 曜日別の来店回数を実データから取得する
+const getRealSummaryWeekdayData = () => {
+  const {
+    startDate,
+    endDate,
+  } =
+    getSummaryCurrentPeriodRange();
+
+  const weekdayCounts = [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+  ];
+
+  spreadsheetVisitHistories.forEach(
+    (visitHistory) => {
+      const visitDate =
+        createCustomerDetailDate(
+          visitHistory.visitDate
+        );
+
+      if (
+        !visitDate ||
+        visitDate < startDate ||
+        visitDate > endDate
+      ) {
+        return;
+      }
+
+      weekdayCounts[
+        visitDate.getDay()
+      ] += 1;
+    }
+  );
+
+  // JavaScriptは日曜始まりなので、
+  // 画面用に月曜始まりへ並べ替える
+  const weekdayOrder = [
+    ["月", 1],
+    ["火", 2],
+    ["水", 3],
+    ["木", 4],
+    ["金", 5],
+    ["土", 6],
+    ["日", 0],
+  ];
+
+  return weekdayOrder.map(
+    (
+      [
+        weekday,
+        dayIndex,
+      ]
+    ) => {
+      return {
+        weekday,
+
+        count:
+          weekdayCounts[
+            dayIndex
+          ],
+      };
+    }
+  );
+};
+
+
+// 選択月の誕生日を実データから取得する
+const getRealSummaryBirthdayData = () => {
+  const selectedMonth =
+    createSummarySelectedMonthDate()
+      .getMonth() +
+    1;
+
+  const birthdayCustomers =
+    Array.from(
+      customerSearchResultCards
+    ).filter(
+      (customerCard) => {
+        return (
+          customerCard.dataset
+            .birthdayStatus ===
+            "known" &&
+          Number(
+            customerCard.dataset
+              .birthMonth ||
+            0
+          ) ===
+            selectedMonth
+        );
+      }
+    );
+
+  const today = new Date();
+
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  // 月曜日を週の始まりとして計算する
+  const daysFromMonday =
+    (
+      today.getDay() +
+      6
+    ) %
+    7;
+
+  const thisWeekStart =
+    new Date(
+      today
+    );
+
+  thisWeekStart.setDate(
+    today.getDate() -
+    daysFromMonday
+  );
+
+  const thisWeekEnd =
+    new Date(
+      thisWeekStart
+    );
+
+  thisWeekEnd.setDate(
+    thisWeekStart.getDate() +
+    6
+  );
+
+  const nextWeekStart =
+    new Date(
+      thisWeekStart
+    );
+
+  nextWeekStart.setDate(
+    thisWeekStart.getDate() +
+    7
+  );
+
+  const nextWeekEnd =
+    new Date(
+      nextWeekStart
+    );
+
+  nextWeekEnd.setDate(
+    nextWeekStart.getDate() +
+    6
+  );
+
+  let thisWeek = 0;
+  let nextWeek = 0;
+
+  birthdayCustomers.forEach(
+    (customerCard) => {
+      const birthDay =
+        Number(
+          customerCard.dataset
+            .birthDay ||
+          0
+        );
+
+      if (!birthDay) {
+        return;
+      }
+
+      const birthdayDate =
+        new Date(
+          today.getFullYear(),
+          selectedMonth - 1,
+          birthDay
+        );
+
+      // 存在しない日付は除外する
+      if (
+        birthdayDate.getMonth() !==
+          selectedMonth - 1 ||
+        birthdayDate.getDate() !==
+          birthDay
+      ) {
+        return;
+      }
+
+      if (
+        birthdayDate >=
+          thisWeekStart &&
+        birthdayDate <=
+          thisWeekEnd
+      ) {
+        thisWeek += 1;
+      }
+
+      if (
+        birthdayDate >=
+          nextWeekStart &&
+        birthdayDate <=
+          nextWeekEnd
+      ) {
+        nextWeek += 1;
+      }
+    }
+  );
+
+  return {
+    total:
+      birthdayCustomers.length,
+
+    thisWeek,
+
+    nextWeek,
+  };
+};
+
+// 来店なし顧客を表示する
+const renderSummaryNoVisitCustomers = () => {
+  const matchingCustomers =
+    getRealSummaryNoVisitCustomers();
 
   summaryNoVisitCount.textContent =
     `${matchingCustomers.length}名`;
@@ -7673,8 +8021,7 @@ const renderSummaryNoVisitCustomers = () => {
 // 曜日別の来店状況を表示する
 const renderSummaryWeekdays = () => {
   const weekdayDataList =
-    getActiveSummaryMonthData()
-      .weekdays;
+    getRealSummaryWeekdayData();
   
   const maximumCount =
     Math.max(
@@ -7699,8 +8046,9 @@ const renderSummaryWeekdays = () => {
           );
 
         const isHighest =
+          weekdayData.count > 0 &&
           weekdayData.count ===
-          maximumCount;
+            maximumCount;
 
         return `
           <div
@@ -7733,39 +8081,78 @@ const renderSummaryWeekdays = () => {
 // AI分析を表示する
 const renderSummaryAiAnalysis = () => {
   const periodData =
-    getActiveSummaryPeriodData();
+    getRealSummaryKpiData();
+
+  const ratioData =
+    getRealSummaryRatioData();
+
+  const noVisitCustomers =
+    getRealSummaryNoVisitCustomers();
+
+  const periodLabel =
+    getActiveSummaryPeriodLabel();
+
+  const salesComparisonDescription =
+    periodData.salesRate ===
+    "算出不可"
+      ? "前の期間に売上データがないため、増減率は算出できません。"
+      : `前の期間との比較は${periodData.salesRate}です。`;
+
+  const hasNoVisitCustomers =
+    noVisitCustomers.length >
+    0;
 
   const analysisItems = [
     {
       title:
-        `売上は前の期間より${periodData.salesRate}増加しています。`,
+        `${periodLabel}売上は${formatSummaryCurrency(
+          periodData.sales
+        )}です。`,
+
       description:
-        "売上推移と平均単価の両方が上向いています。",
-      warning: false,
+        salesComparisonDescription,
+
+      warning:
+        false,
     },
 
     {
       title:
         `新規顧客は${periodData.newCustomers}名です。`,
+
       description:
-        "新規登録後の再来店状況もあわせて確認しましょう。",
-      warning: false,
+        `来店内訳は新規${ratioData.newVisits}回、常連${ratioData.regularVisits}回です。`,
+
+      warning:
+        false,
     },
 
     {
       title:
-        `平均単価は${formatSummaryCurrency(periodData.averageSpend)}です。`,
+        `平均単価は${formatSummaryCurrency(
+          periodData.averageSpend
+        )}です。`,
+
       description:
-        "高単価メニューの利用状況を確認できます。",
-      warning: false,
+        `来店${periodData.visits}回の実績から算出しています。`,
+
+      warning:
+        false,
     },
 
     {
       title:
-        "長期間来店のない顧客がいます。",
+        hasNoVisitCustomers
+          ? `${activeSummaryNoVisitDays}日以上来店のない顧客が${noVisitCustomers.length}名います。`
+          : `${activeSummaryNoVisitDays}日以上来店のない顧客はいません。`,
+
       description:
-        "来店なし顧客欄で、最終来店日と担当スタッフを確認できます。",
-      warning: true,
+        hasNoVisitCustomers
+          ? "来店なし顧客欄で、最終来店日と担当スタッフを確認できます。"
+          : "現在の来店履歴では該当する顧客はいません。",
+
+      warning:
+        hasNoVisitCustomers,
     },
   ];
 
@@ -7823,8 +8210,7 @@ const renderSummaryAiAnalysis = () => {
 // 選択中の月の誕生日人数を表示する
 const renderSummaryBirthdays = () => {
   const birthdayData =
-    getActiveSummaryMonthData()
-      .birthdays;
+    getRealSummaryBirthdayData();
 
   summaryBirthdayTotal.textContent =
     birthdayData.total;
@@ -7838,8 +8224,8 @@ const renderSummaryBirthdays = () => {
 
 // サマリー画面全体を表示する
 const renderSummaryScreen = () => {
-  const monthData =
-    getActiveSummaryMonthData();
+  const selectedMonthDate =
+    createSummarySelectedMonthDate();
 
   const periodLabel =
     getActiveSummaryPeriodLabel();
@@ -7848,7 +8234,7 @@ const renderSummaryScreen = () => {
     `${periodLabel}売上`;
 
   summaryBirthdayTitle.textContent =
-    `${monthData.monthNumber}月の誕生日`;
+  `${selectedMonthDate.getMonth() + 1}月の誕生日`;
 
   renderSummaryKpis();
   renderSummaryRatio();
@@ -7964,6 +8350,7 @@ summaryNoVisitFilters.forEach(
         );
 
         renderSummaryNoVisitCustomers();
+        renderSummaryAiAnalysis();
       }
     );
   }
@@ -7984,8 +8371,8 @@ summaryNoVisitShowAllButton.addEventListener(
 summaryBirthdaySearchButton.addEventListener(
   "click",
   () => {
-    const monthData =
-      getActiveSummaryMonthData();
+    const selectedMonthDate =
+      createSummarySelectedMonthDate();
 
     // 以前の検索文字や詳細条件が混ざらないよう初期化する
     customerSearchInput.value = "";
@@ -8001,7 +8388,7 @@ summaryBirthdaySearchButton.addEventListener(
       "birthday";
 
     activeCustomerBirthdayFilterMonth =
-      monthData.monthNumber;
+      selectedMonthDate.getMonth() + 1;
 
     syncCustomerQuickFilterButtons();
     syncCustomerSearchConditionRows();
