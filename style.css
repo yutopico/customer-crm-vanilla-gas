@@ -1837,6 +1837,12 @@ html.app-loading .app-container {
     box-shadow 0.2s ease;
 }
 
+/* iPhoneでも日付入力欄を親要素の幅に収める */
+.form-input[type="date"] {
+  min-width: 0;
+  max-width: 100%;
+}
+
 /* 入力例として表示する薄い文字 */
 .form-input::placeholder {
   color: #a5aaa8;
@@ -5870,6 +5876,7 @@ body.confirm-dialog-open {
 .customer-search-result-features {
   width: fit-content;
   max-width: 100%;
+  min-width: 0;
   padding: 5px 10px;
 
   background-color: rgb(125 150 128 / 10%);
@@ -10286,7 +10293,27 @@ body.customer-detail-mode .app-container {
 
   /* 特徴 */
   .customer-search-result-features {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
     font-size: 11px;
+  }
+
+  /* iPhoneの日付入力欄をカード内に収める */
+  .form-input[type="date"] {
+    display: block;
+    width: -webkit-fill-available;
+    min-width: 0;
+    max-width: 100%;
+
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   /* 統計情報をカード下段へ移動する */

@@ -2268,6 +2268,10 @@ function doGet() {
       "App"
     )
     .evaluate()
+    .addMetaTag(
+      "viewport",
+      "width=device-width, initial-scale=1"
+    )
     .setTitle(
       "顧客管理Webアプリ"
     );
