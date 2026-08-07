@@ -6803,20 +6803,182 @@ const renderSummaryKpis = () => {
     periodData.averageRate;
 };
 
+// サマリーで選択中の集計期間を取得する
+const getSummaryCurrentPeriodRange =
+  () => {
+    const selectedMonthDate =
+      createSummarySelectedMonthDate();
+
+    const periodMonthCount =
+      summaryPeriodMonthCounts[
+        activeSummaryPeriod
+      ] ||
+      1;
+
+    const startDate =
+      new Date(
+        selectedMonthDate.getFullYear(),
+        selectedMonthDate.getMonth() -
+          periodMonthCount +
+          1,
+        1
+      );
+
+    const endDate =
+      new Date(
+        selectedMonthDate.getFullYear(),
+        selectedMonthDate.getMonth() +
+          1,
+        0,
+        23,
+        59,
+        59,
+        999
+      );
+
+    return {
+      startDate,
+      endDate,
+    };
+  };
+
+
+// 来店履歴を古い順へ並べる
+const getSummaryVisitHistoriesOldestFirst =
+  () => {
+    return [
+      ...spreadsheetVisitHistories,
+    ].sort(
+      (
+        firstVisit,
+        secondVisit
+      ) => {
+        const dateComparison =
+          (
+            firstVisit.visitDate ||
+            ""
+          ).localeCompare(
+            secondVisit.visitDate ||
+            ""
+          );
+
+        if (dateComparison !== 0) {
+          return dateComparison;
+        }
+
+        const registeredAtComparison =
+          (
+            firstVisit.registeredAt ||
+            ""
+          ).localeCompare(
+            secondVisit.registeredAt ||
+            ""
+          );
+
+        if (
+          registeredAtComparison !==
+          0
+        ) {
+          return registeredAtComparison;
+        }
+
+        return (
+          firstVisit.visitId ||
+          ""
+        ).localeCompare(
+          secondVisit.visitId ||
+          ""
+        );
+      }
+    );
+  };
+
+
+// 新規・常連の来店回数を実データから計算する
+const getRealSummaryRatioData =
+  () => {
+    const {
+      startDate,
+      endDate,
+    } =
+      getSummaryCurrentPeriodRange();
+
+    const firstVisitByCustomerId =
+      new Map();
+
+    getSummaryVisitHistoriesOldestFirst()
+      .forEach((visitHistory) => {
+        const customerId =
+          visitHistory.customerId ||
+          "";
+
+        if (
+          customerId &&
+          !firstVisitByCustomerId.has(
+            customerId
+          )
+        ) {
+          firstVisitByCustomerId.set(
+            customerId,
+            visitHistory
+          );
+        }
+      });
+
+    const periodVisits =
+      spreadsheetVisitHistories.filter(
+        (visitHistory) => {
+          return isSummaryDateInRange(
+            visitHistory.visitDate,
+            startDate,
+            endDate
+          );
+        }
+      );
+
+    let newVisits = 0;
+    let regularVisits = 0;
+
+    periodVisits.forEach(
+      (visitHistory) => {
+        const firstVisit =
+          firstVisitByCustomerId.get(
+            visitHistory.customerId ||
+            ""
+          );
+
+        if (
+          firstVisit ===
+          visitHistory
+        ) {
+          newVisits += 1;
+        } else {
+          regularVisits += 1;
+        }
+      }
+    );
+
+    return {
+      newVisits,
+      regularVisits,
+    };
+  };
+
+
 // 新規・常連の割合を表示する
 const renderSummaryRatio = () => {
-  const periodData =
-    getActiveSummaryPeriodData();
+  const ratioData =
+    getRealSummaryRatioData();
 
   const totalVisits =
-    periodData.regularVisits +
-    periodData.newVisits;
+    ratioData.regularVisits +
+    ratioData.newVisits;
 
   const regularPercent =
     totalVisits > 0
       ? Math.round(
           (
-            periodData.regularVisits /
+            ratioData.regularVisits /
             totalVisits
           ) *
           100
@@ -6824,8 +6986,10 @@ const renderSummaryRatio = () => {
       : 0;
 
   const newPercent =
-    100 -
-    regularPercent;
+    totalVisits > 0
+      ? 100 -
+        regularPercent
+      : 0;
 
   summaryRatioDonut.style.setProperty(
     "--regular-percent",
@@ -6836,56 +7000,280 @@ const renderSummaryRatio = () => {
     totalVisits;
 
   summaryRegularCount.textContent =
-    `${periodData.regularVisits}回`;
+    `${ratioData.regularVisits}回`;
 
   summaryRegularPercent.textContent =
     `${regularPercent}%`;
 
   summaryNewCount.textContent =
-    `${periodData.newVisits}回`;
+    `${ratioData.newVisits}回`;
 
   summaryNewPercent.textContent =
     `${newPercent}%`;
 };
 
+// Date型を年月日のキーへ変換する
+const createSummaryDateKey = (
+  dateValue
+) => {
+  const year =
+    dateValue.getFullYear();
+
+  const month =
+    String(
+      dateValue.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    );
+
+  const day =
+    String(
+      dateValue.getDate()
+    ).padStart(
+      2,
+      "0"
+    );
+
+  return `${year}-${month}-${day}`;
+};
+
+
+// 売上推移に使用する実データを作る
+const getRealSummaryTrendData =
+  () => {
+    const selectedMonthDate =
+      createSummarySelectedMonthDate();
+
+    let trendItems = [];
+
+    // 月別の場合は、
+    // 選択期間に含まれる月を作る
+    if (
+      activeSummaryChartMode ===
+      "monthly"
+    ) {
+      const {
+        startDate,
+        endDate,
+      } =
+        getSummaryCurrentPeriodRange();
+
+      const currentMonth =
+        new Date(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          1
+        );
+
+      while (
+        currentMonth <=
+        endDate
+      ) {
+        const year =
+          currentMonth.getFullYear();
+
+        const month =
+          currentMonth.getMonth() + 1;
+
+        trendItems.push({
+          key:
+            `${year}-${
+              String(
+                month
+              ).padStart(
+                2,
+                "0"
+              )
+            }`,
+
+          label:
+            `${month}月`,
+
+          axisLabel:
+            `${month}月`,
+
+          sales:
+            0,
+
+          visits:
+            0,
+        });
+
+        currentMonth.setMonth(
+          currentMonth.getMonth() + 1
+        );
+      }
+    } else {
+      // 日別の場合は、
+      // 選択月の1日から月末までを作る
+      const lastDay =
+        new Date(
+          selectedMonthDate.getFullYear(),
+          selectedMonthDate.getMonth() +
+            1,
+          0
+        ).getDate();
+
+      trendItems =
+        Array.from(
+          {
+            length:
+              lastDay,
+          },
+          (
+            _,
+            dayIndex
+          ) => {
+            const day =
+              dayIndex + 1;
+
+            const date =
+              new Date(
+                selectedMonthDate.getFullYear(),
+                selectedMonthDate.getMonth(),
+                day
+              );
+
+            const label =
+              `${
+                date.getMonth() + 1
+              }/${day}`;
+
+            // 横軸が混雑しないよう、
+            // 1日・5日ごと・月末だけ文字を表示する
+            const shouldShowAxisLabel =
+              day === 1 ||
+              day === lastDay ||
+              day % 5 === 0;
+
+            return {
+              key:
+                createSummaryDateKey(
+                  date
+                ),
+
+              label,
+
+              axisLabel:
+                shouldShowAxisLabel
+                  ? label
+                  : "",
+
+              sales:
+                0,
+
+              visits:
+                0,
+            };
+          }
+        );
+    }
+
+    const trendItemMap =
+      new Map(
+        trendItems.map(
+          (trendItem) => {
+            return [
+              trendItem.key,
+              trendItem,
+            ];
+          }
+        )
+      );
+
+    // 来店履歴を対応する日・月へ加算する
+    spreadsheetVisitHistories.forEach(
+      (visitHistory) => {
+        const visitDate =
+          createCustomerDetailDate(
+            visitHistory.visitDate
+          );
+
+        if (!visitDate) {
+          return;
+        }
+
+        const trendKey =
+          activeSummaryChartMode ===
+          "monthly"
+            ? `${
+                visitDate.getFullYear()
+              }-${
+                String(
+                  visitDate.getMonth() +
+                    1
+                ).padStart(
+                  2,
+                  "0"
+                )
+              }`
+            : createSummaryDateKey(
+                visitDate
+              );
+
+        const trendItem =
+          trendItemMap.get(
+            trendKey
+          );
+
+        // 選択期間外の来店履歴は集計しない
+        if (!trendItem) {
+          return;
+        }
+
+        trendItem.sales +=
+          Number(
+            visitHistory.paymentAmount ||
+            0
+          );
+
+        trendItem.visits +=
+          1;
+      }
+    );
+
+    return {
+      labels:
+        trendItems.map(
+          (trendItem) => {
+            return trendItem.label;
+          }
+        ),
+
+      axisLabels:
+        trendItems.map(
+          (trendItem) => {
+            return trendItem.axisLabel;
+          }
+        ),
+
+      sales:
+        trendItems.map(
+          (trendItem) => {
+            return trendItem.sales;
+          }
+        ),
+
+      visits:
+        trendItems.map(
+          (trendItem) => {
+            return trendItem.visits;
+          }
+        ),
+    };
+  };
+
 // 売上推移グラフを表示する
 const renderSummaryTrendChart = () => {
-  const monthData =
-    getActiveSummaryMonthData();
-
-  const periodData =
-    getActiveSummaryPeriodData();
-
   const sourceData =
-    activeSummaryChartMode ===
-    "monthly"
-      ? monthData.charts.monthly
-      : monthData.charts.daily;
+    getRealSummaryTrendData();
 
   const salesData =
-    sourceData.sales.map(
-      (salesAmount) => {
-        return Math.round(
-          salesAmount *
-          periodData.chartFactor
-        );
-      }
-    );
+    sourceData.sales;
 
   const visitData =
-    sourceData.visits.map(
-      (visitCount) => {
-        return Math.max(
-          1,
-          Math.round(
-            visitCount *
-            Math.sqrt(
-              periodData.chartFactor
-            )
-          )
-        );
-      }
-    );
+    sourceData.visits;
 
   const width = 780;
   const height = 300;
@@ -7058,6 +7446,16 @@ const renderSummaryTrendChart = () => {
   const xLabels =
     sourceData.labels.map(
       (label, index) => {
+        const axisLabel =
+          sourceData.axisLabels[
+            index
+          ] ||
+          "";
+
+        if (!axisLabel) {
+          return "";
+        }
+
         return `
           <text
             class="summary-chart-axis-label"
@@ -7065,7 +7463,7 @@ const renderSummaryTrendChart = () => {
             y="${height - 14}"
             text-anchor="middle"
           >
-            ${label}
+            ${axisLabel}
           </text>
         `;
       }
