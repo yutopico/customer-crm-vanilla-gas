@@ -3616,8 +3616,8 @@ body.confirm-dialog-open {
 }
 
 /* 確認画面のボタンへマウスを乗せたとき */
-.new-customer-confirm-back:hover,
-.new-customer-confirm-register:hover {
+.new-customer-confirm-back:hover:not(:disabled),
+.new-customer-confirm-register:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
@@ -3635,6 +3635,17 @@ body.confirm-dialog-open {
   box-shadow: none;
 
   cursor: wait;
+  transform: none;
+}
+
+/* 処理中の戻る・キャンセル系ボタンは
+   操作できないことが分かる見た目にする */
+.new-customer-confirm-back:disabled,
+.regular-customer-confirm-back:disabled,
+.customer-detail-edit-cancel:disabled,
+.customer-detail-edit-close:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
   transform: none;
 }
 
@@ -4732,8 +4743,8 @@ body.confirm-dialog-open {
 }
 
 /* ボタンへマウスを乗せたとき */
-.regular-customer-confirm-back:hover,
-.regular-customer-confirm-update:hover {
+.regular-customer-confirm-back:hover:not(:disabled),
+.regular-customer-confirm-update:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
@@ -7342,6 +7353,27 @@ body.customer-detail-mode .app-container {
   border: 1px solid #7d9680;
 
   color: #ffffff;
+}
+
+/* 保存・更新処理中の離脱ボタンは
+   操作できないことが分かる見た目にする */
+.new-customer-confirm-back:disabled,
+.regular-customer-confirm-back:disabled,
+.customer-detail-edit-cancel:disabled,
+.customer-detail-edit-close:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* 顧客詳細の保存処理中 */
+.customer-detail-edit-save:disabled {
+  background-color: #c9bdaf;
+  border-color: #c9bdaf;
+  opacity: 0.75;
+
+  cursor: wait;
 }
 
 /* 顧客詳細画面のタブレット・スマホ表示 */

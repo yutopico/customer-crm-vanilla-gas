@@ -375,6 +375,9 @@ const customerDetailEditDialog = document.querySelector("#customer-detail-edit-d
 const customerDetailEditForm = document.querySelector("#customer-detail-edit-form");
 const customerDetailEditCloseButton = document.querySelector(".customer-detail-edit-close");
 const customerDetailEditCancelButton = document.querySelector(".customer-detail-edit-cancel");
+const customerDetailEditSaveButton =document.querySelector(".customer-detail-edit-save");
+// 顧客詳細をGASへ保存している最中か管理する
+let isCustomerDetailEditSaving = false;
 const customerDetailEditNameInput = document.querySelector("#customer-detail-edit-name");
 const customerDetailEditStaffInput = document.querySelector("#customer-detail-edit-staff");
 const customerDetailEditFeaturesInput = document.querySelector("#customer-detail-edit-features");
@@ -5201,6 +5204,34 @@ customerDetailTimelineLoadMoreButton.addEventListener(
   }
 );
 
+// 顧客詳細の保存中状態をまとめて切り替える
+const setCustomerDetailEditSavingState = (
+  isSaving
+) => {
+  isCustomerDetailEditSaving =
+    isSaving;
+
+  // フォーム内の入力欄・保存・キャンセル・
+  // スタッフ候補ボタンもまとめてロックする
+  customerDetailEditForm
+    .querySelectorAll(
+      "input, textarea, button"
+    )
+    .forEach((control) => {
+      control.disabled =
+        isSaving;
+    });
+
+  // ×ボタンはフォーム外なので個別にロックする
+  customerDetailEditCloseButton.disabled =
+    isSaving;
+
+  customerDetailEditSaveButton.textContent =
+    isSaving
+      ? "保存中..."
+      : "保存する";
+};
+
 // 顧客情報の編集画面を開く
 const openCustomerDetailEditDialog = () => {
   if (!activeCustomerDetailData) {
@@ -5233,6 +5264,14 @@ const openCustomerDetailEditDialog = () => {
 
 // 顧客情報の編集画面を閉じる
 const closeCustomerDetailEditDialog = () => {
+  // 保存中は×・キャンセル・背景・Escの
+  // どの操作からも閉じない
+  if (
+    isCustomerDetailEditSaving
+  ) {
+    return;
+  }
+
   customerDetailEditDialog.hidden =
     true;
 
@@ -5289,21 +5328,42 @@ document.addEventListener(
   }
 );
 
-// 編集内容を顧客詳細画面と検索結果へ反映する
+// 編集内容を顧客マスタへ保存する
 customerDetailEditForm.addEventListener(
   "submit",
   (event) => {
     event.preventDefault();
 
-    if (!activeCustomerDetailData) {
+    if (
+      !activeCustomerDetailData ||
+      isCustomerDetailEditSaving
+    ) {
+      return;
+    }
+
+    if (
+      !window.google?.script?.run
+    ) {
+      window.alert(
+        "GASへ接続できません。"
+      );
+
       return;
     }
 
     const updatedName =
-      customerDetailEditNameInput.value.trim();
+      customerDetailEditNameInput
+        .value
+        .trim();
+
+    const updatedStaff =
+      customerDetailEditStaffInput
+        .value
+        .trim();
 
     const updatedFeatures =
-      customerDetailEditFeaturesInput.value
+      customerDetailEditFeaturesInput
+        .value
         .split(",")
         .map((featureName) => {
           return featureName.trim();
@@ -5311,93 +5371,76 @@ customerDetailEditForm.addEventListener(
         .filter(Boolean);
 
     const updatedMemo =
-      customerDetailEditMemoInput.value.trim();
+      customerDetailEditMemoInput
+        .value
+        .trim();
 
-    activeCustomerDetailData.name =
-      updatedName;
+    const customerData = {
+      customerId:
+        activeCustomerDetailData.id,
 
-    activeCustomerDetailData.initial =
-      updatedName.slice(0, 1) ||
-      "客";
+      name:
+        updatedName,
 
-    activeCustomerDetailData.staff =
-      customerDetailEditStaffInput.value.trim();
+      staffMember:
+        updatedStaff,
 
-    // 編集画面で新しく入力したスタッフ名も候補として保存する
-    saveStaffMemberName(
-      customerDetailEditStaffInput
+      features:
+        updatedFeatures,
+
+      memo:
+        updatedMemo,
+    };
+
+    // 保存開始と同時に編集画面全体をロックする
+    setCustomerDetailEditSavingState(
+      true
     );
 
-    activeCustomerDetailData.features =
-      updatedFeatures;
+    google.script.run
+      .withSuccessHandler(
+        (result) => {
+          console.log(
+            "顧客詳細を更新しました:",
+            result
+          );
 
-    activeCustomerDetailData.memo =
-      updatedMemo ||
-      "メモは登録されていません。";
+          // 正常保存できたスタッフ名だけ候補へ追加する
+          saveStaffMemberName(
+            customerDetailEditStaffInput
+          );
 
-    const resultCard =
-      activeCustomerDetailData.resultCard;
+          // 保存完了後にロックを解除する
+          setCustomerDetailEditSavingState(
+            false
+          );
 
-    // 検索結果カードのデータも更新する
-    resultCard.dataset.customerName =
-      activeCustomerDetailData.name;
+          closeCustomerDetailEditDialog();
 
-    resultCard.dataset.staffMember =
-      activeCustomerDetailData.staff;
+          // Sheetsの最新データを再取得して
+          // 詳細・検索結果・ホームなどへ反映する
+          loadInitialAppDataFromSpreadsheet();
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "顧客詳細の更新に失敗しました:",
+            error
+          );
 
-    resultCard.dataset.hasFeatures =
-      String(
-        updatedFeatures.length > 0
+          setCustomerDetailEditSavingState(
+            false
+          );
+
+          window.alert(
+            "顧客情報の保存に失敗しました。"
+          );
+        }
+      )
+      .updateCustomerDetails(
+        customerData
       );
-
-    resultCard.dataset.hasMemo =
-      String(updatedMemo !== "");
-
-    resultCard.dataset.detailMemo =
-      activeCustomerDetailData.memo;
-
-    const resultName =
-      resultCard.querySelector(
-        ".customer-search-result-name-row strong"
-      );
-
-    const resultAvatar =
-      resultCard.querySelector(
-        ".customer-search-result-avatar"
-      );
-
-    const resultFeatures =
-      resultCard.querySelector(
-        ".customer-search-result-features"
-      );
-
-    if (resultName) {
-      resultName.textContent =
-        activeCustomerDetailData.name;
-    }
-
-    if (resultAvatar) {
-      resultAvatar.textContent =
-        activeCustomerDetailData.initial;
-    }
-
-    if (resultFeatures) {
-      resultFeatures.textContent =
-        updatedFeatures.length > 0
-          ? updatedFeatures.join("・")
-          : "特徴未登録";
-    }
-
-    resultCard.dataset.searchText = [
-      activeCustomerDetailData.name,
-      activeCustomerDetailData.id,
-      ...updatedFeatures,
-      activeCustomerDetailData.memo,
-      activeCustomerDetailData.staff,
-    ].join(" ");
-
-    renderCustomerDetailScreen();
-    closeCustomerDetailEditDialog();
   }
 );
 
@@ -8918,7 +8961,7 @@ const renderSummaryNoVisitCustomers = () => {
 const renderSummaryWeekdays = () => {
   const weekdayDataList =
     getRealSummaryWeekdayData();
-  
+
   const maximumCount =
     Math.max(
       ...weekdayDataList.map(
@@ -12507,32 +12550,126 @@ regularCustomerConfirmUpdate.addEventListener(
     regularCustomerConfirmUpdate.disabled =
       true;
 
+    // 更新中は「戻って修正」も押せないようにする
+    regularCustomerConfirmBack.disabled =
+      true;
+
     regularCustomerConfirmUpdate.textContent =
       "更新中...";
 
-    // 現段階では通信を想定した仮処理
-    setTimeout(() => {
-      // 今回入力したスタッフ名を候補として保存する
-      saveStaffMemberName(
+    // 誕生日が未登録だった顧客で、
+    // 今回新しく入力された場合だけ保存する
+    const shouldSaveBirthday =
+      !regularBirthdayCard.hidden &&
+      regularBirthdayKnownInput.checked;
+
+    const birthday =
+      shouldSaveBirthday
+        ? [
+            regularBirthYearSelect.value,
+            String(
+              regularBirthMonthSelect.value
+            ).padStart(
+              2,
+              "0"
+            ),
+            String(
+              regularBirthDaySelect.value
+            ).padStart(
+              2,
+              "0"
+            ),
+          ].join("-")
+        : "";
+
+    const visitData = {
+      customerId:
+        regularSelectedCustomerIdInput
+          .value,
+
+      visitDate:
+        regularVisitDateInput.value,
+
+      paymentAmount:
+        getRegularPaymentAmountNumber(),
+
+      staffMember:
         regularStaffMemberInput
+          .value
+          .trim(),
+
+      visitMemo:
+        regularCustomerMemo
+          .value
+          .trim(),
+
+      birthday,
+    };
+
+    // GASへ今回の来店情報を送信する
+    google.script.run
+      .withSuccessHandler(
+        (result) => {
+          console.log(
+            "常連顧客の来店を登録しました:",
+            result
+          );
+
+          // 今回入力したスタッフ名を候補として保存する
+          saveStaffMemberName(
+            regularStaffMemberInput
+          );
+
+          // 確認内容を隠して更新完了画面を表示する
+          regularCustomerConfirmMain.hidden =
+            true;
+
+          regularCustomerUpdateSuccess.hidden =
+            false;
+
+          // 更新ボタンを元の状態へ戻す
+          regularCustomerConfirmUpdate.disabled =
+            false;
+
+          regularCustomerConfirmUpdate.textContent =
+            "更新する";
+
+          regularCustomerConfirmBack.disabled =
+            false;
+
+          regularCustomerSuccessBack.focus();
+
+          // 顧客検索・詳細・サマリーなども
+          // 新しい来店履歴で更新する
+          loadInitialAppDataFromSpreadsheet();
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "常連顧客の来店登録に失敗しました:",
+            error
+          );
+
+          window.alert(
+            "来店情報の保存に失敗しました。"
+          );
+
+          // 失敗した場合も再試行できるよう
+          // 更新ボタンを元へ戻す
+          regularCustomerConfirmUpdate.disabled =
+            false;
+
+          regularCustomerConfirmUpdate.textContent =
+            "更新する";
+
+          regularCustomerConfirmBack.disabled =
+            false;
+        }
+      )
+      .registerRegularCustomerVisit(
+        visitData
       );
-
-      // 確認内容を隠して更新完了画面を表示する
-      regularCustomerConfirmMain.hidden =
-        true;
-
-      regularCustomerUpdateSuccess.hidden =
-        false;
-
-      // 更新ボタンを元の状態へ戻す
-      regularCustomerConfirmUpdate.disabled =
-        false;
-
-      regularCustomerConfirmUpdate.textContent =
-        "更新する";
-
-      regularCustomerSuccessBack.focus();
-    }, 900);
   }
 );
 
@@ -12880,6 +13017,10 @@ newCustomerConfirmRegister.addEventListener(
     newCustomerConfirmRegister.disabled =
       true;
 
+    // 登録中は「戻って修正」も操作できないようにする
+    newCustomerConfirmBack.disabled =
+      true;
+
     newCustomerConfirmRegister.textContent =
       "登録中...";
 
@@ -12980,6 +13121,9 @@ newCustomerConfirmRegister.addEventListener(
             newCustomerConfirmRegister.disabled =
               false;
 
+            newCustomerConfirmBack.disabled =
+              false;
+
             newCustomerConfirmRegister.textContent =
               "登録する";
 
@@ -12997,6 +13141,9 @@ newCustomerConfirmRegister.addEventListener(
             );
 
             newCustomerConfirmRegister.disabled =
+              false;
+
+            newCustomerConfirmBack.disabled =
               false;
 
             newCustomerConfirmRegister.textContent =
@@ -13018,6 +13165,9 @@ newCustomerConfirmRegister.addEventListener(
       );
 
       newCustomerConfirmRegister.disabled =
+        false;
+
+      newCustomerConfirmBack.disabled =
         false;
 
       newCustomerConfirmRegister.textContent =

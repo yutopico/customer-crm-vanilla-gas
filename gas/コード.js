@@ -1178,6 +1178,309 @@ function deleteCustomerPhoto(
 
 
 /**
+ * 顧客詳細画面で編集した基本情報を保存する
+ */
+function updateCustomerDetails(
+  customerData
+) {
+  const lock =
+    LockService.getScriptLock();
+
+  lock.waitLock(
+    30000
+  );
+
+  try {
+    const spreadsheet =
+      SpreadsheetApp.openById(
+        CRM_SPREADSHEET_ID
+      );
+
+    const customerSheet =
+      spreadsheet.getSheetByName(
+        "顧客マスタ"
+      );
+
+    if (!customerSheet) {
+      throw new Error(
+        "「顧客マスタ」シートが見つかりません。"
+      );
+    }
+
+    const customerId =
+      String(
+        customerData?.customerId ||
+          ""
+      ).trim();
+
+    const name =
+      String(
+        customerData?.name ||
+          ""
+      ).trim();
+
+    const staffMember =
+      String(
+        customerData?.staffMember ||
+          ""
+      ).trim();
+
+    const memo =
+      String(
+        customerData?.memo ||
+          ""
+      ).trim();
+
+    const features =
+      Array.isArray(
+        customerData?.features
+      )
+        ? customerData.features
+            .map((feature) => {
+              return String(
+                feature
+              ).trim();
+            })
+            .filter(Boolean)
+        : [];
+
+    if (!customerId) {
+      throw new Error(
+        "顧客IDがありません。"
+      );
+    }
+
+    if (!name) {
+      throw new Error(
+        "顧客名を入力してください。"
+      );
+    }
+
+    const customerRow =
+      findCustomerRow_(
+        customerSheet,
+        customerId
+      );
+
+    if (!customerRow) {
+      throw new Error(
+        `顧客ID「${customerId}」が見つかりません。`
+      );
+    }
+
+    // B〜H列を一度読み込み、
+    // 編集対象だけ変更してまとめて書き戻す
+    //
+    // B 氏名
+    // C 登録日
+    // D 誕生日
+    // E 担当スタッフ
+    // F 写真URL
+    // G 特徴
+    // H メモ
+    const customerValues =
+      customerSheet
+        .getRange(
+          customerRow,
+          2,
+          1,
+          7
+        )
+        .getValues()[0];
+
+    customerValues[0] =
+      name;
+
+    customerValues[3] =
+      staffMember;
+
+    customerValues[5] =
+      features.join(",");
+
+    customerValues[6] =
+      memo;
+
+    customerSheet
+      .getRange(
+        customerRow,
+        2,
+        1,
+        7
+      )
+      .setValues([
+        customerValues,
+      ]);
+
+    return {
+      customerId,
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/**
+ * 常連顧客の今回の来店情報を登録する
+ */
+function registerRegularCustomerVisit(
+  visitData
+) {
+  const lock =
+    LockService.getScriptLock();
+
+  lock.waitLock(
+    30000
+  );
+
+  try {
+    const spreadsheet =
+      SpreadsheetApp.openById(
+        CRM_SPREADSHEET_ID
+      );
+
+    const customerSheet =
+      spreadsheet.getSheetByName(
+        "顧客マスタ"
+      );
+
+    const visitSheet =
+      spreadsheet.getSheetByName(
+        "来店履歴"
+      );
+
+    if (
+      !customerSheet ||
+      !visitSheet
+    ) {
+      throw new Error(
+        "更新に必要なシートが見つかりません。"
+      );
+    }
+
+    const customerId =
+      String(
+        visitData?.customerId ||
+          ""
+      ).trim();
+
+    const visitDate =
+      String(
+        visitData?.visitDate ||
+          ""
+      ).trim();
+
+    const staffMember =
+      String(
+        visitData?.staffMember ||
+          ""
+      ).trim();
+
+    const visitMemo =
+      String(
+        visitData?.visitMemo ||
+          ""
+      ).trim();
+
+    const birthday =
+      String(
+        visitData?.birthday ||
+          ""
+      ).trim();
+
+    const paymentAmount =
+      Number(
+        visitData
+          ?.paymentAmount
+      );
+
+    // ブラウザ側だけに頼らず、
+    // GAS側でも必須項目を確認する
+    if (!customerId) {
+      throw new Error(
+        "顧客IDがありません。"
+      );
+    }
+
+    if (!visitDate) {
+      throw new Error(
+        "来店日を入力してください。"
+      );
+    }
+
+    if (
+      !Number.isFinite(
+        paymentAmount
+      ) ||
+      paymentAmount < 0
+    ) {
+      throw new Error(
+        "会計金額が正しくありません。"
+      );
+    }
+
+    if (!staffMember) {
+      throw new Error(
+        "担当スタッフを入力してください。"
+      );
+    }
+
+    // 本当に存在する顧客か確認する
+    const customerRow =
+      findCustomerRow_(
+        customerSheet,
+        customerId
+      );
+
+    if (!customerRow) {
+      throw new Error(
+        `顧客ID「${customerId}」が見つかりません。`
+      );
+    }
+
+    // 新しい来店IDを作る
+    const visitId =
+      createNextId_(
+        visitSheet,
+        "VI"
+      );
+
+    // 今回の来店情報を実データとして保存する
+    visitSheet.appendRow([
+      visitId,
+      customerId,
+      visitDate,
+      paymentAmount,
+      staffMember,
+      visitMemo,
+      new Date(),
+      "有効",
+    ]);
+
+    // 誕生日が未登録だった顧客で、
+    // 今回新しく入力された場合だけ顧客マスタへ保存する
+    if (birthday) {
+      customerSheet
+        .getRange(
+          customerRow,
+          4
+        )
+        .setValue(
+          birthday
+        );
+    }
+
+    return {
+      customerId,
+      visitId,
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+/**
  * 新規顧客と初回来店をまとめて登録する
  */
 function registerNewCustomer(
