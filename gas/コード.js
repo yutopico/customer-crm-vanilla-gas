@@ -88,9 +88,7 @@ function getCustomers() {
           row[5].trim(),
 
         photoPreviewUrl:
-          getPhotoPreviewDataUrlByDriveUrl_(
-            row[5].trim()
-          ),
+          "",
 
         features:
           row[6]
@@ -452,6 +450,53 @@ function getPhotoPreviewDataUrlByDriveUrl_(
 
 
 /**
+ * 必要な代表写真だけまとめて取得する
+ *
+ * 初期表示では写真本体を読み込まず、
+ * ブラウザ側で必要になった写真だけ取得する。
+ */
+function getCustomerPhotoPreviews(
+  photoUrls
+) {
+  if (
+    !Array.isArray(
+      photoUrls
+    )
+  ) {
+    return [];
+  }
+
+  // 同じ写真URLが複数含まれていても
+  // Driveから読み込むのは1回だけにする
+  const uniquePhotoUrls =
+    Array.from(
+      new Set(
+        photoUrls
+          .map((photoUrl) => {
+            return String(
+              photoUrl || ""
+            ).trim();
+          })
+          .filter(Boolean)
+      )
+    );
+
+  return uniquePhotoUrls.map(
+    (photoUrl) => {
+      return {
+        photoUrl,
+
+        previewUrl:
+          getPhotoPreviewDataUrlByDriveUrl_(
+            photoUrl
+          ),
+      };
+    }
+  );
+}
+
+
+/**
  * シート内の最大番号から
  * 次のIDを作る
  *
@@ -659,10 +704,29 @@ function saveCustomerPhotos_(
       customerId
     );
 
+  // 次に使用する写真IDを最初に1回だけ取得する
+  const firstPhotoId =
+    createNextId_(
+      photoSheet,
+      "PH"
+    );
+
+  const firstPhotoNumber =
+    Number(
+      firstPhotoId.replace(
+        /^PH/,
+        ""
+      )
+    );
+
+  // シートへ最後にまとめて書き込むため、
+  // 写真情報を一度配列へためる
+  const photoRows = [];
+
   const savedPhotos = [];
 
   photoDataList.forEach(
-    (photoData) => {
+    (photoData, index) => {
       const blob =
         createCustomerPhotoBlob_(
           photoData
@@ -673,36 +737,66 @@ function saveCustomerPhotos_(
           blob
         );
 
+      // 最初に取得した番号を基準に、
+      // 写真ごとの連番を作る
       const photoId =
-        createNextId_(
-          photoSheet,
-          "PH"
+        "PH" +
+        String(
+          firstPhotoNumber +
+            index
+        ).padStart(
+          5,
+          "0"
         );
+
+      // Drive情報も1回ずつ取得して使い回す
+      const fileId =
+        file.getId();
 
       const photoUrl =
         file.getUrl();
 
-      photoSheet.appendRow([
+      const fileName =
+        file.getName();
+
+      const registeredAt =
+        new Date();
+
+      photoRows.push([
         photoId,
         customerId,
-        file.getId(),
+        fileId,
         photoUrl,
-        file.getName(),
-        new Date(),
+        fileName,
+        registeredAt,
         "有効",
       ]);
 
       savedPhotos.push({
         photoId,
         customerId,
-        fileId:
-          file.getId(),
+        fileId,
         photoUrl,
-        fileName:
-          file.getName(),
+        fileName,
       });
     }
   );
+
+  // 写真枚数分の行を1回でまとめて書き込む
+  const startRow =
+    photoSheet.getLastRow() +
+    1;
+
+  photoSheet
+    .getRange(
+      startRow,
+      1,
+      photoRows.length,
+      7
+    )
+    .setValues(
+      photoRows
+    );
 
   return savedPhotos;
 }
