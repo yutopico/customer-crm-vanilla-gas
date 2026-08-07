@@ -1557,6 +1557,150 @@ const normalizeRegularCustomerSearchText = (
     .replace(/\s+/g, "");
 };
 
+// 常連顧客検索で現在表示されている顧客だけ
+// 代表写真をGASから遅れて読み込む
+const loadVisibleRegularCustomerPhotoPreviews =
+  () => {
+    if (
+      !window.google?.script?.run
+    ) {
+      return;
+    }
+
+    const visiblePhotoItems =
+      Array.from(
+        regularCustomerResultItems
+      ).filter((resultItem) => {
+        return (
+          !resultItem.hidden &&
+          Boolean(
+            resultItem.dataset
+              .photoUrl
+          ) &&
+          !resultItem.dataset
+            .photoPreviewState
+        );
+      });
+
+    if (
+      visiblePhotoItems.length === 0
+    ) {
+      return;
+    }
+
+    visiblePhotoItems.forEach(
+      (resultItem) => {
+        resultItem.dataset
+          .photoPreviewState =
+          "loading";
+      }
+    );
+
+    const photoUrls =
+      visiblePhotoItems.map(
+        (resultItem) => {
+          return resultItem.dataset
+            .photoUrl;
+        }
+      );
+
+    google.script.run
+      .withSuccessHandler(
+        (photoPreviews) => {
+          const previewList =
+            Array.isArray(
+              photoPreviews
+            )
+              ? photoPreviews
+              : [];
+
+          const previewMap =
+            new Map(
+              previewList.map(
+                (photoPreview) => {
+                  return [
+                    photoPreview.photoUrl,
+                    photoPreview.previewUrl ||
+                      "",
+                  ];
+                }
+              )
+            );
+
+          visiblePhotoItems.forEach(
+            (resultItem) => {
+              const previewUrl =
+                previewMap.get(
+                  resultItem.dataset
+                    .photoUrl ||
+                    ""
+                ) ||
+                "";
+
+              if (!previewUrl) {
+                resultItem.dataset
+                  .photoPreviewState =
+                  "error";
+
+                return;
+              }
+
+              const avatar =
+                resultItem.querySelector(
+                  ".regular-customer-result-avatar"
+                );
+
+              if (!avatar) {
+                return;
+              }
+
+              const image =
+                document.createElement(
+                  "img"
+                );
+
+              image.className =
+                "regular-customer-result-avatar-image";
+
+              image.src =
+                previewUrl;
+
+              image.alt = "";
+
+              image.decoding =
+                "async";
+
+              avatar.replaceChildren(
+                image
+              );
+
+              resultItem.dataset
+                .photoPreviewState =
+                "loaded";
+            });
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "常連顧客の代表写真読み込みに失敗しました:",
+            error
+          );
+
+          visiblePhotoItems.forEach(
+            (resultItem) => {
+              resultItem.dataset
+                .photoPreviewState =
+                "error";
+            }
+          );
+        }
+      )
+      .getCustomerPhotoPreviews(
+        photoUrls
+      );
+  };
+
 // 入力文字に合う常連顧客だけを表示する
 const updateRegularCustomerSearchResults =
   () => {
@@ -1611,6 +1755,9 @@ const updateRegularCustomerSearchResults =
     // 一致する顧客がいない場合だけ案内を表示する
     regularCustomerNoResults.hidden =
       matchCount > 0;
+
+    // 検索結果に表示された顧客だけ代表写真を読み込む
+    loadVisibleRegularCustomerPhotoPreviews();
   };
 
 // 検索欄へ文字を入力するたびに結果を更新する
@@ -1625,9 +1772,102 @@ const showSelectedRegularCustomer = (
 ) => {
   const customerData = resultItem.dataset;
 
-  // 基本情報を表示する
+  // まず頭文字を表示しておき、写真がある場合だけ後から置き換える
   regularSelectedAvatar.textContent =
-    customerData.customerInitial || "客";
+    customerData.customerInitial ||
+    "客";
+
+  const selectedPhotoUrl =
+    customerData.photoUrl ||
+    "";
+
+  const resultAvatarImage =
+    resultItem.querySelector(
+      ".regular-customer-result-avatar-image"
+    );
+
+  if (
+    selectedPhotoUrl &&
+    resultAvatarImage?.src
+  ) {
+    const image =
+      document.createElement(
+        "img"
+      );
+
+    image.className =
+      "regular-selected-customer-avatar-image";
+
+    image.src =
+      resultAvatarImage.src;
+
+    image.alt = "";
+
+    image.decoding =
+      "async";
+
+    regularSelectedAvatar.replaceChildren(
+      image
+    );
+  } else if (
+    selectedPhotoUrl &&
+    window.google?.script?.run
+  ) {
+    google.script.run
+      .withSuccessHandler(
+        (photoPreviews) => {
+          const previewUrl =
+            Array.isArray(
+              photoPreviews
+            )
+              ? photoPreviews[0]
+                  ?.previewUrl ||
+                ""
+              : "";
+
+          // 途中で別のお客様へ変更されていたら反映しない
+          if (
+            !previewUrl ||
+            regularSelectedCustomerIdInput
+              .value !==
+              customerData.customerId
+          ) {
+            return;
+          }
+
+          const image =
+            document.createElement(
+              "img"
+            );
+
+          image.className =
+            "regular-selected-customer-avatar-image";
+
+          image.src =
+            previewUrl;
+
+          image.alt = "";
+
+          image.decoding =
+            "async";
+
+          regularSelectedAvatar.replaceChildren(
+            image
+          );
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "選択中顧客の代表写真読み込みに失敗しました:",
+            error
+          );
+        }
+      )
+      .getCustomerPhotoPreviews([
+        selectedPhotoUrl,
+      ]);
+  }
 
   regularSelectedName.textContent =
     customerData.customerName || "";
@@ -2527,14 +2767,18 @@ const createHomeCustomerCardHtml = (
       .customerName ||
     "名前未登録";
 
+  const photoUrl =
+    customerCard.dataset
+      .photoUrl ||
+    "";
+
   const customerInitial =
-    customerCard.querySelector(
-      ".customer-search-result-avatar"
-    )?.textContent.trim() ||
-    customerName.slice(
-      0,
-      1
-    ) ||
+    customerName
+      .trim()
+      .slice(
+        0,
+        1
+      ) ||
     "?";
 
   return `
@@ -2543,6 +2787,9 @@ const createHomeCustomerCardHtml = (
       type="button"
       data-home-customer-id="${escapeCustomerSearchHtml(
         customerId
+      )}"
+      data-home-photo-url="${escapeCustomerSearchHtml(
+        photoUrl
       )}"
       aria-label="${escapeCustomerSearchHtml(
         customerName
@@ -2573,6 +2820,137 @@ const createHomeCustomerCardHtml = (
     </button>
   `;
 };
+
+// ホームに現在表示している顧客だけ代表写真を読み込む
+const loadHomeCustomerPhotoPreviews =
+  () => {
+    if (
+      !window.google?.script?.run
+    ) {
+      return;
+    }
+
+    const homeCustomerCards = [
+      ...homeRecentlyAddedList
+        .querySelectorAll(
+          ".customer-card"
+        ),
+
+      ...homeRecentlyViewedList
+        .querySelectorAll(
+          ".customer-card"
+        ),
+    ];
+
+    const cardsToLoad =
+      homeCustomerCards.filter(
+        (customerCard) => {
+          return (
+            Boolean(
+              customerCard.dataset
+                .homePhotoUrl
+            ) &&
+            !customerCard.querySelector(
+              ".customer-avatar-image"
+            )
+          );
+        }
+      );
+
+    if (
+      cardsToLoad.length === 0
+    ) {
+      return;
+    }
+
+    const photoUrls =
+      cardsToLoad.map(
+        (customerCard) => {
+          return customerCard.dataset
+            .homePhotoUrl;
+        }
+      );
+
+    google.script.run
+      .withSuccessHandler(
+        (photoPreviews) => {
+          const previewMap =
+            new Map(
+              (
+                Array.isArray(
+                  photoPreviews
+                )
+                  ? photoPreviews
+                  : []
+              ).map(
+                (photoPreview) => {
+                  return [
+                    photoPreview.photoUrl,
+                    photoPreview.previewUrl ||
+                      "",
+                  ];
+                }
+              )
+            );
+
+          cardsToLoad.forEach(
+            (customerCard) => {
+              const previewUrl =
+                previewMap.get(
+                  customerCard.dataset
+                    .homePhotoUrl ||
+                    ""
+                ) ||
+                "";
+
+              if (!previewUrl) {
+                return;
+              }
+
+              const avatar =
+                customerCard.querySelector(
+                  ".customer-avatar"
+                );
+
+              if (!avatar) {
+                return;
+              }
+
+              const image =
+                document.createElement(
+                  "img"
+                );
+
+              image.className =
+                "customer-avatar-image";
+
+              image.src =
+                previewUrl;
+
+              image.alt = "";
+
+              image.decoding =
+                "async";
+
+              avatar.replaceChildren(
+                image
+              );
+            }
+          );
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "ホームの代表写真読み込みに失敗しました:",
+            error
+          );
+        }
+      )
+      .getCustomerPhotoPreviews(
+        photoUrls
+      );
+  };
 
 // 最近追加・最近見た顧客をホーム画面へ表示する
 const renderHomeRecentCustomers =
@@ -2691,6 +3069,9 @@ const renderHomeRecentCustomers =
             最近見たお客様はいません。
           </p>
         `;
+
+    // ホームに表示された顧客だけ代表写真を読み込む
+    loadHomeCustomerPhotoPreviews();
   };
 
 // 日付を並び替えに使用できる数値へ変換する
@@ -10892,6 +11273,10 @@ const createRegularCustomerResultHtml =
       customer.name ||
       "名前未登録";
 
+    const photoUrl =
+      customer.photoUrl ||
+      "";
+
     const features =
       Array.isArray(
         customer.features
@@ -11006,6 +11391,9 @@ const createRegularCustomerResultHtml =
         )}"
         data-customer-id="${escapeCustomerSearchHtml(
           customerId
+        )}"
+        data-photo-url="${escapeCustomerSearchHtml(
+          photoUrl
         )}"
         data-customer-initial="${escapeCustomerSearchHtml(
           initial

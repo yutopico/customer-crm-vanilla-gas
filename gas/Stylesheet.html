@@ -1538,28 +1538,38 @@ html.app-loading .app-container {
   outline-offset: 3px;
 }
 
-/* 顧客写真が未登録の場合に表示する丸い仮アイコン */
+/* ホームの顧客カードで表示するスクエアアイコン */
 .customer-avatar {
-  /* 仮アイコンの大きさ */
   width: 48px;
   height: 48px;
+  aspect-ratio: 1 / 1;
 
-  /* 文字を円の中央に配置する */
   display: grid;
   place-items: center;
 
-  /* 円形にする */
-  border-radius: 50%;
+  border-radius: 12px;
+  overflow: hidden;
 
-  /* セージグリーン系の背景を付ける */
   background-color: rgba(125, 150, 128, 0.2);
   color: #7d9680;
 
   font-size: 16px;
   font-weight: bold;
 
-  /* 画面が狭くてもアイコンをつぶさない */
   flex-shrink: 0;
+}
+
+/* ホームの顧客カードで表示する代表写真 */
+.customer-avatar-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: inherit;
+
+  object-fit: cover;
+  object-position: center;
 }
 
 /* 顧客名と補足情報を縦に並べる */
@@ -4155,23 +4165,39 @@ body.confirm-dialog-open {
   min-width: 0;
 }
 
-/* 顧客写真未登録時の丸い仮アイコン */
+/* 常連顧客検索で表示するスクエアアイコン */
 .regular-customer-result-avatar {
   display: grid;
   place-items: center;
 
   width: 52px;
   height: 52px;
+  aspect-ratio: 1 / 1;
 
   background-color: rgb(125 150 128 / 15%);
   border: 1px solid rgb(125 150 128 / 22%);
-  border-radius: 50%;
+  border-radius: 12px;
+
+  overflow: hidden;
 
   color: #7d9680;
   font-size: 16px;
   font-weight: 700;
 
   flex-shrink: 0;
+}
+
+/* 常連顧客検索で表示する代表写真 */
+.regular-customer-result-avatar-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: inherit;
+
+  object-fit: cover;
+  object-position: center;
 }
 
 /* 顧客名・ID・特徴・最終来店日 */
@@ -4350,23 +4376,39 @@ body.confirm-dialog-open {
   margin-top: 20px;
 }
 
-/* 選択中顧客の丸いアイコン */
+/* 選択中顧客のスクエアアイコン */
 .regular-selected-customer-avatar {
   display: grid;
   place-items: center;
 
   width: 74px;
   height: 74px;
+  aspect-ratio: 1 / 1;
 
   background-color: rgb(255 255 255 / 68%);
   border: 1px solid rgb(125 150 128 / 24%);
-  border-radius: 50%;
+  border-radius: 16px;
+
+  overflow: hidden;
 
   color: #7d9680;
   font-size: 22px;
   font-weight: 700;
 
   flex-shrink: 0;
+}
+
+/* 選択中のお客様で表示する代表写真 */
+.regular-selected-customer-avatar-image {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: inherit;
+
+  object-fit: cover;
+  object-position: center;
 }
 
 /* 顧客名と集計情報 */
@@ -5340,6 +5382,8 @@ body.confirm-dialog-open {
   width: 76px;
   height: 76px;
 
+  aspect-ratio: 1 / 1;
+
   background:
     linear-gradient(
       145deg,
@@ -5349,9 +5393,12 @@ body.confirm-dialog-open {
   border: 1px solid rgb(125 150 128 / 16%);
   border-radius: 18px;
 
+  overflow: hidden;
+
   color: #6d856f;
   font-size: 26px;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 /* 顧客検索で表示する代表写真 */
