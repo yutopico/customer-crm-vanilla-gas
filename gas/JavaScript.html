@@ -2974,7 +2974,7 @@ const renderHomeRecentCustomers =
             firstCustomer,
             secondCustomer
           ) => {
-            return (
+            const registrationDateDifference =
               getCustomerSearchDateNumber(
                 secondCustomer.dataset
                   .registrationDate
@@ -2982,7 +2982,30 @@ const renderHomeRecentCustomers =
               getCustomerSearchDateNumber(
                 firstCustomer.dataset
                   .registrationDate
-              )
+              );
+
+            // 登録日が違う場合は新しい日付を先にする
+            if (
+              registrationDateDifference !==
+              0
+            ) {
+              return registrationDateDifference;
+            }
+
+            // 同じ日に登録された場合は
+            // 新しい顧客IDを先にする
+            return (
+              secondCustomer.dataset
+                .customerId ||
+              ""
+            ).localeCompare(
+              firstCustomer.dataset
+                .customerId ||
+                "",
+              "ja",
+              {
+                numeric: true,
+              }
             );
           }
         )
@@ -4523,13 +4546,54 @@ const createCustomerDetailHistory = (
         );
       })
       .sort(
-        (firstVisit, secondVisit) => {
+        (
+          firstVisit,
+          secondVisit
+        ) => {
+          // まず来店日が新しい履歴を先にする
+          const dateComparison =
+            (
+              secondVisit.visitDate ||
+              ""
+            ).localeCompare(
+              firstVisit.visitDate ||
+              ""
+            );
+
+          if (
+            dateComparison !== 0
+          ) {
+            return dateComparison;
+          }
+
+          // 同じ来店日なら、あとから登録された履歴を先にする
+          const registeredAtComparison =
+            (
+              secondVisit.registeredAt ||
+              ""
+            ).localeCompare(
+              firstVisit.registeredAt ||
+              ""
+            );
+
+          if (
+            registeredAtComparison !==
+            0
+          ) {
+            return registeredAtComparison;
+          }
+
+          // 登録日時まで同じ場合は、来店IDが新しい履歴を先にする
           return (
-            secondVisit.visitDate ||
+            secondVisit.visitId ||
             ""
           ).localeCompare(
-            firstVisit.visitDate ||
-            ""
+            firstVisit.visitId ||
+            "",
+            "ja",
+            {
+              numeric: true,
+            }
           );
         }
       );
