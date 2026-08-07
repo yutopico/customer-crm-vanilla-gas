@@ -8129,6 +8129,11 @@ body.customer-detail-mode .app-container {
   cursor: pointer;
 }
 
+/* 非表示状態の「すべて表示」ボタンは確実に隠す */
+.summary-list-more-button[hidden] {
+  display: none;
+}
+
 /* 今月の誕生日カード */
 .summary-birthday-card {
   display: grid;
