@@ -2069,19 +2069,25 @@ html.app-loading .app-container {
 }
 
 /* --------------------------------------------------
-似ている顧客のお知らせ
+   似ている顧客
 -------------------------------------------------- */
-/* 類似する顧客が見つかったときの注意モジュール */
-.similar-customer-alert {
-  margin-top: 12px;
-  padding: 18px;
 
-  background-color: rgb(245 177 135 / 16%);
-  border: 1px solid rgb(232 148 95 / 35%);
-  border-radius: 14px;
+/* 類似する顧客が見つかったときの注意エリア */
+.similar-customer-alert {
+  margin-top: 14px;
+  padding: 20px;
+
+  background-color: rgb(245 177 135 / 14%);
+  border: 1px solid rgb(232 148 95 / 32%);
+  border-radius: 18px;
 }
 
-/* 注意アイコンと見出しを横に並べる */
+/* hidden中は表示しない */
+.similar-customer-alert[hidden] {
+  display: none;
+}
+
+/* 注意アイコンと見出し */
 .similar-customer-header {
   display: flex;
   align-items: center;
@@ -2090,13 +2096,13 @@ html.app-loading .app-container {
 
 /* 丸い注意アイコン */
 .similar-customer-icon {
-  width: 24px;
-  height: 24px;
-
   display: grid;
   place-items: center;
 
-  background-color: rgb(245 177 135 / 28%);
+  width: 28px;
+  height: 28px;
+
+  background-color: rgb(245 177 135 / 26%);
   border-radius: 50%;
 
   color: #e8945f;
@@ -2106,73 +2112,125 @@ html.app-loading .app-container {
   flex-shrink: 0;
 }
 
-/* 「似ている顧客がいます」の見出し */
+/* 見出し */
 .similar-customer-header h3 {
   margin: 0;
 
-  color: #d9824e;
-  font-size: 15px;
+  color: #515254;
+  font-size: 16px;
 }
 
-/* 見出し下の説明文 */
+/* 説明文 */
 .similar-customer-description {
   margin: 10px 0 0;
 
   color: #818685;
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
-/* 類似する顧客1件分のカード */
-.similar-customer-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-
-  margin-top: 16px;
-  padding: 16px;
-
-  background-color: rgb(255 255 255 / 60%);
-  border: 1px solid rgb(81 82 84 / 10%);
-  border-radius: 14px;
-}
-
-/* 顧客名と最終来店日を縦に並べる */
-.similar-customer-info {
+/* 類似顧客カードを縦に並べる */
+.similar-customer-list {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
 
+  margin-top: 16px;
+}
+
+/* 類似顧客1人分 */
+.similar-customer-card {
+  display: grid;
+  grid-template-columns:
+    auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px 16px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 16px;
+
+  box-shadow:
+    0 6px 18px rgb(81 82 84 / 6%);
+}
+
+/* 候補顧客の写真・頭文字 */
+.similar-customer-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 48px;
+  height: 48px;
+
+  background-color: rgb(125 150 128 / 16%);
+  border-radius: 50%;
+
+  color: #607862;
+  font-size: 16px;
+  font-weight: 700;
+
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* 候補顧客の代表写真 */
+.similar-customer-avatar-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* 顧客名など */
+.similar-customer-info {
   min-width: 0;
 }
 
-/* 類似する顧客の名前 */
+/* 名前とID */
+.similar-customer-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+/* 顧客名 */
 .similar-customer-name {
   color: #515254;
   font-size: 15px;
   font-weight: 700;
 }
 
-/* 類似する顧客の補足情報 */
-.similar-customer-meta {
-  color: #818685;
-  font-size: 12px;
+/* 顧客ID */
+.similar-customer-id {
+  color: #9a9d9c;
+  font-size: 11px;
+  font-weight: 700;
 }
 
-/* 顧客詳細を確認するボタン */
+/* 最終来店などの補足 */
+.similar-customer-meta {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #818685;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* 顧客を確認するボタン */
 .similar-customer-button {
-  border: 1px solid #7d9680;
+  min-height: 40px;
+  padding: 8px 13px;
+
   background-color: transparent;
-  border-radius: 10px;
+  border: 1px solid #7d9680;
+  border-radius: 11px;
 
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 10px 12px;
-
-  color: #7d9680;
+  color: #607862;
   font: inherit;
   font-size: 12px;
   font-weight: 700;
@@ -2182,19 +2240,357 @@ html.app-loading .app-container {
 
   transition:
     background-color 0.2s ease,
-    color 0.2s ease;
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
-/* 確認ボタンへマウスを乗せたとき */
 .similar-customer-button:hover {
   background-color: #7d9680;
   color: #ffffff;
+
+  transform: translateY(-1px);
 }
 
-/* キーボード操作時の選択位置 */
 .similar-customer-button:focus-visible {
-  outline: 3px solid rgb(125 150 128 / 22%);
+  outline: 3px solid rgb(125 150 128 / 24%);
   outline-offset: 3px;
+}
+
+
+/* --------------------------------------------------
+   似ている顧客の確認ダイアログ
+-------------------------------------------------- */
+
+/* モーダル表示中は背景を固定する */
+body.similar-customer-dialog-open {
+  overflow: hidden;
+}
+
+/* 画面全体を覆う背景 */
+.similar-customer-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+
+  display: grid;
+  place-items: center;
+
+  padding: 24px;
+
+  background-color: rgb(81 82 84 / 52%);
+  backdrop-filter: blur(5px);
+}
+
+/* hidden中は表示しない */
+.similar-customer-dialog[hidden] {
+  display: none;
+}
+
+/* モーダル本体 */
+.similar-customer-dialog-content {
+  width: min(100%, 620px);
+  max-height: calc(100dvh - 48px);
+  padding: 30px;
+
+  background-color: #fdfaf6;
+  border: 1px solid rgb(129 134 133 / 18%);
+  border-radius: 24px;
+
+  box-shadow:
+    0 24px 70px rgb(81 82 84 / 28%);
+
+  overflow-y: auto;
+}
+
+/* 上部の英字 */
+.similar-customer-dialog-label {
+  margin: 0 0 8px;
+
+  color: #f19a52;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* モーダルタイトル */
+.similar-customer-dialog-title {
+  margin: 0;
+
+  color: #515254;
+  font-size: clamp(22px, 5vw, 30px);
+  line-height: 1.4;
+}
+
+/* タイトル下の説明 */
+.similar-customer-dialog-message {
+  margin: 10px 0 0;
+
+  color: #818685;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* 顧客情報全体 */
+.similar-customer-dialog-profile {
+  margin-top: 24px;
+  padding: 20px;
+
+  background-color: #ffffff;
+  border: 1px solid rgb(129 134 133 / 16%);
+  border-radius: 18px;
+}
+
+/* 写真と名前 */
+.similar-customer-dialog-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* モーダル内の代表写真 */
+.similar-customer-dialog-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 72px;
+  height: 72px;
+
+  background-color: rgb(125 150 128 / 16%);
+  border-radius: 50%;
+
+  color: #607862;
+  font-size: 22px;
+  font-weight: 700;
+
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* JSで追加する代表写真 */
+.similar-customer-dialog-avatar img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+/* 名前とID */
+.similar-customer-dialog-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+.similar-customer-dialog-heading strong {
+  color: #515254;
+  font-size: 21px;
+  line-height: 1.4;
+}
+
+.similar-customer-dialog-heading span {
+  color: #9a9d9c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 来店情報など */
+.similar-customer-dialog-stats {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 0;
+
+  margin: 20px 0 0;
+
+  border-top:
+    1px solid rgb(129 134 133 / 14%);
+  border-left:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* 各情報 */
+.similar-customer-dialog-stats > div {
+  padding: 13px 14px;
+
+  border-right:
+    1px solid rgb(129 134 133 / 14%);
+  border-bottom:
+    1px solid rgb(129 134 133 / 14%);
+}
+
+/* 担当スタッフは横幅いっぱい */
+.similar-customer-dialog-stat--wide {
+  grid-column: 1 / -1;
+}
+
+/* 項目名 */
+.similar-customer-dialog-stats dt {
+  color: #7d9680;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* 内容 */
+.similar-customer-dialog-stats dd {
+  margin: 5px 0 0;
+
+  color: #515254;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* 特徴・メモ */
+.similar-customer-dialog-section {
+  margin-top: 18px;
+}
+
+/* 小見出し */
+.similar-customer-dialog-section-label {
+  margin: 0 0 8px;
+
+  color: #7d9680;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 特徴タグ */
+.similar-customer-dialog-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.similar-customer-dialog-features span {
+  padding: 6px 10px;
+
+  background-color: rgb(125 150 128 / 12%);
+  border: 1px solid rgb(125 150 128 / 20%);
+  border-radius: 999px;
+
+  color: #607862;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 最近のメモ */
+.similar-customer-dialog-memo {
+  margin: 0;
+  padding: 12px 14px;
+
+  background-color: #f7f2eb;
+  border-radius: 12px;
+
+  color: #515254;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 下部の2ボタン */
+.similar-customer-dialog-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  margin-top: 24px;
+}
+
+/* 「登録を続ける」 */
+.similar-customer-dialog-continue {
+  min-height: 52px;
+  padding: 11px 16px;
+
+  background-color: transparent;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  color: #607862;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* 「この顧客で来店登録」 */
+.similar-customer-dialog-register {
+  min-height: 52px;
+  padding: 11px 16px;
+
+  background-color: #7d9680;
+  border: 1px solid #7d9680;
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 20px rgb(125 150 128 / 20%);
+
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* ボタンを少し浮かせる */
+.similar-customer-dialog-continue:hover,
+.similar-customer-dialog-register:hover {
+  transform: translateY(-1px);
+}
+
+/* キーボード操作 */
+.similar-customer-dialog-continue:focus-visible,
+.similar-customer-dialog-register:focus-visible {
+  outline: 4px solid rgb(125 150 128 / 26%);
+  outline-offset: 3px;
+}
+
+/* スマホでも2ボタンは横並びを維持する */
+@media (max-width: 600px) {
+  .similar-customer-alert {
+    padding: 16px;
+  }
+
+  .similar-customer-card {
+    grid-template-columns:
+      auto minmax(0, 1fr);
+  }
+
+  .similar-customer-button {
+    grid-column: 1 / -1;
+
+    width: 100%;
+  }
+
+  .similar-customer-dialog {
+    padding: 14px;
+  }
+
+  .similar-customer-dialog-content {
+    padding: 22px 18px;
+  }
+
+  .similar-customer-dialog-profile {
+    padding: 16px;
+  }
+
+  .similar-customer-dialog-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .similar-customer-dialog-actions {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .similar-customer-dialog-continue,
+  .similar-customer-dialog-register {
+    padding: 10px 8px;
+
+    font-size: 13px;
+  }
 }
 
 /* --------------------------------------------------

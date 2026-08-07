@@ -277,6 +277,7 @@ const bottomNavItems = document.querySelectorAll(".bottom-nav-item[data-view]");
 // 顧客検索画面に使用する要素を取得する
 const customerSearchInput = document.querySelector("#customer-search-input");
 const customerSearchClearButton = document.querySelector(".customer-search-clear-button");
+
 // 顧客カードはスプレッドシート取得後に入れ替わるため、
 // あとから更新できる変数として管理する
 let customerSearchResultCards =document.querySelectorAll(".customer-search-result-card");
@@ -375,6 +376,7 @@ const customerDetailEditForm = document.querySelector("#customer-detail-edit-for
 const customerDetailEditCloseButton = document.querySelector(".customer-detail-edit-close");
 const customerDetailEditCancelButton = document.querySelector(".customer-detail-edit-cancel");
 const customerDetailEditSaveButton =document.querySelector(".customer-detail-edit-save");
+
 // 顧客詳細をGASへ保存している最中か管理する
 let isCustomerDetailEditSaving = false;
 const customerDetailEditNameInput = document.querySelector("#customer-detail-edit-name");
@@ -389,6 +391,7 @@ const summaryMonthPicker = document.querySelector(".summary-month-picker");
 const summaryMonthButton = document.querySelector("#summary-month-button");
 const summaryMonthLabel = document.querySelector("#summary-month-label");
 const summaryMonthOptions = document.querySelector("#summary-month-options");
+
 // 来店履歴取得後に月ボタンを入れ替えるため、
 // あとから更新できる変数として管理する
 let summaryMonthOptionButtons =document.querySelectorAll("[data-summary-month]");
@@ -664,7 +667,6 @@ const customerRecentSearchLimit = 8;
 
 // 常連顧客の検索に使用する要素を取得する
 const regularCustomerSearchInput = document.querySelector("#regular-customer-search");
-
 const regularCustomerSearchResults =document.querySelector("#regular-customer-search-results");
 
 // 実データから検索結果をあとで作り直すための一覧
@@ -675,29 +677,17 @@ let regularCustomerResultItems =document.querySelectorAll(".regular-customer-res
 
 // 選択中のお客様カードに使用する要素を取得する
 const regularCustomerNoResults =document.querySelector(".regular-customer-no-results");
-
 const regularSelectedCustomer = document.querySelector("#regular-selected-customer");
-
 const regularCustomerChangeButton = document.querySelector(".regular-customer-change-button");
-
 const regularSelectedAvatar = document.querySelector("#regular-selected-avatar");
-
 const regularSelectedName = document.querySelector("#regular-selected-name");
-
 const regularSelectedId = document.querySelector("#regular-selected-id");
-
 const regularSelectedLastVisit = document.querySelector("#regular-selected-last-visit");
-
 const regularSelectedVisitCount = document.querySelector("#regular-selected-visit-count");
-
 const regularSelectedTotalSales = document.querySelector("#regular-selected-total-sales");
-
 const regularSelectedAverageSpend = document.querySelector("#regular-selected-average-spend");
-
 const regularSelectedFeatures = document.querySelector("#regular-selected-features");
-
 const regularSelectedMemo = document.querySelector("#regular-selected-memo");
-
 const regularSelectedCustomerIdInput = document.querySelector("#regular-selected-customer-id");
 
 // 常連顧客の誕生日入力に使用する要素を取得する
@@ -754,16 +744,12 @@ const featureDeleteButton = document.querySelector(".feature-delete-button");
 
 // 特徴タグの重複警告に使用する要素を取得する
 const featureDuplicateDialog = document.querySelector("#feature-duplicate-dialog");
-
 const featureDuplicateDialogButton = document.querySelector(".feature-duplicate-dialog-button");
 
 // 特徴タグの削除確認に使用する要素を取得する
 const featureDeleteDialog = document.querySelector("#feature-delete-dialog");
-
 const featureDeleteDialogMessage = document.querySelector(".feature-delete-dialog-message");
-
 const featureDeleteDialogCancel = document.querySelector(".feature-delete-dialog-cancel");
-
 const featureDeleteDialogConfirm = document.querySelector(".feature-delete-dialog-confirm");
 
 // 新規顧客メモの入力欄を取得する
@@ -771,37 +757,45 @@ const newCustomerMemo = document.querySelector("#new-customer-memo");
 
 // 顧客写真のプレビューに使用する要素を取得する
 const customerPhotoInput = document.querySelector("#customer-photo");
-
 const photoPreview = document.querySelector(".photo-preview");
-
 const photoPreviewPlaceholder = document.querySelector(".photo-preview-placeholder");
-
 const photoPreviewList = document.querySelector(".photo-preview-list");
-
 const photoRemoveButton = document.querySelector(".photo-remove-button");
 
 // 新規顧客の登録確認画面に使用する要素を取得する
 const newCustomerConfirmDialog = document.querySelector("#new-customer-confirm-dialog");
-
 const newCustomerConfirmSummary = document.querySelector("#new-customer-confirm-summary");
-
 const newCustomerConfirmBack = document.querySelector(".new-customer-confirm-back");
-
 const newCustomerSubmitButton = document.querySelector("#new-customer-submit-button");
-
 const newCustomerConfirmMain = document.querySelector(".new-customer-confirm-main");
-
 const newCustomerConfirmRegister = document.querySelector(".new-customer-confirm-register");
-
 const newCustomerRegisterSuccess = document.querySelector(".new-customer-register-success");
-
 const newCustomerSuccessBack = document.querySelector(".new-customer-success-back");
 
 // 確認画面へ表示する入力欄を取得する
 const customerNameInput = document.querySelector("#customer-name");
 
-// 似ている顧客のお知らせ欄を取得する
+// 似ている顧客の候補表示に使用する要素を取得する
 const similarCustomerAlert =document.querySelector(".similar-customer-alert");
+const similarCustomerList =document.querySelector("#similar-customer-list");
+
+// 似ている顧客の確認ダイアログに使用する要素を取得する
+const similarCustomerDialog =document.querySelector("#similar-customer-dialog");
+const similarCustomerDialogAvatar =document.querySelector("#similar-customer-dialog-avatar");
+const similarCustomerDialogName =document.querySelector("#similar-customer-dialog-name");
+const similarCustomerDialogId =document.querySelector("#similar-customer-dialog-id");
+const similarCustomerDialogBirthday =document.querySelector("#similar-customer-dialog-birthday");
+const similarCustomerDialogLastVisit =document.querySelector("#similar-customer-dialog-last-visit");
+const similarCustomerDialogVisitCount =document.querySelector("#similar-customer-dialog-visit-count");
+const similarCustomerDialogTotalSales =document.querySelector("#similar-customer-dialog-total-sales");
+const similarCustomerDialogStaff =document.querySelector("#similar-customer-dialog-staff");
+const similarCustomerDialogFeatures =document.querySelector("#similar-customer-dialog-features");
+const similarCustomerDialogMemo =document.querySelector("#similar-customer-dialog-memo");
+const similarCustomerDialogContinue =document.querySelector(".similar-customer-dialog-continue");
+const similarCustomerDialogRegister =document.querySelector(".similar-customer-dialog-register");
+
+// 確認ダイアログで現在表示している顧客ID
+let activeSimilarCustomerId = "";
 
 const paymentAmountInput = document.querySelector("#payment-amount");
 
@@ -1481,15 +1475,834 @@ const saveStaffMemberName = (inputElement = staffMemberInput) => {
   renderStaffMemberOptions();
 };
 
-// 似ている顧客のお知らせを表示する
-const showSimilarCustomerAlert = () => {
-  similarCustomerAlert.hidden = false;
+// 顧客IDから常連顧客検索用のデータ要素を取得する
+const getRegularCustomerItemById = (
+  customerId
+) => {
+  return (
+    Array.from(
+      regularCustomerResultItems
+    ).find((resultItem) => {
+      return (
+        resultItem.dataset.customerId ===
+        customerId
+      );
+    }) ||
+    null
+  );
 };
 
-// 似ている顧客のお知らせを非表示にする
+
+// 入力された名前と登録済み顧客名の近さを判定する
+const getSimilarCustomerMatchScore = (
+  enteredName,
+  customerName
+) => {
+  const normalizedEnteredName =
+    normalizeRegularCustomerSearchText(
+      enteredName
+    );
+
+  const normalizedCustomerName =
+    normalizeRegularCustomerSearchText(
+      customerName
+    );
+
+  // 1文字だけでは候補が増えすぎるため表示しない
+  if (
+    normalizedEnteredName.length < 2 ||
+    normalizedCustomerName === ""
+  ) {
+    return null;
+  }
+
+  // 完全一致を最優先する
+  if (
+    normalizedEnteredName ===
+    normalizedCustomerName
+  ) {
+    return 0;
+  }
+
+  // 名前の先頭部分が一致する候補を次に優先する
+  if (
+    normalizedCustomerName.startsWith(
+      normalizedEnteredName
+    ) ||
+    normalizedEnteredName.startsWith(
+      normalizedCustomerName
+    )
+  ) {
+    return 1;
+  }
+
+  // 名前の一部が一致する場合も候補として扱う
+  if (
+    normalizedCustomerName.includes(
+      normalizedEnteredName
+    ) ||
+    normalizedEnteredName.includes(
+      normalizedCustomerName
+    )
+  ) {
+    return 2;
+  }
+
+  return null;
+};
+
+
+// 入力された顧客名に近い登録済み顧客を最大3件取得する
+const getSimilarCustomerItems = (
+  enteredName
+) => {
+  return Array.from(
+    regularCustomerResultItems
+  )
+    .map((resultItem) => {
+      return {
+        resultItem,
+        score:
+          getSimilarCustomerMatchScore(
+            enteredName,
+            resultItem.dataset
+              .customerName ||
+              ""
+          ),
+      };
+    })
+    .filter((candidate) => {
+      return candidate.score !== null;
+    })
+    .sort(
+      (
+        firstCandidate,
+        secondCandidate
+      ) => {
+        if (
+          firstCandidate.score !==
+          secondCandidate.score
+        ) {
+          return (
+            firstCandidate.score -
+            secondCandidate.score
+          );
+        }
+
+        return (
+          firstCandidate.resultItem
+            .dataset.customerName ||
+          ""
+        ).localeCompare(
+          secondCandidate.resultItem
+            .dataset.customerName ||
+            "",
+          "ja"
+        );
+      }
+    )
+    .slice(0, 3)
+    .map((candidate) => {
+      return candidate.resultItem;
+    });
+};
+
+
+// 似ている顧客1人分の候補カードを作る
+const createSimilarCustomerCardHtml = (
+  resultItem
+) => {
+  const customerData =
+    resultItem.dataset;
+
+  const customerName =
+    customerData.customerName ||
+    "名前未登録";
+
+  const customerId =
+    customerData.customerId ||
+    "";
+
+  const customerInitial =
+    customerData.customerInitial ||
+    "客";
+
+  const lastVisit =
+    customerData.lastVisit ||
+    "未登録";
+
+  const visitCount =
+    customerData.visitCount ||
+    "0";
+
+  const featureNames =
+    (
+      customerData.features ||
+      ""
+    )
+      .split(",")
+      .map((featureName) => {
+        return featureName.trim();
+      })
+      .filter(Boolean);
+
+  const featureText =
+    featureNames.length > 0
+      ? featureNames
+          .slice(0, 3)
+          .join("・")
+      : "未登録";
+
+  return `
+    <article
+      class="similar-customer-card"
+      data-customer-id="${escapeCustomerSearchHtml(
+        customerId
+      )}"
+      data-photo-url="${escapeCustomerSearchHtml(
+        customerData.photoUrl ||
+        ""
+      )}"
+    >
+      <span
+        class="similar-customer-avatar"
+        aria-hidden="true"
+      >
+        ${escapeCustomerSearchHtml(
+          customerInitial
+        )}
+      </span>
+
+      <div class="similar-customer-info">
+        <div class="similar-customer-name-row">
+          <span class="similar-customer-name">
+            ${escapeCustomerSearchHtml(
+              customerName
+            )}
+          </span>
+
+          <span class="similar-customer-id">
+            ${escapeCustomerSearchHtml(
+              customerId
+            )}
+          </span>
+        </div>
+
+        <span class="similar-customer-meta">
+          最終来店：${escapeCustomerSearchHtml(
+            lastVisit
+          )} ・ 来店${escapeCustomerSearchHtml(
+            visitCount
+          )}回
+        </span>
+
+        <span class="similar-customer-meta">
+          特徴：${escapeCustomerSearchHtml(
+            featureText
+          )}
+        </span>
+      </div>
+
+      <button
+        class="similar-customer-button"
+        type="button"
+        data-similar-customer-id="${escapeCustomerSearchHtml(
+          customerId
+        )}"
+      >
+        顧客を確認
+      </button>
+    </article>
+  `;
+};
+
+
+// 候補カードの代表写真を必要な分だけ遅れて読み込む
+const loadSimilarCustomerPhotoPreviews =
+  () => {
+    if (
+      !window.google?.script?.run
+    ) {
+      return;
+    }
+
+    const photoCards =
+      Array.from(
+        similarCustomerList
+          .querySelectorAll(
+            ".similar-customer-card"
+          )
+      ).filter((customerCard) => {
+        return Boolean(
+          customerCard.dataset.photoUrl
+        );
+      });
+
+    if (photoCards.length === 0) {
+      return;
+    }
+
+    const photoUrls =
+      photoCards.map(
+        (customerCard) => {
+          return customerCard.dataset
+            .photoUrl;
+        }
+      );
+
+    google.script.run
+      .withSuccessHandler(
+        (photoPreviews) => {
+          const previewList =
+            Array.isArray(
+              photoPreviews
+            )
+              ? photoPreviews
+              : [];
+
+          const previewMap =
+            new Map(
+              previewList.map(
+                (photoPreview) => {
+                  return [
+                    photoPreview.photoUrl,
+                    photoPreview.previewUrl ||
+                      "",
+                  ];
+                }
+              )
+            );
+
+          photoCards.forEach(
+            (customerCard) => {
+              const previewUrl =
+                previewMap.get(
+                  customerCard.dataset
+                    .photoUrl ||
+                    ""
+                ) ||
+                "";
+
+              if (!previewUrl) {
+                return;
+              }
+
+              const avatar =
+                customerCard.querySelector(
+                  ".similar-customer-avatar"
+                );
+
+              if (!avatar) {
+                return;
+              }
+
+              const image =
+                document.createElement(
+                  "img"
+                );
+
+              image.className =
+                "similar-customer-avatar-image";
+
+              image.src =
+                previewUrl;
+
+              image.alt = "";
+
+              image.decoding =
+                "async";
+
+              avatar.replaceChildren(
+                image
+              );
+
+              // モーダルでも再利用できるよう保持する
+              customerCard.dataset
+                .photoPreviewUrl =
+                previewUrl;
+            }
+          );
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "類似顧客の代表写真読み込みに失敗しました:",
+            error
+          );
+        }
+      )
+      .getCustomerPhotoPreviews(
+        photoUrls
+      );
+  };
+
+
+// 似ている顧客のお知らせを非表示へ戻す
 const hideSimilarCustomerAlert = () => {
   similarCustomerAlert.hidden = true;
+
+  similarCustomerList
+    .replaceChildren();
 };
+
+
+// 入力中の顧客名に合わせて候補を更新する
+const renderSimilarCustomerAlert =
+  () => {
+    const similarCustomerItems =
+      getSimilarCustomerItems(
+        customerNameInput.value
+      );
+
+    if (
+      similarCustomerItems.length ===
+      0
+    ) {
+      hideSimilarCustomerAlert();
+      return;
+    }
+
+    similarCustomerList.innerHTML =
+      similarCustomerItems
+        .map(
+          createSimilarCustomerCardHtml
+        )
+        .join("");
+
+    similarCustomerAlert.hidden =
+      false;
+
+    loadSimilarCustomerPhotoPreviews();
+  };
+
+
+// 確認モーダルの代表写真を表示する
+const renderSimilarCustomerDialogAvatar =
+  (resultItem) => {
+    const customerData =
+      resultItem.dataset;
+
+    similarCustomerDialogAvatar
+      .textContent =
+      customerData.customerInitial ||
+      "客";
+
+    const customerCard =
+      Array.from(
+        similarCustomerList
+          .querySelectorAll(
+            ".similar-customer-card"
+          )
+      ).find((card) => {
+        return (
+          card.dataset.customerId ===
+          customerData.customerId
+        );
+      });
+
+    const previewUrl =
+      customerCard?.dataset
+        .photoPreviewUrl ||
+      "";
+
+    if (previewUrl) {
+      const image =
+        document.createElement(
+          "img"
+        );
+
+      image.src = previewUrl;
+      image.alt = "";
+      image.decoding = "async";
+
+      similarCustomerDialogAvatar
+        .replaceChildren(
+          image
+        );
+
+      return;
+    }
+
+    const photoUrl =
+      customerData.photoUrl ||
+      "";
+
+    if (
+      !photoUrl ||
+      !window.google?.script?.run
+    ) {
+      return;
+    }
+
+    google.script.run
+      .withSuccessHandler(
+        (photoPreviews) => {
+          if (
+            activeSimilarCustomerId !==
+            customerData.customerId
+          ) {
+            return;
+          }
+
+          const previewUrl =
+            Array.isArray(
+              photoPreviews
+            )
+              ? photoPreviews[0]
+                  ?.previewUrl ||
+                ""
+              : "";
+
+          if (!previewUrl) {
+            return;
+          }
+
+          const image =
+            document.createElement(
+              "img"
+            );
+
+          image.src =
+            previewUrl;
+
+          image.alt = "";
+          image.decoding =
+            "async";
+
+          similarCustomerDialogAvatar
+            .replaceChildren(
+              image
+            );
+        }
+      )
+      .withFailureHandler(
+        (error) => {
+          console.error(
+            "類似顧客確認の代表写真読み込みに失敗しました:",
+            error
+          );
+        }
+      )
+      .getCustomerPhotoPreviews([
+        photoUrl,
+      ]);
+  };
+
+
+// 似ている顧客の確認ダイアログを開く
+const openSimilarCustomerDialog = (
+  customerId
+) => {
+  const resultItem =
+    getRegularCustomerItemById(
+      customerId
+    );
+
+  if (!resultItem) {
+    return;
+  }
+
+  const customerData =
+    resultItem.dataset;
+
+  activeSimilarCustomerId =
+    customerId;
+
+  similarCustomerDialogName
+    .textContent =
+    customerData.customerName ||
+    "名前未登録";
+
+  similarCustomerDialogId
+    .textContent =
+    customerData.customerId ||
+    "";
+
+  const hasBirthday =
+    customerData.birthdayStatus ===
+      "known" &&
+    customerData.birthYear &&
+    customerData.birthMonth &&
+    customerData.birthDay;
+
+  similarCustomerDialogBirthday
+    .textContent =
+    hasBirthday
+      ? `${customerData.birthYear}/${String(
+          customerData.birthMonth
+        ).padStart(
+          2,
+          "0"
+        )}/${String(
+          customerData.birthDay
+        ).padStart(
+          2,
+          "0"
+        )}`
+      : "未登録";
+
+  similarCustomerDialogLastVisit
+    .textContent =
+    customerData.lastVisit ||
+    "未登録";
+
+  similarCustomerDialogVisitCount
+    .textContent =
+    customerData.visitCount ||
+    "0";
+
+  const totalSales =
+    Number(
+      customerData.totalSales ||
+      0
+    );
+
+  similarCustomerDialogTotalSales
+    .textContent =
+    `¥${totalSales.toLocaleString(
+      "ja-JP"
+    )}`;
+
+  similarCustomerDialogStaff
+    .textContent =
+    customerData.staffMember ||
+    "未登録";
+
+  similarCustomerDialogFeatures
+    .replaceChildren();
+
+  const featureNames =
+    (
+      customerData.features ||
+      ""
+    )
+      .split(",")
+      .map((featureName) => {
+        return featureName.trim();
+      })
+      .filter(Boolean);
+
+  const displayFeatureNames =
+    featureNames.length > 0
+      ? featureNames
+      : ["未登録"];
+
+  displayFeatureNames.forEach(
+    (featureName) => {
+      const featureTag =
+        document.createElement(
+          "span"
+        );
+
+      featureTag.textContent =
+        featureName;
+
+      similarCustomerDialogFeatures
+        .appendChild(
+          featureTag
+        );
+    }
+  );
+
+  similarCustomerDialogMemo
+    .textContent =
+    customerData.recentMemo ||
+    "なし";
+
+  renderSimilarCustomerDialogAvatar(
+    resultItem
+  );
+
+  similarCustomerDialog.hidden =
+    false;
+
+  document.body.classList.add(
+    "similar-customer-dialog-open"
+  );
+
+  similarCustomerDialogContinue
+    .focus();
+};
+
+
+// 似ている顧客の確認ダイアログを閉じる
+const closeSimilarCustomerDialog =
+  () => {
+    similarCustomerDialog.hidden =
+      true;
+
+    document.body.classList.remove(
+      "similar-customer-dialog-open"
+    );
+
+    activeSimilarCustomerId = "";
+  };
+
+
+// 顧客名を入力するたびに候補を更新する
+customerNameInput.addEventListener(
+  "input",
+  (event) => {
+    if (event.isComposing) {
+      return;
+    }
+
+    renderSimilarCustomerAlert();
+  }
+);
+
+
+// 日本語変換が確定したあとにも候補を更新する
+customerNameInput.addEventListener(
+  "compositionend",
+  renderSimilarCustomerAlert
+);
+
+
+// 候補カードの「顧客を確認」を押したとき
+similarCustomerList.addEventListener(
+  "click",
+  (event) => {
+    const confirmButton =
+      event.target.closest(
+        "[data-similar-customer-id]"
+      );
+
+    if (!confirmButton) {
+      return;
+    }
+
+    openSimilarCustomerDialog(
+      confirmButton.dataset
+        .similarCustomerId ||
+        ""
+    );
+  }
+);
+
+
+// 「登録を続ける」で新規顧客フォームへ戻る
+similarCustomerDialogContinue
+  .addEventListener(
+    "click",
+    () => {
+      closeSimilarCustomerDialog();
+
+      customerNameInput.focus({
+        preventScroll: true,
+      });
+    }
+  );
+
+
+// 「この顧客で来店登録」で常連顧客更新へ移動する
+similarCustomerDialogRegister
+  .addEventListener(
+    "click",
+    () => {
+      const customerId =
+        activeSimilarCustomerId;
+
+      const resultItem =
+        getRegularCustomerItemById(
+          customerId
+        );
+
+      if (!resultItem) {
+        return;
+      }
+
+      // 新規登録フォームに入力済みの今回の来店情報を保持する
+      const transferData = {
+        visitDate:
+          visitDateInput.value,
+
+        paymentAmount:
+          paymentAmountInput.value,
+
+        staffMember:
+          staffMemberInput.value,
+
+        memo:
+          newCustomerMemo.value,
+      };
+
+      closeSimilarCustomerDialog();
+
+      showView(
+        "regular-customer",
+        "auto"
+      );
+
+      window.requestAnimationFrame(
+        () => {
+          // 選択した顧客を常連顧客画面へ引き継ぐ
+          showSelectedRegularCustomer(
+            resultItem
+          );
+
+          regularCustomerSearchInput
+            .value =
+            `${resultItem.dataset.customerName || ""} ${customerId}`;
+
+          // 新規登録画面で入力済みの今回の来店情報だけ引き継ぐ
+          regularVisitDateInput.value =
+            transferData.visitDate ||
+            "";
+
+          if (
+            !regularVisitDateInput.value
+          ) {
+            setTodayToRegularVisitDate();
+          }
+
+          regularPaymentAmountInput.value =
+            transferData.paymentAmount ||
+            "";
+
+          formatRegularPaymentAmountInput();
+
+          regularStaffMemberInput.value =
+            transferData.staffMember ||
+            "";
+
+          regularCustomerMemo.value =
+            transferData.memo ||
+            "";
+        }
+      );
+    }
+  );
+
+
+// モーダル背景を押しても新規登録へ戻れるようにする
+similarCustomerDialog.addEventListener(
+  "click",
+  (event) => {
+    if (
+      event.target ===
+      similarCustomerDialog
+    ) {
+      closeSimilarCustomerDialog();
+    }
+  }
+);
+
+
+// Escキーでも確認ダイアログを閉じる
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key === "Escape" &&
+      !similarCustomerDialog.hidden
+    ) {
+      closeSimilarCustomerDialog();
+      customerNameInput.focus();
+    }
+  }
+);
 
 // 通知パネルを閉じる共通処理
 const closeNotificationPanel = () => {
@@ -11475,6 +12288,9 @@ const createRegularCustomerResultHtml =
         data-recent-memo="${escapeCustomerSearchHtml(
           recentMemo
         )}"
+        data-staff-member="${escapeCustomerSearchHtml(
+          customer.staffMember || ""
+        )}"
         data-birthday-status="${
           birthday
             ? "known"
@@ -11601,6 +12417,14 @@ const renderSpreadsheetCustomers = (
 
   // 最近追加・最近見た顧客も実データへ更新する
   renderHomeRecentCustomers();
+
+  // 顧客名が入力済みの場合は類似候補も最新データで更新する
+  if (
+    customerNameInput.value.trim() !==
+    ""
+  ) {
+    renderSimilarCustomerAlert();
+  }
 };
 
 // 保存されていた画面を復元する
