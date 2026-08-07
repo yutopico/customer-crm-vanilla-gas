@@ -658,14 +658,16 @@ const customerRecentSearchLimit = 8;
 // 常連顧客の検索に使用する要素を取得する
 const regularCustomerSearchInput = document.querySelector("#regular-customer-search");
 
-const regularCustomerSearchResults = document.querySelector("#regular-customer-search-results");
+const regularCustomerSearchResults =document.querySelector("#regular-customer-search-results");
 
-const regularCustomerResultItems = document.querySelectorAll(".regular-customer-result-item");
+// 実データから検索結果をあとで作り直すための一覧
+const regularCustomerResultList =document.querySelector(".regular-customer-result-list");
 
-const regularCustomerNoResults = document.querySelector(".regular-customer-no-results");
+// 顧客データ取得後に入れ替えるため、letで管理する
+let regularCustomerResultItems =document.querySelectorAll(".regular-customer-result-item");
 
 // 選択中のお客様カードに使用する要素を取得する
-const regularCustomerSelectButtons = document.querySelectorAll(".regular-customer-select-button");
+const regularCustomerNoResults =document.querySelector(".regular-customer-no-results");
 
 const regularSelectedCustomer = document.querySelector("#regular-selected-customer");
 
@@ -1737,25 +1739,30 @@ featureNames.forEach((featureName) => {
   });
 };
 
-// 各「この顧客を選択」ボタンに処理を登録する
-regularCustomerSelectButtons.forEach(
-  (selectButton) => {
-    selectButton.addEventListener(
-      "click",
-      () => {
-        const resultItem =
-          selectButton.closest(
-            ".regular-customer-result-item"
-          );
+// 実データから追加された「この顧客を選択」ボタンを動かす
+regularCustomerSearchResults.addEventListener(
+  "click",
+  (event) => {
+    const selectButton =
+      event.target.closest(
+        ".regular-customer-select-button"
+      );
 
-        if (!resultItem) {
-          return;
-        }
+    if (!selectButton) {
+      return;
+    }
 
-        showSelectedRegularCustomer(
-          resultItem
-        );
-      }
+    const resultItem =
+      selectButton.closest(
+        ".regular-customer-result-item"
+      );
+
+    if (!resultItem) {
+      return;
+    }
+
+    showSelectedRegularCustomer(
+      resultItem
     );
   }
 );
@@ -9960,6 +9967,235 @@ const createSpreadsheetCustomerCardHtml =
     `;
   };
 
+// スプレッドシートの顧客から常連顧客検索カードを作る
+const createRegularCustomerResultHtml =
+  (customer) => {
+    const customerId =
+      customer.customerId || "";
+
+    const customerName =
+      customer.name ||
+      "名前未登録";
+
+    const features =
+      Array.isArray(
+        customer.features
+      )
+        ? customer.features.filter(
+            Boolean
+          )
+        : [];
+
+    const history =
+      createCustomerDetailHistory(
+        customerId
+      );
+
+    const visitCount =
+      history.length;
+
+    const lastVisit =
+      visitCount > 0
+        ? history[0].date
+        : "";
+
+    const totalSales =
+      history.reduce(
+        (total, visitHistory) => {
+          return (
+            total +
+            Number(
+              visitHistory.amount ||
+              0
+            )
+          );
+        },
+        0
+      );
+
+    const averageSpend =
+      visitCount > 0
+        ? Math.round(
+            totalSales /
+            visitCount
+          )
+        : 0;
+
+    const initial =
+      customerName
+        .trim()
+        .slice(0, 1) ||
+      "?";
+
+    const birthday =
+      customer.birthday || "";
+
+    const birthdayParts =
+      birthday.split("-");
+
+    const birthYear =
+      birthdayParts[0] || "";
+
+    const birthMonth =
+      birthdayParts[1]
+        ? String(
+            Number(
+              birthdayParts[1]
+            )
+          )
+        : "";
+
+    const birthDay =
+      birthdayParts[2]
+        ? String(
+            Number(
+              birthdayParts[2]
+            )
+          )
+        : "";
+
+    const featureText =
+      features.length > 0
+        ? features.join("・")
+        : "特徴未登録";
+
+    // 最新来店メモを優先し、なければ顧客マスタのメモを使う
+    const latestVisitMemo =
+      visitCount > 0 &&
+      history[0].memo !==
+        "メモなし"
+        ? history[0].memo
+        : "";
+
+    const recentMemo =
+      latestVisitMemo ||
+      customer.memo ||
+      "なし";
+
+    const searchText = [
+      customerName,
+      customerId,
+      ...features,
+      customer.memo || "",
+      customer.staffMember || "",
+    ].join(" ");
+
+    return `
+      <article
+        class="regular-customer-result-item"
+        data-search-text="${escapeCustomerSearchHtml(
+          searchText
+        )}"
+        data-customer-name="${escapeCustomerSearchHtml(
+          customerName
+        )}"
+        data-customer-id="${escapeCustomerSearchHtml(
+          customerId
+        )}"
+        data-customer-initial="${escapeCustomerSearchHtml(
+          initial
+        )}"
+        data-last-visit="${escapeCustomerSearchHtml(
+          formatCustomerSearchDate(
+            lastVisit
+          )
+        )}"
+        data-visit-count="${visitCount}"
+        data-total-sales="${totalSales}"
+        data-average-spend="${averageSpend}"
+        data-features="${escapeCustomerSearchHtml(
+          features.join(",")
+        )}"
+        data-recent-memo="${escapeCustomerSearchHtml(
+          recentMemo
+        )}"
+        data-birthday-status="${
+          birthday
+            ? "known"
+            : "unknown"
+        }"
+        data-birth-year="${escapeCustomerSearchHtml(
+          birthYear
+        )}"
+        data-birth-month="${escapeCustomerSearchHtml(
+          birthMonth
+        )}"
+        data-birth-day="${escapeCustomerSearchHtml(
+          birthDay
+        )}"
+      >
+        <div class="regular-customer-result-profile">
+          <span
+            class="regular-customer-result-avatar"
+            aria-hidden="true"
+          >
+            ${escapeCustomerSearchHtml(
+              initial
+            )}
+          </span>
+
+          <div class="regular-customer-result-info">
+            <div class="regular-customer-result-heading">
+              <strong>
+                ${escapeCustomerSearchHtml(
+                  customerName
+                )}
+              </strong>
+
+              <span>
+                ${escapeCustomerSearchHtml(
+                  customerId
+                )}
+              </span>
+            </div>
+
+            <p>
+              ${escapeCustomerSearchHtml(
+                featureText
+              )}
+            </p>
+
+            <p>
+              最終来店：${escapeCustomerSearchHtml(
+                formatCustomerSearchDate(
+                  lastVisit
+                )
+              )}
+            </p>
+          </div>
+        </div>
+
+        <button
+          class="regular-customer-select-button"
+          type="button"
+        >
+          この顧客を選択
+        </button>
+      </article>
+    `;
+  };
+
+
+// 実データを常連顧客検索へ表示する
+const renderRegularCustomerResults =
+  (customers) => {
+    regularCustomerResultList.innerHTML =
+      customers
+        .map(
+          createRegularCustomerResultHtml
+        )
+        .join("");
+
+    // 作り直した検索結果を再取得する
+    regularCustomerResultItems =
+      regularCustomerResultList
+        .querySelectorAll(
+          ".regular-customer-result-item"
+        );
+
+    updateRegularCustomerSearchResults();
+  };
+
 // 取得した顧客を検索結果へ表示する
 const renderSpreadsheetCustomers = (
   customers
@@ -9981,6 +10217,11 @@ const renderSpreadsheetCustomers = (
       .querySelectorAll(
         ".customer-search-result-card"
       );
+
+    // 常連顧客検索にも同じ実データを反映する
+    renderRegularCustomerResults(
+      customers
+    );
 
   // 実データから担当スタッフ候補を更新する
   renderStaffMemberOptions();
