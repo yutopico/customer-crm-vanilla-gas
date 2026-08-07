@@ -944,11 +944,14 @@ regularPaymentAmountInput.addEventListener(
   formatRegularPaymentAmountInput
 );
 
-// スタッフ名の候補を表示するdatalistを取得する
-const staffMemberOptions =
-  document.querySelector(
-    "#staff-member-options"
+// 3画面の担当スタッフ独自ドロップダウンを取得する
+const staffComboboxes =
+  document.querySelectorAll(
+    "[data-staff-combobox]"
   );
+
+// 画面へ表示する担当スタッフ候補
+let staffMemberCandidates = [];
 
 // 保存時に使用する名前
 const staffMemberStorageKey =
@@ -976,6 +979,383 @@ const getSavedStaffMembers = () => {
     return [];
   }
 };
+
+// スタッフ名を候補検索しやすい形へ整える
+const normalizeStaffMemberSearchText = (
+  value
+) => {
+  return value
+    .normalize("NFKC")
+    .toLocaleLowerCase("ja-JP")
+    .replace(/\s+/g, "");
+};
+
+
+// 1つの担当スタッフ候補一覧を描画する
+const renderStaffComboboxOptions = (
+  staffCombobox
+) => {
+  const input =
+    staffCombobox.querySelector(
+      "[data-staff-combobox-input]"
+    );
+
+  const optionsContainer =
+    staffCombobox.querySelector(
+      "[data-staff-combobox-options]"
+    );
+
+  const searchText =
+    normalizeStaffMemberSearchText(
+      input.value
+    );
+
+  const matchingStaffMembers =
+    staffMemberCandidates.filter(
+      (staffName) => {
+        return (
+          searchText === "" ||
+          normalizeStaffMemberSearchText(
+            staffName
+          ).includes(
+            searchText
+          )
+        );
+      }
+    );
+
+  optionsContainer.replaceChildren();
+
+  // 候補がない場合
+  if (
+    matchingStaffMembers.length ===
+    0
+  ) {
+    const emptyMessage =
+      document.createElement("p");
+
+    emptyMessage.className =
+      "staff-combobox-empty";
+
+    emptyMessage.textContent =
+      staffMemberCandidates.length === 0
+        ? "担当スタッフ候補はまだありません"
+        : "一致する候補はありません。そのまま入力できます。";
+
+    optionsContainer.appendChild(
+      emptyMessage
+    );
+
+    return;
+  }
+
+  // 候補をボタンとして作る
+  matchingStaffMembers.forEach(
+    (staffName) => {
+      const optionButton =
+        document.createElement(
+          "button"
+        );
+
+      optionButton.className =
+        "staff-combobox-option";
+
+      optionButton.type =
+        "button";
+
+      optionButton.setAttribute(
+        "role",
+        "option"
+      );
+
+      optionButton.dataset.staffName =
+        staffName;
+
+      optionButton.textContent =
+        staffName;
+
+      optionButton.setAttribute(
+        "aria-selected",
+        String(
+          input.value.trim() ===
+          staffName
+        )
+      );
+
+      optionsContainer.appendChild(
+        optionButton
+      );
+    }
+  );
+};
+
+
+// 1つの担当スタッフ候補一覧を閉じる
+const closeStaffCombobox = (
+  staffCombobox
+) => {
+  const input =
+    staffCombobox.querySelector(
+      "[data-staff-combobox-input]"
+    );
+
+  const toggleButton =
+    staffCombobox.querySelector(
+      "[data-staff-combobox-toggle]"
+    );
+
+  const optionsContainer =
+    staffCombobox.querySelector(
+      "[data-staff-combobox-options]"
+    );
+
+  optionsContainer.hidden =
+    true;
+
+  input.setAttribute(
+    "aria-expanded",
+    "false"
+  );
+
+  toggleButton.setAttribute(
+    "aria-expanded",
+    "false"
+  );
+};
+
+
+// 今開いているほかの候補一覧を閉じる
+const closeOtherStaffComboboxes = (
+  currentCombobox
+) => {
+  staffComboboxes.forEach(
+    (staffCombobox) => {
+      if (
+        staffCombobox !==
+        currentCombobox
+      ) {
+        closeStaffCombobox(
+          staffCombobox
+        );
+      }
+    }
+  );
+};
+
+
+// 担当スタッフ候補一覧を開く
+const openStaffCombobox = (
+  staffCombobox
+) => {
+  const input =
+    staffCombobox.querySelector(
+      "[data-staff-combobox-input]"
+    );
+
+  const toggleButton =
+    staffCombobox.querySelector(
+      "[data-staff-combobox-toggle]"
+    );
+
+  const optionsContainer =
+    staffCombobox.querySelector(
+      "[data-staff-combobox-options]"
+    );
+
+  closeOtherStaffComboboxes(
+    staffCombobox
+  );
+
+  renderStaffComboboxOptions(
+    staffCombobox
+  );
+
+  optionsContainer.hidden =
+    false;
+
+  input.setAttribute(
+    "aria-expanded",
+    "true"
+  );
+
+  toggleButton.setAttribute(
+    "aria-expanded",
+    "true"
+  );
+};
+
+
+// 3画面の担当スタッフ欄へ共通操作を設定する
+staffComboboxes.forEach(
+  (staffCombobox) => {
+    const input =
+      staffCombobox.querySelector(
+        "[data-staff-combobox-input]"
+      );
+
+    const toggleButton =
+      staffCombobox.querySelector(
+        "[data-staff-combobox-toggle]"
+      );
+
+    const optionsContainer =
+      staffCombobox.querySelector(
+        "[data-staff-combobox-options]"
+      );
+
+    // 読み上げ機能へコンボボックスであることを伝える
+    input.setAttribute(
+      "role",
+      "combobox"
+    );
+
+    // 入力欄を選択したら候補を開く
+    input.addEventListener(
+      "focus",
+      () => {
+        openStaffCombobox(
+          staffCombobox
+        );
+      }
+    );
+
+    // 入力するたびに候補を絞り込む
+    input.addEventListener(
+      "input",
+      () => {
+        openStaffCombobox(
+          staffCombobox
+        );
+      }
+    );
+
+    // 右側の矢印で候補を開閉する
+    toggleButton.addEventListener(
+      "click",
+      () => {
+        if (
+          optionsContainer.hidden
+        ) {
+          openStaffCombobox(
+            staffCombobox
+          );
+
+          input.focus({
+            preventScroll: true,
+          });
+
+          return;
+        }
+
+        closeStaffCombobox(
+          staffCombobox
+        );
+      }
+    );
+
+    // 候補を押したら入力欄へ反映する
+    optionsContainer.addEventListener(
+      "click",
+      (event) => {
+        const optionButton =
+          event.target.closest(
+            ".staff-combobox-option"
+          );
+
+        if (!optionButton) {
+          return;
+        }
+
+        input.value =
+          optionButton.dataset
+            .staffName ||
+          "";
+
+        // 既存フォームのエラー解除処理にも変更を伝える
+        input.dispatchEvent(
+          new Event(
+            "input",
+            {
+              bubbles: true,
+            }
+          )
+        );
+
+        input.dispatchEvent(
+          new Event(
+            "change",
+            {
+              bubbles: true,
+            }
+          )
+        );
+
+        closeStaffCombobox(
+          staffCombobox
+        );
+      }
+    );
+  }
+);
+
+
+// 担当スタッフ欄の外側を押したら候補を閉じる
+document.addEventListener(
+  "click",
+  (event) => {
+    if (
+      event.target.closest(
+        "[data-staff-combobox]"
+      )
+    ) {
+      return;
+    }
+
+    staffComboboxes.forEach(
+      closeStaffCombobox
+    );
+  }
+);
+
+
+// Escapeキーでは候補一覧だけを先に閉じる
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key !==
+      "Escape"
+    ) {
+      return;
+    }
+
+    const hasOpenCombobox =
+      Array.from(
+        staffComboboxes
+      ).some(
+        (staffCombobox) => {
+          return !staffCombobox
+            .querySelector(
+              "[data-staff-combobox-options]"
+            )
+            .hidden;
+        }
+      );
+
+    if (!hasOpenCombobox) {
+      return;
+    }
+
+    event.preventDefault();
+
+    // 顧客編集モーダルまで同時に閉じないようにする
+    event.stopImmediatePropagation();
+
+    staffComboboxes.forEach(
+      closeStaffCombobox
+    );
+  }
+);
 
 // 顧客・来店履歴・入力済みデータから
 // 担当スタッフ候補を作る
@@ -1020,7 +1400,7 @@ const renderStaffMemberOptions =
         });
 
     // すべての候補をまとめて重複をなくす
-    const staffMembers = [
+    staffMemberCandidates = [
       ...new Set([
         ...customerStaffMembers,
         ...visitStaffMembers,
@@ -1033,55 +1413,10 @@ const renderStaffMemberOptions =
       );
     });
 
-    // 新規・常連来店フォームの入力候補
-    staffMemberOptions.replaceChildren();
-
-    staffMembers.forEach((staffName) => {
-      const option =
-        document.createElement(
-          "option"
-        );
-
-      option.value =
-        staffName;
-
-      staffMemberOptions.appendChild(
-        option
-      );
-    });
-
-    // 顧客編集画面の選択肢
-    const currentEditStaff =
-      customerDetailEditStaffInput.value;
-
-    customerDetailEditStaffInput.replaceChildren();
-
-    staffMembers.forEach((staffName) => {
-      const option =
-        document.createElement(
-          "option"
-        );
-
-      option.value =
-        staffName;
-
-      option.textContent =
-        staffName;
-
-      customerDetailEditStaffInput.appendChild(
-        option
-      );
-    });
-
-    if (
-      currentEditStaff &&
-      staffMembers.includes(
-        currentEditStaff
-      )
-    ) {
-      customerDetailEditStaffInput.value =
-        currentEditStaff;
-    }
+    // 新規・常連・顧客編集の3画面へ候補を反映する
+    staffComboboxes.forEach(
+      renderStaffComboboxOptions
+    );
 
     // 顧客検索の担当スタッフ条件
     customerSearchConditionSettings[
@@ -1092,7 +1427,7 @@ const renderStaffMemberOptions =
         label: "すべて",
       },
 
-      ...staffMembers.map(
+      ...staffMemberCandidates.map(
         (staffName) => {
           return {
             value: staffName,
@@ -4716,7 +5051,12 @@ customerDetailEditForm.addEventListener(
       "客";
 
     activeCustomerDetailData.staff =
-      customerDetailEditStaffInput.value;
+      customerDetailEditStaffInput.value.trim();
+
+    // 編集画面で新しく入力したスタッフ名も候補として保存する
+    saveStaffMemberName(
+      customerDetailEditStaffInput
+    );
 
     activeCustomerDetailData.features =
       updatedFeatures;

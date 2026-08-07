@@ -1490,20 +1490,49 @@
                             </div>
 
                             <!-- 担当スタッフの入力欄 -->
-                            <div class="staff-input-field">
-                                <input
-                                    class="form-input"
-                                    id="staff-member"
-                                    name="staffMember"
-                                    type="text"
-                                    list="staff-member-options"
-                                    placeholder="担当スタッフ名を入力してください"
-                                    autocomplete="off"
-                                    required
-                                >
+                            <div
+                                class="staff-combobox"
+                                data-staff-combobox
+                            >
+                                <div class="staff-combobox-control">
+                                    <input
+                                        class="form-input staff-combobox-input"
+                                        id="staff-member"
+                                        name="staffMember"
+                                        type="text"
+                                        placeholder="担当スタッフ名を入力してください"
+                                        autocomplete="off"
+                                        data-staff-combobox-input
+                                        aria-autocomplete="list"
+                                        aria-expanded="false"
+                                        aria-controls="new-staff-member-options"
+                                        required
+                                    >
 
-                                <!-- 実データから担当スタッフ候補を表示する -->
-                                <datalist id="staff-member-options"></datalist>
+                                    <button
+                                        class="staff-combobox-toggle"
+                                        type="button"
+                                        data-staff-combobox-toggle
+                                        aria-label="担当スタッフ候補を表示"
+                                        aria-expanded="false"
+                                        aria-controls="new-staff-member-options"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            aria-hidden="true"
+                                        >
+                                            <path d="m7 9 5 5 5-5"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div
+                                    class="staff-combobox-options"
+                                    id="new-staff-member-options"
+                                    data-staff-combobox-options
+                                    role="listbox"
+                                    hidden
+                                ></div>
                             </div>
 
                             <p
@@ -2229,16 +2258,50 @@
                                     </span>
                                 </div>
 
-                                <input
-                                    class="form-input"
-                                    id="regular-staff-member"
-                                    name="staffMember"
-                                    type="text"
-                                    list="staff-member-options"
-                                    placeholder="担当スタッフ名を入力してください"
-                                    autocomplete="off"
-                                    required
+                                <div
+                                    class="staff-combobox"
+                                    data-staff-combobox
                                 >
+                                    <div class="staff-combobox-control">
+                                        <input
+                                            class="form-input staff-combobox-input"
+                                            id="regular-staff-member"
+                                            name="staffMember"
+                                            type="text"
+                                            placeholder="担当スタッフ名を入力してください"
+                                            autocomplete="off"
+                                            data-staff-combobox-input
+                                            aria-autocomplete="list"
+                                            aria-expanded="false"
+                                            aria-controls="regular-staff-member-options"
+                                            required
+                                        >
+
+                                        <button
+                                            class="staff-combobox-toggle"
+                                            type="button"
+                                            data-staff-combobox-toggle
+                                            aria-label="担当スタッフ候補を表示"
+                                            aria-expanded="false"
+                                            aria-controls="regular-staff-member-options"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                aria-hidden="true"
+                                            >
+                                                <path d="m7 9 5 5 5-5"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <div
+                                        class="staff-combobox-options"
+                                        id="regular-staff-member-options"
+                                        data-staff-combobox-options
+                                        role="listbox"
+                                        hidden
+                                    ></div>
+                                </div>
 
                                 <p
                                     class="form-error-message"
@@ -5368,14 +5431,53 @@
                                 >
                             </label>
 
-                            <label class="customer-detail-edit-field">
-                                <span>
+                            <div class="customer-detail-edit-field">
+                                <label for="customer-detail-edit-staff">
                                     担当スタッフ
-                                </span>
+                                </label>
 
-                                <!-- 実データから担当スタッフ候補を表示する -->
-                                <select id="customer-detail-edit-staff"></select>
-                            </label>
+                                <div
+                                    class="staff-combobox"
+                                    data-staff-combobox
+                                >
+                                    <div class="staff-combobox-control">
+                                        <input
+                                            class="staff-combobox-input"
+                                            id="customer-detail-edit-staff"
+                                            type="text"
+                                            autocomplete="off"
+                                            data-staff-combobox-input
+                                            aria-autocomplete="list"
+                                            aria-expanded="false"
+                                            aria-controls="customer-detail-edit-staff-options"
+                                        >
+
+                                        <button
+                                            class="staff-combobox-toggle"
+                                            type="button"
+                                            data-staff-combobox-toggle
+                                            aria-label="担当スタッフ候補を表示"
+                                            aria-expanded="false"
+                                            aria-controls="customer-detail-edit-staff-options"
+                                        >
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                aria-hidden="true"
+                                            >
+                                                <path d="m7 9 5 5 5-5"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <div
+                                        class="staff-combobox-options"
+                                        id="customer-detail-edit-staff-options"
+                                        data-staff-combobox-options
+                                        role="listbox"
+                                        hidden
+                                    ></div>
+                                </div>
+                            </div>
 
                             <label class="customer-detail-edit-field">
                                 <span>
